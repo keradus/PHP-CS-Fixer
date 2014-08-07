@@ -155,91 +155,88 @@ automatically fix anything:
 
 Choose from the list of available fixers:
 
-* **encoding** [PSR-1] PHP code MUST use only UTF-8 without BOM
-   (remove BOM).
+* **encoding**
+    [PSR-1] PHP code MUST use only UTF-8 without BOM (remove BOM).
 
-* **linefeed** [PSR-2] All PHP files must use the Unix LF
-   (linefeed) line ending.
+* **linefeed**
+    [PSR-2] All PHP files must use the Unix LF (linefeed) line ending.
 
-* **indentation** [PSR-2] Code MUST use an indent of 4 spaces, and
-   MUST NOT use tabs for indenting.
+* **indentation**
+    [PSR-2] Code MUST use an indent of 4 spaces, and MUST NOT use tabs for indenting.
 
-* **trailing_spaces** [PSR-2] Remove trailing whitespace at the end of
-   lines.
+* **trailing_spaces**
+    [PSR-2] Remove trailing whitespace at the end of lines.
 
-* **unused_use** [all] Unused use statements must be removed.
+* **unused_use**
+    [all] Unused use statements must be removed.
 
-* **php_closing_tag** [PSR-2] The closing ?> tag MUST be omitted from
-   files containing only PHP.
+* **php_closing_tag**
+    [PSR-2] The closing ?> tag MUST be omitted from files containing only PHP.
 
-* **phpdoc_params** [all] All items of the @param phpdoc tags must be
-   aligned vertically.
+* **ternary_spaces**
+    [all] Standardize spaces around ternary operator.
 
-* **standardize_not_equal** [all] Replace all <> with !=.
+* **function_declaration**
+    [PSR-2] Spaces should be properly placed in a function declaration
 
-* **short_tag** [PSR-1] PHP code must use the long <?php ?> tags or
-   the short-echo <?= ?> tags; it must not use the
-   other tag variations.
+* **visibility**
+    [PSR-2] Visibility MUST be declared on all properties and methods; abstract and final MUST be declared before the visibility; static MUST be declared after the visibility.
 
-* **ternary_spaces** [all] Standardize spaces around ternary operator.
+* **short_array_syntax**
+    [contrib] PHP array's should use the PHP 5.4 short-syntax
 
-* **spaces_cast** [all] A single space should be between cast and
-   variable.
+* **extra_empty_lines**
+    [all] Removes extra empty lines.
 
-* **object_operator** [all] There should not be space before or after
-   object T_OBJECT_OPERATOR.
+* **braces**
+    [PSR-2] Opening braces for classes, interfaces, traits and methods must go on the next line, and closing braces must go on the next line after the body. Opening braces for control structures must go on the same line, and closing braces must go on the next line after the body.
 
-* **visibility** [PSR-2] Visibility MUST be declared on all
-   properties and methods; abstract and final MUST be
-   declared before the visibility; static MUST be
-   declared after the visibility.
+* **phpdoc_params**
+    [all] All items of the @param phpdoc tags must be aligned vertically.
 
-* **return** [all] An empty line feed should precede a return
-   statement.
+* **object_operator**
+    [all] There should not be space before or after object T_OBJECT_OPERATOR.
+
+* **short_tag**
+    [PSR-1] PHP code must use the long <?php ?> tags or the short-echo <?= ?> tags; it must not use the other tag variations.
+
+* **lowercase_constants**
+    [PSR-2] The PHP constants true, false, and null MUST be in lower case.
+
+* **new_with_braces**
+    [all] All instances created with new keyword must be followed by braces.
+
+* **return**
+    [all] An empty line feed should precede a return statement.
+
+* **lowercase_keywords**
+    [PSR-2] PHP keywords MUST be in lower case.
+
+* **ordered_use** [all] Ordering use statements.
 
 * **function_declaration** [PSR-2] Spaces should be properly placed in a
-   function declaration
-
-* **include** [all] Include and file path should be divided with
-   a single space. File path should not be placed
-   under brackets.
-
-* **extra_empty_lines** [all] Removes extra empty lines.
-
-* **new_with_braces** [all] All instances created with new keyword must
-   be followed by braces.
-
-* **braces** [PSR-2] Opening braces for classes, interfaces,
-   traits and methods must go on the next line, and
-   closing braces must go on the next line after the
-   body. Opening braces for control structures must go
-   on the same line, and closing braces must go on the
-   next line after the body.
-
-* **lowercase_keywords** [PSR-2] PHP keywords MUST be in lower case.
+  function declaration
 
 * **short_array_syntax** [contrib] PHP array's should use the PHP 5.4
    short-syntax
 
-* **lowercase_constants** [PSR-2] The PHP constants true, false, and null
-   MUST be in lower case.
+* **include**
+    [all] Include and file path should be divided with a single space. File path should not be placed under brackets.
 
-* **controls_spaces** [all] A single space should be between: the closing
-   brace and the control, the control and the opening
-   parentheses, the closing parentheses and the
-   opening brace.
+* **spaces_cast**
+    [all] A single space should be between cast and variable.
 
-* **psr0** [PSR-0] Classes must be in a path that matches
-   their namespace, be at least one namespace deep,
-   and the class name should match the file name.
+* **controls_spaces**
+    [all] A single space should be between: the closing brace and the control, the control and the opening parentheses, the closing parentheses and the opening brace.
 
-* **elseif** [PSR-2] The keyword elseif should be used instead
-   of else if so that all control keywords looks like
-   single words.
+* **psr0**
+    [PSR-0] Classes must be in a path that matches their namespace, be at least one namespace deep, and the class name should match the file name.
 
-* **eof_ending** [PSR-2] A file must always end with an empty line
-   feed.
+* **elseif**
+    [PSR-2] The keyword elseif should be used instead of else if so that all control keywords looks like single words.
 
+* **eof_ending**
+    [PSR-2] A file must always end with an empty line feed.
 
 The ``--config`` option customizes the files to analyse, based
 on some well-known directory structures:
