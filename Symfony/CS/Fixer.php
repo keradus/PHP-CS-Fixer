@@ -159,7 +159,7 @@ class Fixer
             return 'PSR-2';
         }
 
-        if ($level === ($level & FixerInterface::CONTRIB_LEVEL)) {
+        if ($fixer->getLevel() === ($fixer->getLevel() & FixerInterface::CONTRIB_LEVEL)) {
             return 'contrib';
         }
 
