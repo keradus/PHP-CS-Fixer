@@ -41,9 +41,9 @@ class OrderUseStatementsFixer implements FixerInterface
     private function findLines($allLines, $tokens)
     {
         $lines = array();
-        foreach ($tokens as $key => $token) {
+        foreach ($tokens as $index => $token) {
             if (T_USE === $token->id) {
-                $nextToken = $tokens->getNextNonWhitespace($key);
+                $nextToken = $tokens->getNextNonWhitespace($index);
                 if ($nextToken && $nextToken->id) {
                     $lines[$token->line - 1] = $allLines[$nextToken->line - 1];
                 }
