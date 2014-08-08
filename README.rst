@@ -167,36 +167,41 @@ Choose from the list of available fixers:
 * **trailing_spaces** [PSR-2] Remove trailing whitespace at the end of
    lines.
 
-* **unused_use** [all] Unused use statements must be removed.
-
 * **php_closing_tag** [PSR-2] The closing ?> tag MUST be omitted from
    files containing only PHP.
 
-* **standardize_not_equal** [all] Replace all <> with !=.
+* **unused_use** [all] Unused use statements must be removed.
 
 * **return** [all] An empty line feed should precede a return
    statement.
 
-* **short_array_syntax** [contrib] PHP array's should use the PHP 5.4
-   short-syntax
-
-* **ordered_use** [contrib] Ordering use statements.
-
-* **ternary_spaces** [all] Standardize spaces around ternary operator.
-
-* **short_tag** [PSR-1] PHP code must use the long <?php ?> tags or
-   the short-echo <?= ?> tags; it must not use the
-   other tag variations.
-
-* **spaces_cast** [all] A single space should be between cast and
-   variable.
+* **phpdoc_params** [all] All items of the @param phpdoc tags must be
+   aligned vertically.
 
 * **visibility** [PSR-2] Visibility MUST be declared on all
    properties and methods; abstract and final MUST be
    declared before the visibility; static MUST be
    declared after the visibility.
 
-* **extra_empty_lines** [all] Removes extra empty lines.
+* **object_operator** [all] There should not be space before or after
+   object T_OBJECT_OPERATOR.
+
+* **lowercase_constants** [PSR-2] The PHP constants true, false, and null
+   MUST be in lower case.
+
+* **spaces_cast** [all] A single space should be between cast and
+   variable.
+
+* **ternary_spaces** [all] Standardize spaces around ternary operator.
+
+* **standardize_not_equal** [all] Replace all <> with !=.
+
+* **function_declaration** [PSR-2] Spaces should be properly placed in a
+   function declaration
+
+* **short_tag** [PSR-1] PHP code must use the long <?php ?> tags or
+   the short-echo <?= ?> tags; it must not use the
+   other tag variations.
 
 * **braces** [PSR-2] Opening braces for classes, interfaces,
    traits and methods must go on the next line, and
@@ -205,25 +210,20 @@ Choose from the list of available fixers:
    on the same line, and closing braces must go on the
    next line after the body.
 
+* **short_array_syntax** [contrib] PHP array's should use the PHP 5.4
+   short-syntax
+
+* **ordered_use** [contrib] Ordering use statements.
+
 * **new_with_braces** [all] All instances created with new keyword must
    be followed by braces.
 
-* **object_operator** [all] There should not be space before or after
-   object T_OBJECT_OPERATOR.
-
-* **function_declaration** [PSR-2] Spaces should be properly placed in a
-   function declaration
-
-* **lowercase_constants** [PSR-2] The PHP constants true, false, and null
-   MUST be in lower case.
+* **extra_empty_lines** [all] Removes extra empty lines.
 
 * **lowercase_keywords** [PSR-2] PHP keywords MUST be in lower case.
 
 * **short_array_syntax** [contrib] PHP array's should use the PHP 5.4
    short-syntax
-
-* **phpdoc_params** [all] All items of the @param phpdoc tags must be
-   aligned vertically.
 
 * **psr0** [PSR-0] Classes must be in a path that matches
    their namespace, be at least one namespace deep,
@@ -271,18 +271,14 @@ your project. The file must return an instance of
 `Symfony\CS\ConfigInterface`, which lets you configure the fixers, the files,
 and directories that need to be analyzed:
 
-.. code-block:: bash
+.. code-block:: php
 
     <?php
-
-.. code-block:: bash
 
     $finder = Symfony\CS\Finder\DefaultFinder::create()
         ->exclude('somedir')
         ->in(__DIR__)
     ;
-
-.. code-block:: bash
 
     return Symfony\CS\Config\Config::create()
         ->fixers(array('indentation', 'elseif'))
@@ -293,18 +289,14 @@ You may also use a blacklist for the Fixers instead of the above shown whitelist
 The following example shows how to use all Fixers but the `psr0` fixer.
 Note the additional ``-`` in front of the Fixer name.
 
-.. code-block:: bash
+.. code-block:: php
 
     <?php
-
-.. code-block:: bash
 
     $finder = Symfony\CS\Finder\DefaultFinder::create()
         ->exclude('somedir')
         ->in(__DIR__)
     ;
-
-.. code-block:: bash
 
     return Symfony\CS\Config\Config::create()
         ->fixers(array('-psr0'))
