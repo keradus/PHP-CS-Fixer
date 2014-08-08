@@ -92,5 +92,4 @@ class OrderUseStatementsFixer implements FixerInterface
     {
         return 'Ordering use statements.';
     }
-
 }

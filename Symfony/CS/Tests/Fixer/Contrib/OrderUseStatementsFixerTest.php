@@ -112,5 +112,4 @@ EOF;
 
         return $files[$filename];
     }
-
 }
