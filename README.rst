@@ -272,18 +272,14 @@ your project. The file must return an instance of
 `Symfony\CS\ConfigInterface`, which lets you configure the fixers, the files,
 and directories that need to be analyzed:
 
-.. code-block:: bash
+.. code-block:: php
 
     <?php
-
-.. code-block:: bash
 
     $finder = Symfony\CS\Finder\DefaultFinder::create()
         ->exclude('somedir')
         ->in(__DIR__)
     ;
-
-.. code-block:: bash
 
     return Symfony\CS\Config\Config::create()
         ->fixers(array('indentation', 'elseif'))
@@ -294,18 +290,14 @@ You may also use a blacklist for the Fixers instead of the above shown whitelist
 The following example shows how to use all Fixers but the `psr0` fixer.
 Note the additional ``-`` in front of the Fixer name.
 
-.. code-block:: bash
+.. code-block:: php
 
     <?php
-
-.. code-block:: bash
 
     $finder = Symfony\CS\Finder\DefaultFinder::create()
         ->exclude('somedir')
         ->in(__DIR__)
     ;
-
-.. code-block:: bash
 
     return Symfony\CS\Config\Config::create()
         ->fixers(array('-psr0'))
