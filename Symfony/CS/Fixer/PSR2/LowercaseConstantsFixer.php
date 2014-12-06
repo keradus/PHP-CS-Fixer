@@ -82,6 +82,14 @@ class LowercaseConstantsFixer extends AbstractFixer
             return false;
         }
 
+        if (!defined('T_TRAIT') && 'trait' === strtolower($token->getContent())) {
+            return false;
+        }
+
+        if (!defined('T_INSTEADOF') && 'insteadof' === strtolower($token->getContent())) {
+            return false;
+        }
+
         return !$token->isGivenKind($forbiddenTokens);
     }
 
