@@ -288,21 +288,9 @@ EOF
             }
         }
 
-        $configFile = $input->getOption('config-file');
-        if (null === $configFile) {
-            if (is_file($path) && $dirName = pathinfo($path, PATHINFO_DIRNAME)) {
-                $configDir = $dirName;
-            } elseif ($stdin || null === $path) {
-                $configDir = getcwd();
-                // path is directory
-            } else {
-                $configDir = $path;
-            }
-            $configFile = $configDir.DIRECTORY_SEPARATOR.'.php_cs';
-        }
+        $config = null;
 
         if ($input->getOption('config')) {
-            $config = null;
             foreach ($this->fixer->getConfigs() as $c) {
                 if ($c->getName() === $input->getOption('config')) {
                     $config = $c;
@@ -313,16 +301,42 @@ EOF
             if (null === $config) {
                 throw new \InvalidArgumentException(sprintf('The configuration "%s" is not defined', $input->getOption('config')));
             }
-        } elseif (file_exists($configFile)) {
-            $config = include $configFile;
-            // verify that the config has an instance of Config
-            if (!$config instanceof Config) {
-                throw new \UnexpectedValueException(sprintf('The config file "%s" does not return an instance of Symfony\CS\Config\Config', $configFile));
-            } else {
-                $output->writeln(sprintf('Loaded config from "%s"', $configFile));
-            }
         } else {
-            $config = $this->defaultConfig;
+            $configFile = $input->getOption('config-file');
+            if (null !== $configFile) {
+                $configFiles = array($configFile);
+            } else {
+                if (is_file($path) && $dirName = pathinfo($path, PATHINFO_DIRNAME)) {
+                    $configDir = $dirName;
+                } elseif ($stdin || null === $path) {
+                    $configDir = getcwd();
+                    // path is directory
+                } else {
+                    $configDir = $path;
+                }
+                $configFiles = array(
+                    $configDir.DIRECTORY_SEPARATOR.'.php_cs',
+                    $configDir.DIRECTORY_SEPARATOR.'.php_cs.dist',
+                );
+            }
+
+            foreach ($configFiles as $configFile) {
+                if (file_exists($configFile)) {
+                    $config = include $configFile;
+
+                    // verify that the config has an instance of Config
+                    if (!$config instanceof Config) {
+                        throw new \UnexpectedValueException(sprintf('The config file "%s" does not return an instance of Symfony\CS\Config\Config', $configFile));
+                    }
+
+                    $output->writeln(sprintf('Loaded config from "%s"', $configFile));
+                    break;
+                }
+            }
+
+            if (null === $config) {
+                $config = $this->defaultConfig;
+            }
         }
 
         if ($config->usingLinter()) {
