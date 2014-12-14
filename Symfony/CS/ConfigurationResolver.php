@@ -29,13 +29,13 @@ class ConfigurationResolver
     protected $defaultConfig;
     protected $fixers = array();
     protected $options = array(
-        'config'        => null,
-        'config-file'   => null,
-        'isStdIn'       => null,
-        'fixers'        => null,
-        'level'         => null,
-        'path'          => null,
-        'progress'      => null,
+        'config'      => null,
+        'config-file' => null,
+        'isStdIn'     => null,
+        'fixers'      => null,
+        'level'       => null,
+        'path'        => null,
+        'progress'    => null,
     );
 
     public function setAllFixers(array $allFixers)
