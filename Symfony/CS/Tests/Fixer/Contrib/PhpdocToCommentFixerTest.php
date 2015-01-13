@@ -133,7 +133,7 @@ include_once "include_once.php";
 /**
  * Do not convert this
  *
- * @var boolean $local
+ * @var bool $local
  */
 $local = true;
 ',
