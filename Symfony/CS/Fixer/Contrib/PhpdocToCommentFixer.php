@@ -65,7 +65,7 @@ class PhpdocToCommentFixer extends AbstractFixer
      * Check if token is a structural element
      * @see http://www.phpdoc.org/docs/latest/glossary.html#term-structural-elements
      *
-     * @param  Token $token
+     * @param Token $token
      *
      * @return bool
      */
@@ -91,8 +91,8 @@ class PhpdocToCommentFixer extends AbstractFixer
     /**
      * Checks foreach statements for correct docblock usage.
      *
-     * @param  Tokens $tokens
-     * @param  int    $index
+     * @param Tokens $tokens
+     * @param int    $index
      *
      * @return bool
      */
@@ -129,8 +129,8 @@ class PhpdocToCommentFixer extends AbstractFixer
     /**
      * Checks variable assignments for correct docblock usage.
      *
-     * @param  Tokens $tokens
-     * @param  int    $index
+     * @param Tokens $tokens
+     * @param int    $index
      *
      * @return bool
      */
