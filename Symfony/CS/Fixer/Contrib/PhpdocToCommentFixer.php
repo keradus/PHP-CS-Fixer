@@ -113,26 +113,32 @@ class PhpdocToCommentFixer extends AbstractFixer
     private function isValidForeach(Tokens $tokens, $index)
     {
         $startIndex = $index;
-        $endIndex = $tokens->getNextTokenOfKind($startIndex, array(')'));
+        while (!$tokens[$startIndex]->isGivenkind(T_AS)) {
+            ++$startIndex;
+        }
+
+        $endIndex = $startIndex;
+        $end = false;
+        $i = 0;
+        while (!$end) {
+            ++$endIndex;
+            if ($tokens[$endIndex]->equals('(')) {
+                ++$i;
+                continue;
+            } elseif ($tokens[$endIndex]->equals(')')) {
+                --$i;
+            }
+            $end = $i < 0;
+        }
+
         while ($startIndex < $endIndex) {
             ++$startIndex;
-            if (!$tokens[$startIndex]->isGivenkind(T_AS)) {
-                continue;
-            }
-
-            /*
-             * Is the $value documented in docblock: foreach($array as $value)
-             * or
-             * Is the $key documented in docblock: foreach($array as $key => $value)
-             */
             $nextMeaningful = $tokens->getNextMeaningfulToken($startIndex);
-            if (strpos($tokens[$index]->getContent(), $tokens[$nextMeaningful]->getContent()) !== false) {
-                return true;
-            }
 
-            // Is the $value documented in docblock: ($array as $key => $value)
-            $nextMeaningful = $tokens->getNextMeaningfulToken($tokens->getNextMeaningfulToken($nextMeaningful));
-            if (strpos($tokens[$index]->getContent(), $tokens[$nextMeaningful]->getContent()) !== false) {
+            if (
+                $tokens[$nextMeaningful]->isGivenkind(T_VARIABLE) &&
+                strpos($tokens[$index]->getContent(), $tokens[$nextMeaningful]->getContent()) !== false
+            ) {
                 return true;
             }
         }
@@ -156,7 +162,7 @@ class PhpdocToCommentFixer extends AbstractFixer
             return false;
         }
 
-        return strpos($tokens[$index]->getContent(), $tokens[$variable]->getContent()) !== false;
+        return false !== strpos($tokens[$index]->getContent(), $tokens[$variable]->getContent());
     }
 
     /**
@@ -177,7 +183,7 @@ class PhpdocToCommentFixer extends AbstractFixer
                 continue;
             }
 
-            if (strpos($tokens[$index]->getContent(), $tokens[$startIndex]->getContent()) !== false) {
+            if (false !== strpos($tokens[$index]->getContent(), $tokens[$startIndex]->getContent())) {
                 return true;
             }
         }
