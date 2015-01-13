@@ -227,6 +227,14 @@ list($one, $two) = explode("," , $csvLines);
 ',
         );
 
+        $cases[] = array(
+            '<?php
+/** @var int $index */
+foreach ($foo->getPairs($c->bar(), $bar) as $index => list($a, $b)) [
+    // Do something with $index, $a and $b
+}',
+        );
+
         return $cases;
     }
 
