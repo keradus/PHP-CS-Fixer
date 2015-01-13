@@ -55,6 +55,7 @@ class DocBlocks
      * Do not convert this
      */
     const STRUCTURAL = true;
+
     /**
      * Do not convert this
      */
@@ -124,6 +125,32 @@ include "include.php";
  * Do not convert this
  */
 include_once "include_once.php";
+',
+        );
+
+        $cases[] = array(
+            '<?php
+/**
+ * Do not convert this
+ *
+ * @var boolean $local
+ */
+$local = true;
+',
+        );
+
+        $cases[] = array(
+            '<?php
+/*
+ * This should be a normal comment
+ */
+$local = true;
+',
+            '<?php
+/**
+ * This should be a normal comment
+ */
+$local = true;
 ',
         );
 

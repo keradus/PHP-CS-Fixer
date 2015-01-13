@@ -43,6 +43,10 @@ class PhpdocToCommentFixer extends AbstractFixer
                 continue;
             }
 
+            if ($tokens[$nextIndex]->isGivenkind(T_VARIABLE) && $this->isValidVariable($tokens, $index)) {
+                continue;
+            }
+
             $token->override(array(T_COMMENT, '/*'.ltrim($token->getContent(), '/*'), $token->getLine()));
         }
 
@@ -61,7 +65,7 @@ class PhpdocToCommentFixer extends AbstractFixer
      * Check if token is a structural element
      * @see http://www.phpdoc.org/docs/latest/glossary.html#term-structural-elements
      *
-     * @param \Symfony\CS\Tokenizer\Token $token
+     * @param  \Symfony\CS\Tokenizer\Token $token
      * @return bool
      */
     private function isStructuralElement(Token $token)
@@ -86,8 +90,8 @@ class PhpdocToCommentFixer extends AbstractFixer
     /**
      * Checks foreach statements for correct docblock usage.
      *
-     * @param \Symfony\CS\Tokenizer\Tokens $tokens
-     * @param int $index
+     * @param  \Symfony\CS\Tokenizer\Tokens $tokens
+     * @param  int                          $index
      * @return bool
      */
     private function isValidForeach(Tokens $tokens, $index)
@@ -118,5 +122,23 @@ class PhpdocToCommentFixer extends AbstractFixer
         }
 
         return false;
+    }
+
+    /**
+     * Checks variable assignments for correct docblock usage.
+     *
+     * @param  \Symfony\CS\Tokenizer\Tokens $tokens
+     * @param  int                          $index
+     * @return bool
+     */
+    private function isValidVariable(Tokens $tokens, $index)
+    {
+        $variable = $tokens->getNextMeaningfulToken($index);
+        $nextIndex = $tokens->getNextMeaningfulToken($variable);
+        if (!$tokens[$nextIndex]->equals('=')) {
+            return false;
+        }
+
+        return strpos($tokens[$index]->getContent(), $tokens[$variable]->getContent()) !== false;
     }
 }
