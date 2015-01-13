@@ -26,6 +26,15 @@ class PhpdocToCommentFixerTest extends AbstractFixerTestBase
         $this->makeTest($expected, $input);
     }
 
+    /**
+     * @requires PHP 5.4
+     * @dataProvider provideTraits
+     */
+    public function testFixTraits($expected, $input = null)
+    {
+        $this->makeTest($expected, $input);
+    }
+
     public function provideDocblocks()
     {
         $cases = array();
@@ -89,17 +98,6 @@ abstract class DocBlocks
  * Do not convert this
  */
 interface DocBlocks
-{
-    public function test() {}
-}',
-        );
-
-        $cases[] = array(
-            '<?php
-/**
- * Do not convert this
- */
-trait DocBlocks
 {
     public function test() {}
 }',
@@ -189,5 +187,21 @@ $i++;
         );
 
         return $cases;
+    }
+
+    public function provideTraits()
+    {
+        return array(
+            array(
+                '<?php
+/**
+ * Do not convert this
+ */
+trait DocBlocks
+{
+    public function test() {}
+}',
+            ),
+        );
     }
 }
