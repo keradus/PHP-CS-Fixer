@@ -66,6 +66,7 @@ class PhpdocToCommentFixer extends AbstractFixer
     public function getPriority()
     {
         // should be run before the PhpdocIndentFixer, PhpdocParamsFixer and NoEmptyLinesAfterPhpdocsFixer
+        // so that these fixers don't touch doc comments which are meant to be converted to regular comments 
         return 5;
     }
 
@@ -80,7 +81,7 @@ class PhpdocToCommentFixer extends AbstractFixer
      */
     private function isStructuralElement(Token $token)
     {
-        $skip = array(
+        static $skip = array(
             T_PRIVATE,
             T_PROTECTED,
             T_PUBLIC,
