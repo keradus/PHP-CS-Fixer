@@ -1,0 +1,193 @@
+<?php
+
+/*
+ * This file is part of the PHP CS utility.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+namespace Symfony\CS\Tests\Fixer\Contrib;
+
+use Symfony\CS\Tests\Fixer\AbstractFixerTestBase;
+
+/**
+ * @author Ceeram <ceeram@cakephp.org>
+ */
+class PhpdocToCommentFixerTest extends AbstractFixerTestBase
+{
+    /**
+     * @dataProvider provideDocblocks
+     */
+    public function testFix($expected, $input = null)
+    {
+        $this->makeTest($expected, $input);
+    }
+
+    public function provideDocblocks()
+    {
+        $cases = array();
+
+        $cases[] = array(
+            '<?php
+/**
+ * Do not convert this
+ */
+ namespace Docs;
+
+ /**
+ * Do not convert this
+ */
+class DocBlocks
+{
+    /**
+     * Do not convert this
+     */
+    const STRUCTURAL = true;
+    /**
+     * Do not convert this
+     */
+    protected $indent = false;
+
+    /**
+     * Do not convert this
+     */
+    public function test() {}
+
+    /**
+     * Do not convert this
+     */
+    private function testPrivate() {}
+
+    /**
+     * Do not convert this
+     */
+    function testNoVisibility() {}
+}',
+        );
+
+        $cases[] = array(
+            '<?php
+/**
+ * Do not convert this
+ */
+abstract class DocBlocks
+{
+
+    /**
+     * Do not convert this
+     */
+    abstract public function test() {}
+}',
+        );
+
+        $cases[] = array(
+            '<?php
+/**
+ * Do not convert this
+ */
+interface DocBlocks
+{
+    public function test() {}
+}',
+        );
+
+        $cases[] = array(
+            '<?php
+/**
+ * Do not convert this
+ */
+trait DocBlocks
+{
+    public function test() {}
+}',
+        );
+
+        $cases[] = array(
+            '<?php
+/**
+ * Do not convert this
+ */
+require "require.php";
+
+/**
+ * Do not convert this
+ */
+require_once "require_once.php";
+
+/**
+ * Do not convert this
+ */
+include "include.php";
+
+/**
+ * Do not convert this
+ */
+include_once "include_once.php";
+',
+        );
+
+        $cases[] = array(
+            '<?php
+/** @var \Sqlite3 $sqlite */
+foreach($connections as $sqlite) {
+    $sqlite->open($path);
+ }',
+        );
+
+        $cases[] = array(
+            '<?php
+/** @var \Sqlite3 $sqlite */
+foreach($connections as $key => $sqlite) {
+    $sqlite->open($path);
+ }',
+        );
+
+        $cases[] = array(
+            '<?php
+/** @var int $key */
+foreach($connections as $key => $sqlite) {
+    $sqlite->open($path);
+ }',
+        );
+
+        $cases[] = array(
+            '<?php
+/* This should not be a docblock */
+foreach($connections as $key => $sqlite) {
+    $sqlite->open($path);
+ }',
+            '<?php
+/** This should not be a docblock */
+foreach($connections as $key => $sqlite) {
+    $sqlite->open($path);
+ }',
+        );
+
+        $cases[] = array(
+            '<?php
+/* there should be no docblock here */
+$sqlite1->open($path);
+}',
+            '<?php
+/** there should be no docblock here */
+$sqlite1->open($path);
+}',
+        );
+
+        $cases[] = array(
+            '<?php
+/* there should be no docblock here */
+$i++;
+}',
+            '<?php
+/** there should be no docblock here */
+$i++;
+}',
+        );
+
+        return $cases;
+    }
+}
