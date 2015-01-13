@@ -66,6 +66,15 @@ class PhpdocToCommentFixer extends AbstractFixer
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        // should be run before the PhpdocIndentFixer, PhpdocParamsFixer and NoEmptyLinesAfterPhpdocsFixer
+        return 5;
+    }
+
+    /**
      * Check if token is a structural element
      *
      * @see http://www.phpdoc.org/docs/latest/glossary.html#term-structural-elements
