@@ -65,7 +65,7 @@ class PhpdocToCommentFixer extends AbstractFixer
      * Check if token is a structural element
      * @see http://www.phpdoc.org/docs/latest/glossary.html#term-structural-elements
      *
-     * @param  \Symfony\CS\Tokenizer\Token $token
+     * @param  Token $token
      * @return bool
      */
     private function isStructuralElement(Token $token)
@@ -90,8 +90,8 @@ class PhpdocToCommentFixer extends AbstractFixer
     /**
      * Checks foreach statements for correct docblock usage.
      *
-     * @param  \Symfony\CS\Tokenizer\Tokens $tokens
-     * @param  int                          $index
+     * @param  Tokens $tokens
+     * @param  int    $index
      * @return bool
      */
     private function isValidForeach(Tokens $tokens, $index)
@@ -127,8 +127,8 @@ class PhpdocToCommentFixer extends AbstractFixer
     /**
      * Checks variable assignments for correct docblock usage.
      *
-     * @param  \Symfony\CS\Tokenizer\Tokens $tokens
-     * @param  int                          $index
+     * @param  Tokens $tokens
+     * @param  int    $index
      * @return bool
      */
     private function isValidVariable(Tokens $tokens, $index)
