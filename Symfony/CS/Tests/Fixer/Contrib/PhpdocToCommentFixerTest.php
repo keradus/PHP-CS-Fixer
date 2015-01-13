@@ -213,6 +213,13 @@ $i++;
 }',
         );
 
+        $cases[] = array(
+            '<?php
+/** @var int $index */
+$index = $a[\'number\'];
+',
+        );
+
         return $cases;
     }
 
