@@ -220,6 +220,13 @@ $index = $a[\'number\'];
 ',
         );
 
+        $cases[] = array(
+            '<?php
+/** @var string $two */
+list($one, $two) = explode("," , $csvLines);
+',
+        );
+
         return $cases;
     }
 

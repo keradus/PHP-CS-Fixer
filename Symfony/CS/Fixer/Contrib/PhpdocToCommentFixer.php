@@ -47,6 +47,10 @@ class PhpdocToCommentFixer extends AbstractFixer
                 continue;
             }
 
+            if ($tokens[$nextIndex]->isGivenkind(T_LIST) && $this->isValidList($tokens, $index)) {
+                continue;
+            }
+
             $token->override(array(T_COMMENT, '/*'.ltrim($token->getContent(), '/*'), $token->getLine()));
         }
 
@@ -63,6 +67,7 @@ class PhpdocToCommentFixer extends AbstractFixer
 
     /**
      * Check if token is a structural element
+     *
      * @see http://www.phpdoc.org/docs/latest/glossary.html#term-structural-elements
      *
      * @param Token $token
@@ -143,5 +148,31 @@ class PhpdocToCommentFixer extends AbstractFixer
         }
 
         return strpos($tokens[$index]->getContent(), $tokens[$variable]->getContent()) !== false;
+    }
+
+    /**
+     * Checks variable assignments through `list()` calls for correct docblock usage.
+     *
+     * @param Tokens $tokens
+     * @param int    $index
+     *
+     * @return bool
+     */
+    private function isValidList(Tokens $tokens, $index)
+    {
+        $startIndex = $index;
+        $endIndex = $tokens->getNextTokenOfKind($startIndex, array(')'));
+        while ($startIndex < $endIndex) {
+            ++$startIndex;
+            if (!$tokens[$startIndex]->isGivenkind(T_VARIABLE)) {
+                continue;
+            }
+
+            if (strpos($tokens[$index]->getContent(), $tokens[$startIndex]->getContent()) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
