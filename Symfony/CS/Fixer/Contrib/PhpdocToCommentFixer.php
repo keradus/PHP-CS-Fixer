@@ -110,7 +110,7 @@ class PhpdocToCommentFixer extends AbstractFixer
              * Is the $value documented in docblock: foreach($array as $value)
              * or
              * Is the $key documented in docblock: foreach($array as $key => $value)
-            */
+             */
             $nextMeaningful = $tokens->getNextMeaningfulToken($startIndex);
             if (strpos($tokens[$index]->getContent(), $tokens[$nextMeaningful]->getContent()) !== false) {
                 return true;
