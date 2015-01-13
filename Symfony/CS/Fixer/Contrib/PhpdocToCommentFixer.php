@@ -66,6 +66,7 @@ class PhpdocToCommentFixer extends AbstractFixer
      * @see http://www.phpdoc.org/docs/latest/glossary.html#term-structural-elements
      *
      * @param  Token $token
+     *
      * @return bool
      */
     private function isStructuralElement(Token $token)
@@ -92,6 +93,7 @@ class PhpdocToCommentFixer extends AbstractFixer
      *
      * @param  Tokens $tokens
      * @param  int    $index
+     *
      * @return bool
      */
     private function isValidForeach(Tokens $tokens, $index)
@@ -129,6 +131,7 @@ class PhpdocToCommentFixer extends AbstractFixer
      *
      * @param  Tokens $tokens
      * @param  int    $index
+     *
      * @return bool
      */
     private function isValidVariable(Tokens $tokens, $index)
