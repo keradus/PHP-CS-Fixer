@@ -12,6 +12,7 @@
 namespace Symfony\CS\Fixer\Contrib;
 
 use Symfony\CS\AbstractFixer;
+use Symfony\CS\Tokenizer\Token;
 use Symfony\CS\Tokenizer\Tokens;
 
 /**
@@ -42,7 +43,7 @@ class PhpdocToCommentFixer extends AbstractFixer
                 continue;
             }
 
-            $token->setContent('/*'.ltrim($token->getContent(), '/*'));
+            $token->override(array(T_COMMENT, '/*'.ltrim($token->getContent(), '/*'), $token->getLine()));
         }
 
         return $tokens->generateCode();
@@ -60,10 +61,10 @@ class PhpdocToCommentFixer extends AbstractFixer
      * Check if token is a structural element
      * @see http://www.phpdoc.org/docs/latest/glossary.html#term-structural-elements
      *
-     * @param $token
+     * @param \Symfony\CS\Tokenizer\Token $token
      * @return bool
      */
-    private function isStructuralElement($token)
+    private function isStructuralElement(Token $token)
     {
         $skip = array(
             T_PRIVATE,
@@ -79,21 +80,17 @@ class PhpdocToCommentFixer extends AbstractFixer
             T_INCLUDE_ONCE,
         );
 
-        if ($token->isClassy() || $token->isGivenKind($skip)) {
-            return true;
-        }
-
-        return false;
+        return $token->isClassy() || $token->isGivenKind($skip);
     }
 
     /**
      * Checks foreach statements for correct docblock usage.
      *
-     * @param $tokens
-     * @param $index
+     * @param \Symfony\CS\Tokenizer\Tokens $tokens
+     * @param int $index
      * @return bool
      */
-    private function isValidForeach($tokens, $index)
+    private function isValidForeach(Tokens $tokens, $index)
     {
         $startIndex = $index;
         $endIndex = $tokens->getNextTokenOfKind($startIndex, array(')'));
