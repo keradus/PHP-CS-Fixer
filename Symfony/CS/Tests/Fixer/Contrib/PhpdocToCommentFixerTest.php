@@ -246,6 +246,15 @@ foreach ($foo->getPairs($c->bar(), $bar) as $index => list($a, $b)) [
 }',
         );
 
+        $cases[] = array(
+            '<?php
+/* This should be a comment */
+',
+            '<?php
+/** This should be a comment */
+',
+        );
+
         return $cases;
     }
 

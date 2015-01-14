@@ -30,6 +30,11 @@ class PhpdocToCommentFixer extends AbstractFixer
         foreach ($tokens->findGivenKind(T_DOC_COMMENT) as $index => $token) {
             $nextIndex = $tokens->getNextMeaningfulToken($index);
 
+            if (null === $nextIndex || $tokens[$nextIndex]->equals('}')) {
+                $token->override(array(T_COMMENT, '/*'.ltrim($token->getContent(), '/*'), $token->getLine()));
+                continue;
+            }
+
             if ($this->isStructuralElement($tokens[$nextIndex])) {
                 continue;
             }
