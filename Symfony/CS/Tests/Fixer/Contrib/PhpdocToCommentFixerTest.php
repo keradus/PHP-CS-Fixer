@@ -141,12 +141,16 @@ $local = true;
 
         $cases[] = array(
             '<?php
+$first = true;
+
 /*
  * This should be a normal comment
  */
 $local = true;
 ',
             '<?php
+$first = true;
+
 /**
  * This should be a normal comment
  */
@@ -180,11 +184,15 @@ foreach($connections as $key => $sqlite) {
 
         $cases[] = array(
             '<?php
+$first = true;
+
 /* This should not be a docblock */
 foreach($connections as $key => $sqlite) {
     $sqlite->open($path);
  }',
             '<?php
+$first = true;
+
 /** This should not be a docblock */
 foreach($connections as $key => $sqlite) {
     $sqlite->open($path);
@@ -193,10 +201,14 @@ foreach($connections as $key => $sqlite) {
 
         $cases[] = array(
             '<?php
+$first = true;
+
 /* there should be no docblock here */
 $sqlite1->open($path);
 }',
             '<?php
+$first = true;
+
 /** there should be no docblock here */
 $sqlite1->open($path);
 }',
@@ -204,10 +216,14 @@ $sqlite1->open($path);
 
         $cases[] = array(
             '<?php
+$first = true;
+
 /* there should be no docblock here */
 $i++;
 }',
             '<?php
+$first = true;
+
 /** there should be no docblock here */
 $i++;
 }',
@@ -229,10 +245,14 @@ list($one, $two) = explode("," , $csvLines);
 
         $cases[] = array(
             '<?php
+$first = true;
+
 /* This should be a comment */
 list($one, $two) = explode("," , $csvLines);
 ',
             '<?php
+$first = true;
+
 /** This should be a comment */
 list($one, $two) = explode("," , $csvLines);
 ',
@@ -252,6 +272,16 @@ foreach ($foo->getPairs($c->bar(), $bar) as $index => list($a, $b)) [
 ',
             '<?php
 /** This should be a comment */
+',
+        );
+
+        $cases[] = array(
+            '<?php
+/**
+ * This is a page level docblock should stay untouched
+ */
+
+echo "Some string";
 ',
         );
 

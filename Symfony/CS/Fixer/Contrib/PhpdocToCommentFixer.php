@@ -51,6 +51,12 @@ class PhpdocToCommentFixer extends AbstractFixer
                 continue;
             }
 
+            //first docblock after open tag can be file-level docblock, so its left as is.
+            $prevIndex = $tokens->getPrevMeaningfulToken($index);
+            if ($tokens[$prevIndex]->isGivenKind(T_OPEN_TAG)) {
+                continue;
+            }
+
             $token->override(array(T_COMMENT, '/*'.ltrim($token->getContent(), '/*'), $token->getLine()));
         }
 
