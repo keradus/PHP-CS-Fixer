@@ -32,19 +32,37 @@ class YodaConditionsFixerTest extends AbstractFixerTestBase
         return array(
             // valid conditions that should not be changed
             array('<?php return array(2) == $a;'),
-            array('<?php return $a == array(2);'),
             array('<?php return array($a) == $a;'),
-            array('<?php return $a == array($a);'),
             array('<?php return $this->getStuff() === $myVarirable;'),
-            array('<?php return $myVarirable === $this->getStuff();'),
             array('<?php return 2 * $myVar % 3 === $a;'),
-            array('<?php return $a === 2 * $myVar % 3;'),
             array('<?php return ($a & self::MY_BITMASK) === $a;'),
-            array('<?php return $a === ($a & self::MY_BITMASK);'),
             array('<?php return count($this->array[$var]) === $a;'),
-            array('<?php return $a === count($this->array[$var]);'),
 
             // simple non-Yoda conditions that need to be fixed
+            array(
+                '<?php return array(2) == $a;',
+                '<?php return $a == array(2);',
+            ),
+            array(
+                '<?php return array($a) == $a;',
+                '<?php return $a == array($a);',
+            ),
+            array(
+                '<?php return $this->getStuff() === $myVarirable;',
+                '<?php return $myVarirable === $this->getStuff();',
+            ),
+            array(
+                '<?php return 2 * $myVar % 3 === $a;',
+                '<?php return $a === 2 * $myVar % 3;',
+            ),
+            array(
+                '<?php return ($a & self::MY_BITMASK) === $a;',
+                '<?php return $a === ($a & self::MY_BITMASK);',
+            ),
+            array(
+                '<?php return count($this->array[$var]) === $a;',
+                '<?php return $a === count($this->array[$var]);',
+            ),
             array(
                 '<?php return 2 == $a;',
                 '<?php return $a == 2;',
