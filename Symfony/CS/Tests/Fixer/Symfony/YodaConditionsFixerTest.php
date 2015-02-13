@@ -33,7 +33,7 @@ class YodaConditionsFixerTest extends AbstractFixerTestBase
             // valid conditions that should not be changed
             array('<?php return array(2) == $a;'),
             array('<?php return array($a) == $a;'),
-            array('<?php return $this->getStuff() === $myVarirable;'),
+            array('<?php return $this->getStuff() === $myVariable;'),
             array('<?php return 2 * $myVar % 3 === $a;'),
             array('<?php return ($a & self::MY_BITMASK) === $a;'),
             array('<?php return count($this->array[$var]) === $a;'),
@@ -48,8 +48,8 @@ class YodaConditionsFixerTest extends AbstractFixerTestBase
                 '<?php return $a == array($a);',
             ),
             array(
-                '<?php return $this->getStuff() === $myVarirable;',
-                '<?php return $myVarirable === $this->getStuff();',
+                '<?php return $this->getStuff() === $myVariable;',
+                '<?php return $myVariable === $this->getStuff();',
             ),
             array(
                 '<?php return 2 * $myVar % 3 === $a;',
