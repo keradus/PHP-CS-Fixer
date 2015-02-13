@@ -110,7 +110,7 @@ class YodaConditionsFixerTest extends AbstractFixerTestBase
 if ($a == $b) {
     return null === $b ? (null === $a ? 0 : 0 === $a->b) : 0 === $b->a;
 } else {
-    if ($c === (null === $b)) {
+    if ((null === $b) === $c) {
         return false === $d;
     }
 }',
