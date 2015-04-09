@@ -25,6 +25,8 @@ interface FixerInterface
     const SYMFONY_LEVEL = 15;
     const CONTRIB_LEVEL = 32;
 
+    public function isCandidate(Tokens $tokens);
+
     /**
      * Fixes a file.
      *

@@ -224,7 +224,7 @@ class Fixer
 
         try {
             foreach ($fixers as $fixer) {
-                if (!$fixer->supports($file)) {
+                if (!$fixer->supports($file) || !$fixer->isCandidate($tokens)) {
                     continue;
                 }
 

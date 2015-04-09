@@ -24,6 +24,14 @@ class ShortTagFixer extends AbstractFixer
     /**
      * {@inheritdoc}
      */
+    public function isCandidate(Tokens $tokens)
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function fix(\SplFileInfo $file, Tokens $tokensOrg)
     {
         $content = $tokensOrg->generateCode();

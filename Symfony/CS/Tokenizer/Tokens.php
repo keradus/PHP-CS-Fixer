@@ -54,6 +54,8 @@ class Tokens extends \SplFixedArray
      */
     private $changed = false;
 
+    private $foundTokenKinds;
+
     /**
      * Clear cache - one position or all of them.
      *
@@ -70,6 +72,18 @@ class Tokens extends \SplFixedArray
         if (self::hasCache($key)) {
             unset(self::$cache[$key]);
         }
+    }
+
+    /**
+     * Calculate hash for code.
+     *
+     * @param string $code
+     *
+     * @return string
+     */
+    public static function calculateCodeHash($code)
+    {
+        return crc32($code);
     }
 
     /**
@@ -130,7 +144,7 @@ class Tokens extends \SplFixedArray
      */
     public static function fromCode($code)
     {
-        $codeHash = crc32($code);
+        $codeHash = self::calculateCodeHash($code);
 
         if (self::hasCache($codeHash)) {
             $tokens = self::getCache($codeHash);
@@ -146,19 +160,11 @@ class Tokens extends \SplFixedArray
             }
         }
 
-        $tokens = token_get_all($code);
+        $tokens = new self();
+        $tokens->setCode($code);
+        $tokens->clearChanged();
 
-        foreach ($tokens as $index => $tokenPrototype) {
-            $tokens[$index] = new Token($tokenPrototype);
-        }
-
-        $collection = self::fromArray($tokens);
-        $transformers = Transformers::create();
-        $transformers->transform($collection);
-        $collection->changeCodeHash($codeHash);
-        $collection->clearChanged();
-
-        return $collection;
+        return $tokens;
     }
 
     /**
@@ -479,7 +485,7 @@ class Tokens extends \SplFixedArray
     public function generateCode()
     {
         $code = $this->generatePartialCode(0, count($this) - 1);
-        $this->changeCodeHash(crc32($code));
+        $this->changeCodeHash(self::calculateCodeHash($code));
 
         return $code;
     }
@@ -940,6 +946,7 @@ class Tokens extends \SplFixedArray
 
         $tokens = token_get_all($code);
         $this->setSize(count($tokens));
+        $this->foundTokenKinds = array();
 
         foreach ($tokens as $index => $token) {
             $this[$index] = new Token($token);
@@ -948,8 +955,12 @@ class Tokens extends \SplFixedArray
         $transformers = Transformers::create();
         $transformers->transform($this);
 
+        foreach ($this as $index => $token) {
+            $this->registerFoundToken($token);
+        }
+
         $this->rewind();
-        $this->changeCodeHash(crc32($code));
+        $this->changeCodeHash(self::calculateCodeHash($code));
         $this->changed = true;
     }
 
@@ -970,6 +981,43 @@ class Tokens extends \SplFixedArray
         $this->rewind();
 
         return json_encode($output, $options);
+    }
+
+    public function registerFoundTokenKind($tokenKind)
+    {
+        $this->foundTokenKinds[$tokenKind] = true;
+    }
+
+    public function registerFoundToken(Token $token)
+    {
+        $this->registerFoundTokenKind($token->isArray() ? $token->getId() : $token->getContent());
+    }
+
+    public function isAllTokenKindsFound(array $tokenKinds)
+    {
+        foreach ($tokenKinds as $tokenKind) {
+            if (!array_key_exists($tokenKind, $this->foundTokenKinds)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function isAnyTokenKindsFound(array $tokenKinds)
+    {
+        foreach ($tokenKinds as $tokenKind) {
+            if (array_key_exists($tokenKind, $this->foundTokenKinds)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function isTokenKindFound($tokenKind)
+    {
+        return array_key_exists($tokenKind, $this->foundTokenKinds);
     }
 
     /**

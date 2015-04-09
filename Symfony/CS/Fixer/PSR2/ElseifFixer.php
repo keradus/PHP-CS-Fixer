@@ -22,12 +22,28 @@ use Symfony\CS\Tokenizer\Tokens;
 class ElseifFixer extends AbstractFixer
 {
     /**
+     * {@inheritdoc}
+     */
+    public function isCandidate(Tokens $tokens)
+    {
+        # handle `T_ELSE T_WHITESPACE T_IF` treated as single `T_ELSEIF` by HHVM
+        # see https://github.com/facebook/hhvm/issues/4796
+        if ($tokens->isTokenKindFound(T_ELSEIF)) {
+            return true;
+        }
+
+        return $tokens->isAllTokenKindsFound(array(T_IF, T_ELSE));
+    }
+
+    /**
      * Replace all `else if` (T_ELSE T_IF) with `elseif` (T_ELSEIF).
      *
      * {@inheritdoc}
      */
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
+        $changed = false;
+
         foreach ($tokens as $index => $token) {
             if (!$token->isGivenKind(T_ELSE)) {
                 continue;
@@ -58,6 +74,10 @@ class ElseifFixer extends AbstractFixer
             foreach ($tokens->findGivenKind(T_ELSEIF) as $token) {
                 $token->setContent('elseif');
             }
+        }
+
+        if ($changed) {
+            $tokens->registerFoundTokenKind(T_ELSEIF);
         }
     }
 

@@ -28,6 +28,14 @@ class Psr0Fixer extends AbstractFixer implements ConfigAwareInterface
     /**
      * {@inheritdoc}
      */
+    public function isCandidate(Tokens $tokens)
+    {
+        return $tokens->isAnyTokenKindsFound(array(T_CLASS, T_INTERFACE, T_TRAIT));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
         $namespace = false;

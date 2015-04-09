@@ -52,6 +52,7 @@ abstract class AbstractFixerTestBase extends \PHPUnit_Framework_TestCase
             $tokens = Tokens::fromCode($input);
 
             if ($fileIsSupported) {
+                $this->assertTrue($fixer->isCandidate($tokens), 'Fixer must be a candidate for input code.');
                 $fixResult = $fixer->fix($file, $tokens);
                 $this->assertNull($fixResult, '->fix method must return null.');
             }
