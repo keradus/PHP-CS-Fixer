@@ -28,7 +28,7 @@ class ElseifFixer extends AbstractFixer
     {
         # handle `T_ELSE T_WHITESPACE T_IF` treated as single `T_ELSEIF` by HHVM
         # see https://github.com/facebook/hhvm/issues/4796
-        if ($tokens->isTokenKindFound(T_ELSEIF)) {
+        if (defined('HHVM_VERSION') && $tokens->isTokenKindFound(T_ELSEIF)) {
             return true;
         }
 
@@ -56,6 +56,8 @@ class ElseifFixer extends AbstractFixer
             if (!$nextToken->isGivenKind(T_IF)) {
                 continue;
             }
+
+            $changed = true;
 
             // now we have T_ELSE following by T_IF so we could fix this
             // 1. clear whitespaces between T_ELSE and T_IF

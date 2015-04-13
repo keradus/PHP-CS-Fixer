@@ -75,18 +75,6 @@ class Tokens extends \SplFixedArray
     }
 
     /**
-     * Calculate hash for code.
-     *
-     * @param string $code
-     *
-     * @return string
-     */
-    public static function calculateCodeHash($code)
-    {
-        return crc32($code);
-    }
-
-    /**
      * Detect type of block.
      *
      * @param Token $token token
@@ -200,6 +188,18 @@ class Tokens extends \SplFixedArray
                 'end' => array(CT_DYNAMIC_VAR_BRACE_CLOSE, '}'),
             ),
         );
+    }
+
+    /**
+     * Calculate hash for code.
+     *
+     * @param string $code
+     *
+     * @return string
+     */
+    private static function calculateCodeHash($code)
+    {
+        return crc32($code);
     }
 
     /**
