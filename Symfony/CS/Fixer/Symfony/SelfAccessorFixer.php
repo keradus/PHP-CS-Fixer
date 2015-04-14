@@ -20,6 +20,11 @@ use Symfony\CS\Tokenizer\TokensAnalyzer;
  */
 class SelfAccessorFixer extends AbstractFixer
 {
+    public function isCandidate(Tokens $tokens)
+    {
+        return $tokens->isAnyTokenKindsFound(array(T_CLASS, T_INTERFACE, T_TRAIT));
+    }
+
     /**
      * {@inheritdoc}
      */
