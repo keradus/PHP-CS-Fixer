@@ -78,8 +78,6 @@ abstract class AbstractFixerTestBase extends \PHPUnit_Framework_TestCase
 
     private function assertTokens(Tokens $expectedTokens, Tokens $inputTokens)
     {
-        $this->assertEquals($expectedTokens->count(), $inputTokens->count(), 'The collection must have the same length than the expected one.');
-
         foreach ($expectedTokens as $index => $expectedToken) {
             $inputToken = $inputTokens[$index];
 
@@ -88,5 +86,7 @@ abstract class AbstractFixerTestBase extends \PHPUnit_Framework_TestCase
                 sprintf('The token at index %d must be %s, got %s', $index, $expectedToken->toJson(), $inputToken->toJson())
             );
         }
+
+        $this->assertEquals($expectedTokens->count(), $inputTokens->count(), 'The collection must have the same length than the expected one.');
     }
 }
