@@ -60,6 +60,7 @@ abstract class AbstractFixerTestBase extends \PHPUnit_Framework_TestCase
             $this->assertSame($expected, $tokens->generateCode(), 'Code build on input code must match expected code.');
 
             Tokens::clearCache();
+            $tokens->clearEmptyTokens();
             $this->assertTokens(Tokens::fromCode($expected), $tokens);
         }
 
