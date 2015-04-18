@@ -28,7 +28,17 @@ class VisibilityFixer extends AbstractFixer
      */
     public function isCandidate(Tokens $tokens)
     {
-        return $tokens->isAnyTokenKindsFound(array(T_CLASS, T_INTERFACE, T_TRAIT));
+        static $classyTokens = null;
+
+        if (null === $classyTokens) {
+            $classyTokens = array(T_CLASS, T_INTERFACE);
+
+            if (defined('T_TRAIT')) {
+                $classyTokens[] = T_TRAIT;
+            }
+        }
+
+        return $tokens->isAnyTokenKindsFound($classyTokens);
     }
 
     /**
