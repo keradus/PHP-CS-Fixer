@@ -21,7 +21,7 @@ class PhpUnitConstructFixerTest extends AbstractFixerTestBase
     /**
      * @dataProvider provideTestFixCases
      */
-    public function testFixWithDisabled($expected, $input = null)
+    public function testFix($expected, $input = null)
     {
         $this->makeTest($expected, $input);
     }
@@ -29,7 +29,7 @@ class PhpUnitConstructFixerTest extends AbstractFixerTestBase
     /**
      * @dataProvider provideTestFixCases
      */
-    public function testFix($expected, $input = null)
+    public function testFixWithDisabled($expected, $input = null)
     {
         $fixer = $this->getFixer();
         $fixer->configure(array(
@@ -44,36 +44,8 @@ class PhpUnitConstructFixerTest extends AbstractFixerTestBase
 
     public function provideTestFixCases()
     {
-        return array(
+        $cases = array(
             array('<?php $sth->assertSame(true, $foo);'),
-            array(
-                '<?php $this->assertTrue($a);',
-                '<?php $this->assertSame(true, $a);',
-            ),
-            array(
-                '<?php $this->assertTrue($a  , "true" . $bar);',
-                '<?php $this->assertSame(true  , $a  , "true" . $bar);',
-            ),
-            array(
-                '<?php $this->assertFalse(  $a, "false" . $bar);',
-                '<?php $this->assertSame(  false, $a, "false" . $bar);',
-            ),
-            array(
-                '<?php $this->assertNull(  $a  , "null" . $bar);',
-                '<?php $this->assertSame(  null, $a  , "null" . $bar);',
-            ),
-            array(
-                '<?php $this->assertNotNull(  $a  , "notNull" . $bar);',
-                '<?php $this->assertNotSame(  null, $a  , "notNull" . $bar);',
-            ),
-            array(
-                '<?php $this->assertFalse(  $a, "false" . $bar);',
-                '<?php $this->assertEquals(  false, $a, "false" . $bar);',
-            ),
-            array(
-                '<?php $this->assertNotNull(  $a  , "notNull" . $bar);',
-                '<?php $this->assertNotEquals(  null, $a  , "notNull" . $bar);',
-            ),
             array(
                 '<?php
     $this->assertTrue(
@@ -88,5 +60,25 @@ class PhpUnitConstructFixerTest extends AbstractFixerTestBase
     );',
             ),
         );
+
+        $types = array('true', 'false', 'null');
+        $functionTypes = array('Same' => true, 'NotSame' => false, 'Equals' => true, 'NotEquals' => false);
+        $fromTemplate = '<?php $this->assert%s(%s, $a, "%s", "%s")';
+        $toTemplate = '<?php $this->assert%s%s($a, "%s", "%s")';
+
+        for($i = count($types)-1; $i >= 0; --$i) {
+            foreach($functionTypes as $type => $positive) {
+                $from = sprintf($fromTemplate, $type, $types[$i], $types[$i], $types[$i]);
+                if ($positive) {
+                    $to = sprintf($toTemplate, '', ucfirst($types[$i]), $types[$i], $types[$i]);
+                } else {
+                    $to = sprintf($toTemplate, 'Not', ucfirst($types[$i]), $types[$i], $types[$i]);
+                }
+
+                $cases[] = array($to, $from);
+            }
+        }
+
+        return $cases;
     }
 }
