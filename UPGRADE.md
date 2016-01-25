@@ -11,13 +11,13 @@ Config and Finder classes
 -------------------------
 All off `Symfony\CS\Config\*` and `Symfony\CS\Finder\*` classes have been removed, instead use `Symfony\CS\Config` and `Symfony\CS\Finder`.
 
-For that reason one can not set config class by `--config` CLI argument, from now it is used to set configuration file. Thanks to this the `--config-file` CLI argument is no longer available.
+For that reason you can not set config class by `--config` CLI argument, from now it is used to set configuration file. Therefor the `--config-file` CLI argument is no longer available.
 
 Rules and sets
 --------------
 To configure which fixers should be used one must now set rules and sets instead of fixers and level. This affects both configuration file and CLI arguments.
 
-The term of risky rules was introduced. Risky rule is a rule that may change the meaning of code (like `strict` rule, which will change `==` into `===`). No risky rules are run be default. One need to explicitly permit risky rules to run them.
+The term of risky rules was introduced. Risky rule is a rule that may change the meaning of code (like `strict` rule, which will change `==` into `===`). No risky rules are run by default. One need to explicitly permit risky rules to run them.
 
 Changes to rules
 ----------------
@@ -38,7 +38,7 @@ double_arrow_multiline_whitespaces             | double_arrow_no_multiline_white
 duplicate_semicolon                            | no_duplicate_semicolons
 empty_return                                   | simplified_null_return
 eof_ending                                     | single_blank_line_at_eof
-extra_empty_lines                              | no_extra_consecutive_blank_lines
+extra_empty_lines                              | no_extra_consecutive_blank_lines                  | new configuration options have been added
 function_call_space                            | no_spaces_after_function_name
 indentation                                    | no_tab_indentation
 join_function                                  | no_alias_functions                                | new one fixes more aliases
@@ -78,3 +78,9 @@ unary_operators_spaces                         | unary_operator_spaces
 unneeded_control_parentheses                   | no_unneeded_control_parentheses
 unused_use                                     | no_unused_imports
 visibility                                     | visibility_required
+
+Rules that have been added:
+
+Name              |
+----------------- |
+method_separation |
