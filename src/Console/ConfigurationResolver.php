@@ -12,6 +12,10 @@
 
 namespace PhpCsFixer\Console;
 
+use PhpCsFixer\Cache\FileCacheManager;
+use PhpCsFixer\Cache\FileHandler;
+use PhpCsFixer\Cache\NullCacheManager;
+use PhpCsFixer\Cache\Signature;
 use PhpCsFixer\ConfigInterface;
 use PhpCsFixer\ConfigurationException\InvalidConfigurationException;
 use PhpCsFixer\Finder;
@@ -19,6 +23,7 @@ use PhpCsFixer\FixerFactory;
 use PhpCsFixer\FixerInterface;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\StdinFileInfo;
+use PhpCsFixer\ToolInfo;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder as SymfonyFinder;
 
@@ -112,6 +117,26 @@ final class ConfigurationResolver
     {
         $this->fixerFactory = new FixerFactory();
         $this->fixerFactory->registerBuiltInFixers();
+    }
+
+    /**
+     * @return CacheManagerInterface
+     */
+    public function getCacheManager()
+    {
+        if ($this->usingCache && (ToolInfo::isInstalledAsPhar() || ToolInfo::isInstalledByComposer())) {
+            return new FileCacheManager(
+                new FileHandler($this->cacheFile),
+                new Signature(
+                    PHP_VERSION,
+                    ToolInfo::getVersion(),
+                    $this->getRules()
+                ),
+                $this->isDryRun
+            );
+        }
+
+        return new NullCacheManager();
     }
 
     /**

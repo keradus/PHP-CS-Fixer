@@ -342,12 +342,14 @@ EOF
 
         $showProgress = $resolver->getProgress();
         $runner = new Runner(
-            $config,
+            $config->getFinder(),
+            $config->getFixers(),
             $input->getOption('diff') ? new SebastianBergmannDiffer() : new NullDiffer(),
             $showProgress ? $this->eventDispatcher : null,
             $this->errorsManager,
             $linter,
-            $resolver->isDryRun()
+            $resolver->isDryRun(),
+            $resolver->getCacheManager()
         );
 
         $progressOutput = $showProgress && $stdErr

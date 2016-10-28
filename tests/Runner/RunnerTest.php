@@ -12,6 +12,7 @@
 
 namespace PhpCsFixer\Tests\Runner;
 
+use PhpCsFixer\Cache\NullCacheManager;
 use PhpCsFixer\Config;
 use PhpCsFixer\Differ\NullDiffer;
 use PhpCsFixer\Error\Error;
@@ -56,12 +57,14 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->prophesize('PhpCsFixer\Linter\LintingResultInterface')->reveal());
 
         $runner = new Runner(
-            $config,
+            $config->getFinder(),
+            $config->getFixers(),
             new NullDiffer(),
             null,
             new ErrorsManager(),
             $linterProphecy->reveal(),
-            true
+            true,
+            new NullCacheManager()
         );
 
         $changed = $runner->fix();
@@ -93,12 +96,14 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
         $errorsManager = new ErrorsManager();
 
         $runner = new Runner(
-            $config,
+            $config->getFinder(),
+            $config->getFixers(),
             new NullDiffer(),
             null,
             $errorsManager,
             new Linter(),
-            true
+            true,
+            new NullCacheManager()
         );
 
         $changed = $runner->fix();
@@ -141,12 +146,14 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $runner = new Runner(
-            $config,
+            $config->getFinder(),
+            $config->getFixers(),
             new NullDiffer(),
             null,
             new ErrorsManager(),
             $this->prophesize('PhpCsFixer\Linter\LinterInterface')->reveal(),
-            true
+            true,
+            new NullCacheManager()
         );
 
         $runner->fix();
