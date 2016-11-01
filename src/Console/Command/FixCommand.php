@@ -23,7 +23,6 @@ use PhpCsFixer\Error\Error;
 use PhpCsFixer\Error\ErrorsManager;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\FixerInterface;
-use PhpCsFixer\Linter\Linter;
 use PhpCsFixer\Report\ReporterFactory;
 use PhpCsFixer\Report\ReportSummary;
 use PhpCsFixer\RuleSet;
@@ -308,6 +307,7 @@ EOF
                 'using-cache' => $input->getOption('using-cache'),
                 'cache-file' => $input->getOption('cache-file'),
                 'format' => $input->getOption('format'),
+                'diff' => $input->getOption('diff'),
             ))
             ->setFormats($reporterFactory->getFormats())
             ->resolve()
@@ -331,10 +331,8 @@ EOF
             $stdErr->writeln(sprintf('Loaded config from "%s".', $configFile));
         }
 
-        $linter = new Linter($config->getPhpExecutable());
-
-        if (null !== $stdErr && $config->getUsingCache()) {
-            $cacheFile = $config->getCacheFile();
+        if (null !== $stdErr && $resolver->getUsingCache()) {
+            $cacheFile = $resolver->getCacheFile();
             if (is_file($cacheFile)) {
                 $stdErr->writeln(sprintf('Using cache file "%s".', $cacheFile));
             }
@@ -342,12 +340,12 @@ EOF
 
         $showProgress = $resolver->getProgress();
         $runner = new Runner(
-            $config->getFinder(),
+            $resolver->getFinder(),
             $resolver->getFixers(),
             $input->getOption('diff') ? new SebastianBergmannDiffer() : new NullDiffer(),
             $showProgress ? $this->eventDispatcher : null,
             $this->errorsManager,
-            $linter,
+            $resolver->getLinter(),
             $resolver->isDryRun(),
             $resolver->getCacheManager()
         );

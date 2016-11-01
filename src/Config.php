@@ -49,6 +49,7 @@ class Config implements ConfigInterface
         return $this;
     }
 
+    // iterable
     public function setFinder(\Traversable $finder)
     {
         $this->finder = $finder;

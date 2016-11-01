@@ -21,6 +21,7 @@ use PhpCsFixer\ConfigurationException\InvalidConfigurationException;
 use PhpCsFixer\Finder;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\FixerInterface;
+use PhpCsFixer\Linter\Linter;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\StdinFileInfo;
 use PhpCsFixer\ToolInfo;
@@ -105,6 +106,7 @@ final class ConfigurationResolver
         'using-cache' => null,
         'cache-file' => null,
         'rules' => null,
+        'diff' => null,
     );
     private $path;
     private $progress;
@@ -112,6 +114,8 @@ final class ConfigurationResolver
     private $cacheFile;
     private $ruleSet;
     private $formats = array();
+    private $finder;
+    private $linter;
 
     public function __construct()
     {
@@ -255,11 +259,6 @@ final class ConfigurationResolver
         $this->resolveUsingCache();
         $this->resolveCacheFile();
 
-        $this->config->setRules($this->getRules());
-        $this->config->setUsingCache($this->usingCache);
-        $this->config->setCacheFile($this->cacheFile);
-        $this->config->setRiskyAllowed($this->allowRisky);
-
         return $this;
     }
 
@@ -338,6 +337,35 @@ final class ConfigurationResolver
         $this->formats = $formats;
 
         return $this;
+    }
+
+    public function getUsingCache()
+    {
+        return $this->usingCache;
+    }
+
+    public function getCacheFile()
+    {
+        return $this->cacheFile;
+    }
+
+    public function getRiskyAllowed()
+    {
+        return $this->allowRisky;
+    }
+
+    public function getFinder()
+    {
+        return $this->finder;
+    }
+
+    public function getLinter()
+    {
+        if (null === $this->linter) {
+            $this->linter = new Linter($this->config->getPhpExecutable());
+        }
+
+        return $this->linter;
     }
 
     protected function resolveFormat()
@@ -459,7 +487,7 @@ final class ConfigurationResolver
     private function resolveConfigPath()
     {
         if ($this->isStdIn) {
-            $this->config->setFinder(new \ArrayIterator(array(new StdinFileInfo())));
+            $this->finder = new \ArrayIterator(array(new StdinFileInfo()));
 
             return;
         }
@@ -472,10 +500,13 @@ final class ConfigurationResolver
             },
             $this->path
         ));
+        $currentFinder = $this->config->getFinder();
 
         if (empty($paths)) {
             if ($isIntersectionPathMode) {
-                $this->config->setFinder(new \ArrayIterator(array()));
+                $this->finder = new \ArrayIterator(array());
+            } else {
+                $this->finder = $currentFinder;
             }
 
             return;
@@ -494,7 +525,6 @@ final class ConfigurationResolver
             }
         }
 
-        $currentFinder = $this->config->getFinder();
         $nestedFinder = null;
         $iterator = null;
 
@@ -535,7 +565,7 @@ final class ConfigurationResolver
             $iterator = Finder::create()->in($pathsByType['dir'])->append($pathsByType['file']);
         }
 
-        $this->config->setFinder($iterator);
+        $this->finder = $iterator;
     }
 
     /**
