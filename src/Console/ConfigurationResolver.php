@@ -255,7 +255,7 @@ final class ConfigurationResolver
         $this->resolveUsingCache();
         $this->resolveCacheFile();
 
-        $this->config->fixers($this->getFixers());
+        $this->config->setFixers($this->getFixers());
         $this->config->setRules($this->getRules());
         $this->config->setUsingCache($this->usingCache);
         $this->config->setCacheFile($this->cacheFile);
@@ -460,7 +460,7 @@ final class ConfigurationResolver
     private function resolveConfigPath()
     {
         if ($this->isStdIn) {
-            $this->config->finder(new \ArrayIterator(array(new StdinFileInfo())));
+            $this->config->setFinder(new \ArrayIterator(array(new StdinFileInfo())));
 
             return;
         }
@@ -476,7 +476,7 @@ final class ConfigurationResolver
 
         if (empty($paths)) {
             if ($isIntersectionPathMode) {
-                $this->config->finder(new \ArrayIterator(array()));
+                $this->config->setFinder(new \ArrayIterator(array()));
             }
 
             return;
@@ -536,7 +536,7 @@ final class ConfigurationResolver
             $iterator = Finder::create()->in($pathsByType['dir'])->append($pathsByType['file']);
         }
 
-        $this->config->finder($iterator);
+        $this->config->setFinder($iterator);
     }
 
     /**
@@ -668,7 +668,7 @@ final class ConfigurationResolver
             return;
         }
 
-        $this->usingCache = $this->config->usingCache();
+        $this->usingCache = $this->config->getUsingCache();
     }
 
     /**

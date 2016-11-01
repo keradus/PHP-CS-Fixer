@@ -50,7 +50,7 @@ class Config implements ConfigInterface
         return $this;
     }
 
-    public function finder(\Traversable $finder)
+    public function setFinder(\Traversable $finder)
     {
         $this->finder = $finder;
 
@@ -73,7 +73,7 @@ class Config implements ConfigInterface
      *
      * @return $this
      */
-    public function fixers(array $fixers)
+    public function setFixers(array $fixers)
     {
         $this->fixers = $fixers;
 
@@ -128,14 +128,14 @@ class Config implements ConfigInterface
         return $this->customFixers;
     }
 
-    public function hideProgress($hideProgress)
+    public function setHideProgress($hideProgress)
     {
         $this->hideProgress = $hideProgress;
 
         return $this;
     }
 
-    public function usingCache()
+    public function getUsingCache()
     {
         return $this->usingCache;
     }

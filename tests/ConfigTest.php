@@ -36,7 +36,7 @@ final class ConfigTest extends \PHPUnit_Framework_TestCase
         $finder = new Finder();
         $finder->in(__DIR__.'/Fixtures/FinderDirectory');
 
-        $config = Config::create()->finder($finder);
+        $config = Config::create()->setFinder($finder);
 
         $iterator = $config->getFinder()->getIterator();
         $this->assertSame(1, count($iterator));
@@ -49,7 +49,7 @@ final class ConfigTest extends \PHPUnit_Framework_TestCase
         $finder = new SymfonyFinder();
         $finder->in(__DIR__.'/Fixtures/FinderDirectory');
 
-        $config = Config::create()->finder($finder);
+        $config = Config::create()->setFinder($finder);
 
         $iterator = $config->getFinder()->getIterator();
         $this->assertSame(1, count($iterator));

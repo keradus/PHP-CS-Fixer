@@ -35,10 +35,10 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
     public function testThatFixSuccessfully()
     {
         $config = Config::create()
-            ->finder(Finder::create()->in(
+            ->setFinder(Finder::create()->in(
                 __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'FixerTest'.DIRECTORY_SEPARATOR.'fix'
             ))
-            ->fixers(array(
+            ->setFixers(array(
                 new Fixer\ClassNotation\VisibilityRequiredFixer(),
                 new Fixer\Import\NoUnusedImportsFixer(), // will be ignored cause of test keyword in namespace
             ))
@@ -83,10 +83,10 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
     public function testThatFixInvalidFileReportsToErrorManager()
     {
         $config = Config::create()
-            ->finder(Finder::create()->in(
+            ->setFinder(Finder::create()->in(
                 __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'FixerTest'.DIRECTORY_SEPARATOR.'invalid'
             ))
-            ->fixers(array(
+            ->setFixers(array(
                 new Fixer\ClassNotation\VisibilityRequiredFixer(),
                 new Fixer\Import\NoUnusedImportsFixer(), // will be ignored cause of test keyword in namespace
             ))

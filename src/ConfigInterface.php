@@ -83,7 +83,7 @@ interface ConfigInterface
      *
      * @return bool
      */
-    public function usingCache();
+    public function getUsingCache();
 
     /**
      * Sets the path to the cache file.

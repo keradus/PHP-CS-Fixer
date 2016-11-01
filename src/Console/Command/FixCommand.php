@@ -192,7 +192,7 @@ The example below will add two fixers to the default list of PSR2 set fixers:
             'strict_param' => true,
             'short_array_syntax' => true,
         ))
-        ->finder(\$finder)
+        ->setFinder(\$finder)
     ;
 
     ?>
@@ -217,7 +217,7 @@ The following example shows how to use all ``Symfony`` Fixers but the ``full_ope
             '@Symfony' => true,
             'full_opening_tag' => false,
         ))
-        ->finder(\$finder)
+        ->setFinder(\$finder)
     ;
 
     ?>
@@ -333,7 +333,7 @@ EOF
 
         $linter = new Linter($config->getPhpExecutable());
 
-        if (null !== $stdErr && $config->usingCache()) {
+        if (null !== $stdErr && $config->getUsingCache()) {
             $cacheFile = $config->getCacheFile();
             if (is_file($cacheFile)) {
                 $stdErr->writeln(sprintf('Using cache file "%s".', $cacheFile));

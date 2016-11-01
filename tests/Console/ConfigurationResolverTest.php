@@ -97,7 +97,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveProgressWithPositiveConfigAndPositiveOption()
     {
-        $this->config->hideProgress(true);
+        $this->config->setHideProgress(true);
         $this->resolver
             ->setOption('progress', true)
             ->resolve()
@@ -108,7 +108,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveProgressWithPositiveConfigAndNegativeOption()
     {
-        $this->config->hideProgress(true);
+        $this->config->setHideProgress(true);
         $this->resolver
             ->setOption('progress', false)
             ->resolve()
@@ -119,7 +119,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveProgressWithNegativeConfigAndPositiveOption()
     {
-        $this->config->hideProgress(false);
+        $this->config->setHideProgress(false);
         $this->resolver
             ->setOption('progress', true)
             ->resolve()
@@ -130,7 +130,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveProgressWithNegativeConfigAndNegativeOption()
     {
-        $this->config->hideProgress(false);
+        $this->config->setHideProgress(false);
         $this->resolver
             ->setOption('progress', false)
             ->resolve()
@@ -356,7 +356,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         }
 
         if (null !== $configFinder) {
-            $this->config->finder($configFinder);
+            $this->config->setFinder($configFinder);
         }
 
         $this->resolver
@@ -565,7 +565,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             ->setOption('using-cache', 'yes')
             ->resolve();
 
-        $this->assertTrue($this->config->usingCache());
+        $this->assertTrue($this->config->getUsingCache());
     }
 
     public function testResolveUsingCacheWithPositiveConfigAndNegativeOption()
@@ -575,7 +575,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             ->setOption('using-cache', 'no')
             ->resolve();
 
-        $this->assertFalse($this->config->usingCache());
+        $this->assertFalse($this->config->getUsingCache());
     }
 
     public function testResolveUsingCacheWithNegativeConfigAndPositiveOption()
@@ -585,7 +585,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             ->setOption('using-cache', 'yes')
             ->resolve();
 
-        $this->assertTrue($this->config->usingCache());
+        $this->assertTrue($this->config->getUsingCache());
     }
 
     public function testResolveUsingCacheWithNegativeConfigAndNegativeOption()
@@ -595,7 +595,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             ->setOption('using-cache', 'no')
             ->resolve();
 
-        $this->assertFalse($this->config->usingCache());
+        $this->assertFalse($this->config->getUsingCache());
     }
 
     public function testResolveUsingCacheWithPositiveConfigAndNoOption()
@@ -604,7 +604,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->resolver
             ->resolve();
 
-        $this->assertTrue($this->config->usingCache());
+        $this->assertTrue($this->config->getUsingCache());
     }
 
     public function testResolveUsingCacheWithNegativeConfigAndNoOption()
@@ -613,7 +613,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->resolver
             ->resolve();
 
-        $this->assertFalse($this->config->usingCache());
+        $this->assertFalse($this->config->getUsingCache());
     }
 
     public function testResolveCacheFileWithoutConfigAndOption()
