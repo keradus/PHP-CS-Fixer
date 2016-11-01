@@ -13,7 +13,6 @@
 namespace PhpCsFixer\Tests\Runner;
 
 use PhpCsFixer\Cache\NullCacheManager;
-use PhpCsFixer\Config;
 use PhpCsFixer\Differ\NullDiffer;
 use PhpCsFixer\Error\Error;
 use PhpCsFixer\Error\ErrorsManager;
@@ -34,13 +33,6 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
      */
     public function testThatFixSuccessfully()
     {
-        $config = Config::create()
-            ->setFinder(Finder::create()->in(
-                __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'FixerTest'.DIRECTORY_SEPARATOR.'fix'
-            ))
-            ->setUsingCache(false)
-        ;
-
         $linterProphecy = $this->prophesize('PhpCsFixer\Linter\LinterInterface');
         $linterProphecy
             ->isAsync()
@@ -53,7 +45,9 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->prophesize('PhpCsFixer\Linter\LintingResultInterface')->reveal());
 
         $runner = new Runner(
-            $config->getFinder(),
+            Finder::create()->in(
+                __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'FixerTest'.DIRECTORY_SEPARATOR.'fix'
+            ),
             array(
                 new Fixer\ClassNotation\VisibilityRequiredFixer(),
                 new Fixer\Import\NoUnusedImportsFixer(), // will be ignored cause of test keyword in namespace
@@ -81,17 +75,12 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
      */
     public function testThatFixInvalidFileReportsToErrorManager()
     {
-        $config = Config::create()
-            ->setFinder(Finder::create()->in(
-                __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'FixerTest'.DIRECTORY_SEPARATOR.'invalid'
-            ))
-            ->setUsingCache(false)
-        ;
-
         $errorsManager = new ErrorsManager();
 
         $runner = new Runner(
-            $config->getFinder(),
+            Finder::create()->in(
+                __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'FixerTest'.DIRECTORY_SEPARATOR.'invalid'
+            ),
             array(
                 new Fixer\ClassNotation\VisibilityRequiredFixer(),
                 new Fixer\Import\NoUnusedImportsFixer(), // will be ignored cause of test keyword in namespace
@@ -119,29 +108,5 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(Error::TYPE_INVALID, $error->getType());
         $this->assertSame($pathToInvalidFile, $error->getFilePath());
-    }
-
-    public function testCanFixWithConfigInterfaceImplementation()
-    {
-        $config = $this->getMockBuilder('PhpCsFixer\ConfigInterface')->getMock();
-
-        $config
-            ->expects($this->any())
-            ->method('getFinder')
-            ->willReturn(new \ArrayIterator(array()))
-        ;
-
-        $runner = new Runner(
-            $config->getFinder(),
-            array(),
-            new NullDiffer(),
-            null,
-            new ErrorsManager(),
-            $this->prophesize('PhpCsFixer\Linter\LinterInterface')->reveal(),
-            true,
-            new NullCacheManager()
-        );
-
-        $runner->fix();
     }
 }
