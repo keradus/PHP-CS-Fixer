@@ -80,7 +80,7 @@ class Config implements ConfigInterface
         return $this->hideProgress;
     }
 
-    public function addCustomFixers($fixers)
+    public function registerCustomFixers($fixers)
     {
         if (false === is_array($fixers) && false === $fixers instanceof \Traversable) {
             throw new \InvalidArgumentException(sprintf(
