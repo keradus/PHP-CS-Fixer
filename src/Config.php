@@ -36,7 +36,6 @@ class Config implements ConfigInterface
     {
         $this->name = $name;
         $this->description = $description;
-        $this->finder = new Finder();
     }
 
     public static function create()
@@ -60,6 +59,10 @@ class Config implements ConfigInterface
 
     public function getFinder()
     {
+        if (null === $this->finder) {
+            $this->finder = new Finder();
+        }
+
         return $this->finder;
     }
 
