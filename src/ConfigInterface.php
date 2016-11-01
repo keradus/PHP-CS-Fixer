@@ -58,13 +58,6 @@ interface ConfigInterface
     public function getHideProgress();
 
     /**
-     * Adds an instance of a custom fixer.
-     *
-     * @param FixerInterface $fixer
-     */
-    public function addCustomFixer(FixerInterface $fixer);
-
-    /**
      * Adds a suite of custom fixers.
      *
      * @param FixerInterface[]|\Traversable $fixers

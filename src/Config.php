@@ -100,13 +100,6 @@ class Config implements ConfigInterface
         return $this->hideProgress;
     }
 
-    public function addCustomFixer(FixerInterface $fixer)
-    {
-        $this->customFixers[] = $fixer;
-
-        return $this;
-    }
-
     public function addCustomFixers($fixers)
     {
         if (false === is_array($fixers) && false === $fixers instanceof \Traversable) {
@@ -214,5 +207,12 @@ class Config implements ConfigInterface
     public function getRules()
     {
         return $this->rules;
+    }
+
+    private function addCustomFixer(FixerInterface $fixer)
+    {
+        $this->customFixers[] = $fixer;
+
+        return $this;
     }
 }
