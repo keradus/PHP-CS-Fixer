@@ -343,7 +343,7 @@ EOF
         $showProgress = $resolver->getProgress();
         $runner = new Runner(
             $config->getFinder(),
-            $config->getFixers(),
+            $resolver->getFixers(),
             $input->getOption('diff') ? new SebastianBergmannDiffer() : new NullDiffer(),
             $showProgress ? $this->eventDispatcher : null,
             $this->errorsManager,

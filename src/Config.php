@@ -22,7 +22,6 @@ class Config implements ConfigInterface
     protected $name;
     protected $description;
     protected $finder;
-    protected $fixers = array();
     protected $dir;
     protected $customFixers = array();
     protected $usingCache = true;
@@ -64,25 +63,6 @@ class Config implements ConfigInterface
         }
 
         return $this->finder;
-    }
-
-    /**
-     * Set fixers.
-     *
-     * @param FixerInterface[] $fixers
-     *
-     * @return $this
-     */
-    public function setFixers(array $fixers)
-    {
-        $this->fixers = $fixers;
-
-        return $this;
-    }
-
-    public function getFixers()
-    {
-        return $this->fixers;
     }
 
     public function getName()

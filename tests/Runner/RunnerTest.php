@@ -38,10 +38,6 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
             ->setFinder(Finder::create()->in(
                 __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'FixerTest'.DIRECTORY_SEPARATOR.'fix'
             ))
-            ->setFixers(array(
-                new Fixer\ClassNotation\VisibilityRequiredFixer(),
-                new Fixer\Import\NoUnusedImportsFixer(), // will be ignored cause of test keyword in namespace
-            ))
             ->setUsingCache(false)
         ;
 
@@ -58,7 +54,10 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
 
         $runner = new Runner(
             $config->getFinder(),
-            $config->getFixers(),
+            array(
+                new Fixer\ClassNotation\VisibilityRequiredFixer(),
+                new Fixer\Import\NoUnusedImportsFixer(), // will be ignored cause of test keyword in namespace
+            ),
             new NullDiffer(),
             null,
             new ErrorsManager(),
@@ -86,10 +85,6 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
             ->setFinder(Finder::create()->in(
                 __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'FixerTest'.DIRECTORY_SEPARATOR.'invalid'
             ))
-            ->setFixers(array(
-                new Fixer\ClassNotation\VisibilityRequiredFixer(),
-                new Fixer\Import\NoUnusedImportsFixer(), // will be ignored cause of test keyword in namespace
-            ))
             ->setUsingCache(false)
         ;
 
@@ -97,7 +92,10 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
 
         $runner = new Runner(
             $config->getFinder(),
-            $config->getFixers(),
+            array(
+                new Fixer\ClassNotation\VisibilityRequiredFixer(),
+                new Fixer\Import\NoUnusedImportsFixer(), // will be ignored cause of test keyword in namespace
+            ),
             new NullDiffer(),
             null,
             $errorsManager,
@@ -129,25 +127,13 @@ final class RunnerTest extends \PHPUnit_Framework_TestCase
 
         $config
             ->expects($this->any())
-            ->method('getFixers')
-            ->willReturn(array())
-        ;
-
-        $config
-            ->expects($this->any())
-            ->method('getRules')
-            ->willReturn(array())
-        ;
-
-        $config
-            ->expects($this->any())
             ->method('getFinder')
             ->willReturn(new \ArrayIterator(array()))
         ;
 
         $runner = new Runner(
             $config->getFinder(),
-            $config->getFixers(),
+            array(),
             new NullDiffer(),
             null,
             new ErrorsManager(),

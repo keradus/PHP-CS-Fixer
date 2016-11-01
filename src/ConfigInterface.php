@@ -44,13 +44,6 @@ interface ConfigInterface
     public function getFinder();
 
     /**
-     * Returns the fixers to run.
-     *
-     * @return FixerInterface[]
-     */
-    public function getFixers();
-
-    /**
      * Returns true if progress should be hidden.
      *
      * @return bool
