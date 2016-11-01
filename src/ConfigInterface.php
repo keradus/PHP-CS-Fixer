@@ -90,7 +90,7 @@ interface ConfigInterface
      *
      * @param string $cacheFile
      *
-     * @return ConfigInterface
+     * @return self
      */
     public function setCacheFile($cacheFile);
 
@@ -120,7 +120,7 @@ interface ConfigInterface
      *
      * @param bool $isRiskyAllowed
      *
-     * @return $this
+     * @return self
      */
     public function setRiskyAllowed($isRiskyAllowed);
 
@@ -143,7 +143,7 @@ interface ConfigInterface
      *
      * @param array $rules
      *
-     * @return $this
+     * @return self
      */
     public function setRules(array $rules);
 }
