@@ -49,9 +49,15 @@ class Config implements ConfigInterface
         return $this;
     }
 
-    // iterable
-    public function setFinder(\Traversable $finder)
+    public function setFinder($finder)
     {
+        if (false === is_array($finder) && false === $finder instanceof \Traversable) {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument must be an array or a Traversable, got "%s".',
+                is_object($finder) ? get_class($finder) : gettype($finder)
+            ));
+        }
+
         $this->finder = $finder;
 
         return $this;

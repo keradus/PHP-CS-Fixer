@@ -500,12 +500,12 @@ final class ConfigurationResolver
             },
             $this->path
         ));
-        $currentFinder = $this->config->getFinder();
 
         if (empty($paths)) {
             if ($isIntersectionPathMode) {
                 $this->finder = new \ArrayIterator(array());
             } else {
+                $currentFinder = $this->iterableToTraversable($this->config->getFinder());
                 $this->finder = $currentFinder;
             }
 
@@ -527,6 +527,7 @@ final class ConfigurationResolver
 
         $nestedFinder = null;
         $iterator = null;
+        $currentFinder = $this->iterableToTraversable($this->config->getFinder());
 
         try {
             $nestedFinder = $currentFinder instanceof \IteratorAggregate ? $currentFinder->getIterator() : $currentFinder;
@@ -726,5 +727,15 @@ final class ConfigurationResolver
         }
 
         $this->allowRisky = $this->config->getRiskyAllowed();
+    }
+
+    /**
+     * @param iterable $iterable
+     *
+     * @return Traversable
+     */
+    private function iterableToTraversable($iterable)
+    {
+        return is_array($iterable) ? new \ArrayIterator($iterable) : $iterable;
     }
 }
