@@ -41,7 +41,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->resolver = new ConfigurationResolver();
         $this->resolver
             ->setDefaultConfig($this->config)
-            ->setFormats(array('txt'))
         ;
     }
 
@@ -90,17 +89,11 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('foo', $property);
     }
 
-    public function testResolveFixersReturnsEmptyArrayByDefault()
-    {
-        $this->makeFixersTest(array(), $this->resolver->getFixers());
-    }
-
     public function testResolveProgressWithPositiveConfigAndPositiveOption()
     {
         $this->config->setHideProgress(true);
         $this->resolver
             ->setOption('progress', true)
-            ->resolve()
         ;
 
         $this->assertFalse($this->resolver->getProgress());
@@ -111,7 +104,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->config->setHideProgress(true);
         $this->resolver
             ->setOption('progress', false)
-            ->resolve()
         ;
 
         $this->assertFalse($this->resolver->getProgress());
@@ -122,7 +114,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->config->setHideProgress(false);
         $this->resolver
             ->setOption('progress', true)
-            ->resolve()
         ;
 
         $this->assertTrue($this->resolver->getProgress());
@@ -133,7 +124,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->config->setHideProgress(false);
         $this->resolver
             ->setOption('progress', false)
-            ->resolve()
         ;
 
         $this->assertFalse($this->resolver->getProgress());
@@ -141,9 +131,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveConfigFileDefault()
     {
-        $this->resolver
-            ->resolve();
-
         $this->assertNull($this->resolver->getConfigFile());
         $this->assertInstanceOf('\\PhpCsFixer\\ConfigInterface', $this->resolver->getConfig());
     }
@@ -153,8 +140,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $dir = __DIR__.'/../Fixtures/ConfigurationResolverConfigFile/case_1';
 
         $this->resolver
-            ->setOption('path', array($dir.DIRECTORY_SEPARATOR.'foo.php'))
-            ->resolve();
+            ->setOption('path', array($dir.DIRECTORY_SEPARATOR.'foo.php'));
 
         $this->assertSame($dir.DIRECTORY_SEPARATOR.'.php_cs.dist', $this->resolver->getConfigFile());
         $this->assertInstanceOf('Test1Config', $this->resolver->getConfig());
@@ -165,8 +151,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $file = __DIR__.'/../Fixtures/ConfigurationResolverConfigFile/case_4/my.php_cs';
 
         $this->resolver
-            ->setOption('config', $file)
-            ->resolve();
+            ->setOption('config', $file);
 
         $this->assertSame($file, $this->resolver->getConfigFile());
         $this->assertInstanceOf('Test4Config', $this->resolver->getConfig());
@@ -184,8 +169,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         if (null !== $cwdPath) {
             $resolver->setCwd($cwdPath);
         }
-
-        $resolver->resolve();
 
         $this->assertSame($expectedFile, $this->resolver->getConfigFile());
         $this->assertInstanceOf($expectedClass, $this->resolver->getConfig());
@@ -234,8 +217,8 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $dirBase = realpath(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'ConfigurationResolverConfigFile'.DIRECTORY_SEPARATOR);
         $this->resolver
-            ->setOption('path', array($dirBase.'/case_5'))
-            ->resolve();
+            ->setOption('path', array($dirBase.'/case_5'));
+        $this->resolver->getConfig();
     }
 
     /**
@@ -246,8 +229,8 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $dirBase = realpath(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'ConfigurationResolverConfigFile'.DIRECTORY_SEPARATOR);
         $this->resolver
-            ->setOption('path', array($dirBase.'/case_1/.php_cs.dist', $dirBase.'/case_1/foo.php'))
-            ->resolve();
+            ->setOption('path', array($dirBase.'/case_1/.php_cs.dist', $dirBase.'/case_1/foo.php'));
+        $this->resolver->getConfig();
     }
 
     public function testResolveConfigFileChooseFileWithPathArrayAndConfig()
@@ -255,23 +238,23 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $dirBase = realpath(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR.'ConfigurationResolverConfigFile'.DIRECTORY_SEPARATOR);
         $this->resolver
             ->setOption('config', $dirBase.'/case_1/.php_cs.dist')
-            ->setOption('path', array($dirBase.'/case_1/.php_cs.dist', $dirBase.'/case_1/foo.php'))
-            ->resolve();
+            ->setOption('path', array($dirBase.'/case_1/.php_cs.dist', $dirBase.'/case_1/foo.php'));
     }
 
-    public function testResolvePathRelative()
+    public function testResolvePathRelativeA()
     {
         $this->resolver
             ->setCwd(__DIR__)
-            ->setOption('path', array('Command'))
-            ->resolve();
+            ->setOption('path', array('Command'));
 
         $this->assertSame(array(__DIR__.DIRECTORY_SEPARATOR.'Command'), $this->resolver->getPath());
+    }
 
+    public function testResolvePathRelativeB()
+    {
         $this->resolver
             ->setCwd(dirname(__DIR__))
-            ->setOption('path', array(basename(__DIR__)))
-            ->resolve();
+            ->setOption('path', array(basename(__DIR__)));
 
         $this->assertSame(array(__DIR__), $this->resolver->getPath());
     }
@@ -283,8 +266,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             ->notPath(basename(__FILE__));
 
         $this->resolver
-            ->setOption('path', array(__FILE__))
-            ->resolve();
+            ->setOption('path', array(__FILE__));
 
         $this->assertCount(1, $this->resolver->getFinder());
     }
@@ -297,8 +279,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->resolver
             ->setOption('path', array(__FILE__))
-            ->setOption('path-mode', 'intersection')
-            ->resolve();
+            ->setOption('path-mode', 'intersection');
 
         $this->assertCount(0, $this->resolver->getFinder());
     }
@@ -311,8 +292,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             ->exclude(basename(__DIR__));
 
         $this->resolver
-            ->setOption('path', array(__FILE__))
-            ->resolve();
+            ->setOption('path', array(__FILE__));
 
         $this->assertCount(1, $this->resolver->getFinder());
     }
@@ -326,8 +306,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->resolver
             ->setOption('path', array(__FILE__))
-            ->setOption('path-mode', 'intersection')
-            ->resolve();
+            ->setOption('path-mode', 'intersection');
 
         $this->assertCount(0, $this->resolver->getFinder());
     }
@@ -340,8 +319,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             ->notPath('foo-'.basename(__FILE__));
 
         $this->resolver
-            ->setOption('path', array(__FILE__))
-            ->resolve();
+            ->setOption('path', array(__FILE__));
 
         $this->assertCount(1, $this->resolver->getFinder());
     }
@@ -363,7 +341,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             ->setOption('path', $path)
             ->setOption('path-mode', $pathMode)
             ->setOption('config', $config)
-            ->resolve()
         ;
 
         $intersectionItems = array_map(
@@ -534,8 +511,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->resolver
             ->setOption('path', array('-'))
-            ->setOption('dry-run', false)
-            ->resolve();
+            ->setOption('dry-run', false);
 
         $this->assertTrue($this->resolver->isDryRun());
     }
@@ -543,8 +519,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveIsDryRunViaNegativeOption()
     {
         $this->resolver
-            ->setOption('dry-run', false)
-            ->resolve();
+            ->setOption('dry-run', false);
 
         $this->assertFalse($this->resolver->isDryRun());
     }
@@ -552,8 +527,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveIsDryRunViaPositiveOption()
     {
         $this->resolver
-            ->setOption('dry-run', true)
-            ->resolve();
+            ->setOption('dry-run', true);
 
         $this->assertTrue($this->resolver->isDryRun());
     }
@@ -562,8 +536,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setUsingCache(true);
         $this->resolver
-            ->setOption('using-cache', 'yes')
-            ->resolve();
+            ->setOption('using-cache', 'yes');
 
         $this->assertTrue($this->resolver->getUsingCache());
     }
@@ -572,8 +545,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setUsingCache(true);
         $this->resolver
-            ->setOption('using-cache', 'no')
-            ->resolve();
+            ->setOption('using-cache', 'no');
 
         $this->assertFalse($this->resolver->getUsingCache());
     }
@@ -582,8 +554,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setUsingCache(false);
         $this->resolver
-            ->setOption('using-cache', 'yes')
-            ->resolve();
+            ->setOption('using-cache', 'yes');
 
         $this->assertTrue($this->resolver->getUsingCache());
     }
@@ -592,8 +563,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setUsingCache(false);
         $this->resolver
-            ->setOption('using-cache', 'no')
-            ->resolve();
+            ->setOption('using-cache', 'no');
 
         $this->assertFalse($this->resolver->getUsingCache());
     }
@@ -601,8 +571,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveUsingCacheWithPositiveConfigAndNoOption()
     {
         $this->config->setUsingCache(true);
-        $this->resolver
-            ->resolve();
+        $this->resolver;
 
         $this->assertTrue($this->resolver->getUsingCache());
     }
@@ -610,8 +579,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveUsingCacheWithNegativeConfigAndNoOption()
     {
         $this->config->setUsingCache(false);
-        $this->resolver
-            ->resolve();
+        $this->resolver;
 
         $this->assertFalse($this->resolver->getUsingCache());
     }
@@ -619,8 +587,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveCacheFileWithoutConfigAndOption()
     {
         $default = $this->config->getCacheFile();
-
-        $this->resolver->resolve();
 
         $this->assertSame($default, $this->resolver->getCacheFile());
     }
@@ -631,8 +597,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->config->setCacheFile($cacheFile);
 
-        $this->resolver->resolve();
-
         $this->assertSame($cacheFile, $this->resolver->getCacheFile());
     }
 
@@ -642,8 +606,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->config->setCacheFile($cacheFile);
         $this->resolver->setOption('cache-file', $cacheFile);
-
-        $this->resolver->resolve();
 
         $this->assertSame($cacheFile, $this->resolver->getCacheFile());
     }
@@ -656,8 +618,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->config->setCacheFile($configCacheFile);
         $this->resolver->setOption('cache-file', $optionCacheFile);
 
-        $this->resolver->resolve();
-
         $this->assertSame($optionCacheFile, $this->resolver->getCacheFile());
     }
 
@@ -665,8 +625,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setRiskyAllowed(true);
         $this->resolver
-            ->setOption('allow-risky', 'yes')
-            ->resolve();
+            ->setOption('allow-risky', 'yes');
 
         $this->assertTrue($this->resolver->getRiskyAllowed());
     }
@@ -675,8 +634,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setRiskyAllowed(true);
         $this->resolver
-            ->setOption('allow-risky', 'no')
-            ->resolve();
+            ->setOption('allow-risky', 'no');
 
         $this->assertFalse($this->resolver->getRiskyAllowed());
     }
@@ -685,8 +643,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setRiskyAllowed(false);
         $this->resolver
-            ->setOption('allow-risky', 'yes')
-            ->resolve();
+            ->setOption('allow-risky', 'yes');
 
         $this->assertTrue($this->resolver->getRiskyAllowed());
     }
@@ -695,8 +652,7 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setRiskyAllowed(false);
         $this->resolver
-            ->setOption('allow-risky', 'no')
-            ->resolve();
+            ->setOption('allow-risky', 'no');
 
         $this->assertFalse($this->resolver->getRiskyAllowed());
     }
@@ -704,8 +660,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveAllowRiskyWithPositiveConfigAndNoOption()
     {
         $this->config->setRiskyAllowed(true);
-        $this->resolver
-            ->resolve();
 
         $this->assertTrue($this->resolver->getRiskyAllowed());
     }
@@ -713,8 +667,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveAllowRiskyWithNegativeConfigAndNoOption()
     {
         $this->config->setRiskyAllowed(false);
-        $this->resolver
-            ->resolve();
 
         $this->assertFalse($this->resolver->getRiskyAllowed());
     }
@@ -725,8 +677,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
             'braces' => true,
             'strict_comparison' => false,
         ));
-
-        $this->resolver->resolve();
 
         $this->assertSameRules(
             array(
@@ -739,8 +689,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveRulesWithOption()
     {
         $this->resolver->setOption('rules', 'braces,-strict');
-
-        $this->resolver->resolve();
 
         $this->assertSameRules(
             array(
@@ -758,8 +706,6 @@ final class ConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         ));
 
         $this->resolver->setOption('rules', 'blank_line_before_return');
-
-        $this->resolver->resolve();
 
         $this->assertSameRules(
             array(

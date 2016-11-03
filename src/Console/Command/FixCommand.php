@@ -23,7 +23,6 @@ use PhpCsFixer\Error\Error;
 use PhpCsFixer\Error\ErrorsManager;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\FixerInterface;
-use PhpCsFixer\Report\ReporterFactory;
 use PhpCsFixer\Report\ReportSummary;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\Runner\Runner;
@@ -289,8 +288,6 @@ EOF
         Transformers::create(); // make sure all transformers have defined custom tokens since configuration might depend on it
 
         $verbosity = $output->getVerbosity();
-        $reporterFactory = ReporterFactory::create();
-        $reporterFactory->registerBuiltInReporters();
 
         $resolver = new ConfigurationResolver();
         $resolver
@@ -309,11 +306,9 @@ EOF
                 'format' => $input->getOption('format'),
                 'diff' => $input->getOption('diff'),
             ))
-            ->setFormats($reporterFactory->getFormats())
-            ->resolve()
         ;
 
-        $reporter = $reporterFactory->getReporter($resolver->getFormat());
+        $reporter = $resolver->getReporter();
 
         $stdErr = $output instanceof ConsoleOutputInterface
             ? $output->getErrorOutput()
@@ -324,7 +319,6 @@ EOF
             $stdErr->writeln(sprintf($stdErr->isDecorated() ? '<bg=yellow;fg=black;>%s</>' : '%s', 'You are running php-cs-fixer with xdebug enabled. This has a major impact on runtime performance.'));
         }
 
-        $config = $resolver->getConfig();
         $configFile = $resolver->getConfigFile();
 
         if (null !== $stdErr && $configFile) {
