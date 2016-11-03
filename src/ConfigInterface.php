@@ -21,7 +21,7 @@ interface ConfigInterface
     /**
      * Returns the path to the cache file.
      *
-     * @return string
+     * @return string|null Returns null if not using cache
      */
     public function getCacheFile();
 
@@ -33,18 +33,9 @@ interface ConfigInterface
     public function getCustomFixers();
 
     /**
-     * Returns the description of the configuration.
-     *
-     * A short one-line description for the configuration.
-     *
-     * @return string The description of the configuration
-     */
-    public function getDescription();
-
-    /**
      * Returns files to scan.
      *
-     * @return iterable|Traversable|string[] $fixers
+     * @return iterable|\Traversable|string[]
      */
     public function getFinder();
 
@@ -60,7 +51,7 @@ interface ConfigInterface
      *
      * The name must be all lowercase and without any spaces.
      *
-     * @return string The name of the configuration
+     * @return string|null The name of the configuration
      */
     public function getName();
 
@@ -97,7 +88,7 @@ interface ConfigInterface
     /**
      * Adds a suite of custom fixers.
      *
-     * @param iterable|Traversable|FixerInterface[] $fixers
+     * @param iterable|\Traversable|FixerInterface[] $fixers
      */
     public function registerCustomFixers($fixers);
 
@@ -111,7 +102,7 @@ interface ConfigInterface
     public function setCacheFile($cacheFile);
 
     /**
-     * @param iterable|Traversable|string[] $finder
+     * @param iterable|\Traversable|string[] $finder
      *
      * @return self
      */

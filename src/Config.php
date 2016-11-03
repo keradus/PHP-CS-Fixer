@@ -20,7 +20,6 @@ namespace PhpCsFixer;
 class Config implements ConfigInterface
 {
     protected $name;
-    protected $description;
     protected $finder;
     protected $dir;
     protected $customFixers = array();
@@ -31,10 +30,9 @@ class Config implements ConfigInterface
     protected $isRiskyAllowed = false;
     protected $rules = array('@PSR2' => true);
 
-    public function __construct($name = 'default', $description = 'A default configuration')
+    public function __construct($name = 'default')
     {
         $this->name = $name;
-        $this->description = $description;
     }
 
     /**
@@ -59,14 +57,6 @@ class Config implements ConfigInterface
     public function getCustomFixers()
     {
         return $this->customFixers;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDescription()
-    {
-        return $this->description;
     }
 
     /**
