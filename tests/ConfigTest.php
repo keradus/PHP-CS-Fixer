@@ -42,7 +42,7 @@ final class ConfigTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertStringMatchesFormat(
-            sprintf("%%A\nLoaded config custom_config_test from \"%s\".\n%%a", $customConfigFile),
+            sprintf("%%A\nLoaded config custom_config_test from \"%s\".\n%%A", $customConfigFile),
             $commandTester->getDisplay(true)
         );
     }
