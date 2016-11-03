@@ -19,16 +19,15 @@ namespace PhpCsFixer;
  */
 class Config implements ConfigInterface
 {
-    protected $name;
-    protected $finder;
-    protected $dir;
-    protected $customFixers = array();
-    protected $usingCache = true;
-    protected $hideProgress = false;
-    protected $cacheFile = '.php_cs.cache';
-    protected $phpExecutable;
-    protected $isRiskyAllowed = false;
-    protected $rules = array('@PSR2' => true);
+    private $name;
+    private $finder;
+    private $customFixers = array();
+    private $usingCache = true;
+    private $hideProgress = false;
+    private $cacheFile = '.php_cs.cache';
+    private $phpExecutable;
+    private $isRiskyAllowed = false;
+    private $rules = array('@PSR2' => true);
 
     public function __construct($name = 'default')
     {
