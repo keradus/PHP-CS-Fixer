@@ -12,6 +12,7 @@
 
 namespace PhpCsFixer\Console;
 
+use PhpCsFixer\Cache\CacheManagerInterface;
 use PhpCsFixer\Cache\FileCacheManager;
 use PhpCsFixer\Cache\FileHandler;
 use PhpCsFixer\Cache\NullCacheManager;
@@ -109,7 +110,16 @@ final class ConfigurationResolver
     private $progress;
     private $usingCache;
     private $cacheFile;
+
+    /**
+     * @var RuleSet
+     */
     private $ruleSet;
+<<<<<<< 669a351aa0a753c43b050b1330dcfde069b89d60
+=======
+
+    private $formats = array();
+>>>>>>> Configuration clean ups.
     private $finder;
     private $linter;
     private $cacheManager;
@@ -562,7 +572,7 @@ final class ConfigurationResolver
             $this->getPath()
         ));
 
-        if (empty($paths)) {
+        if (!count($paths)) {
             if ($isIntersectionPathMode) {
                 return new \ArrayIterator(array());
             }
@@ -619,9 +629,156 @@ final class ConfigurationResolver
             );
         }
 
+<<<<<<< 669a351aa0a753c43b050b1330dcfde069b89d60
         if ($currentFinder instanceof SymfonyFinder && null === $nestedFinder) {
             // finder from configuration Symfony finder and it is not fully defined, we may fulfill it
             return $currentFinder->in($pathsByType['dir'])->append($pathsByType['file']);
+=======
+        $this->finder = $iterator;
+    }
+
+    /**
+     * Resolve fixers to run based on rules.
+     */
+    private function resolveFixers()
+    {
+        $this->fixers = $this->fixerFactory->useRuleSet($this->ruleSet)->getFixers();
+
+        if (true === $this->allowRisky) {
+            return;
+        }
+
+        $riskyFixers = array_map(
+            function (FixerInterface $fixer) {
+                return $fixer->getName();
+            },
+            array_filter(
+                $this->fixers,
+                function (FixerInterface $fixer) {
+                    return $fixer->isRisky();
+                }
+            )
+        );
+
+        if (count($riskyFixers)) {
+            throw new InvalidConfigurationException(sprintf('The rules contain risky fixers (%s), but they are not allowed to run. Perhaps you forget to use --allow-risky option?', implode(', ', $riskyFixers)));
+        }
+    }
+
+    /**
+     * Resolve isDryRun based on isStdIn property and dry-run option.
+     */
+    private function resolveIsDryRun()
+    {
+        // Can't write to STDIN
+        if ($this->isStdIn) {
+            $this->isDryRun = true;
+
+            return;
+        }
+
+        $this->isDryRun = $this->options['dry-run'];
+    }
+
+    /**
+     * Resolve isStdIn based on path option.
+     */
+    private function resolveIsStdIn()
+    {
+        $this->isStdIn = 1 === count($this->options['path']) && '-' === $this->options['path'][0];
+    }
+
+    private function resolvePathMode()
+    {
+        $modes = array(self::PATH_MODE_OVERRIDE, self::PATH_MODE_INTERSECTION);
+
+        if (!in_array(
+            $this->options['path-mode'],
+            $modes,
+            true
+        )) {
+            throw new InvalidConfigurationException(sprintf(
+                'The path-mode "%s" is not defined, supported are %s.',
+                $this->options['path-mode'],
+                implode(', ', $modes)
+            ));
+        }
+    }
+
+    /**
+     * Resolve path based on path option.
+     */
+    private function resolvePath()
+    {
+        $filesystem = new Filesystem();
+        $cwd = $this->cwd;
+
+        if (1 === count($this->options['path']) && '-' === $this->options['path'][0]) {
+            $this->path = $this->options['path'];
+
+            return;
+        }
+
+        $this->path = array_map(
+            function ($path) use ($cwd, $filesystem) {
+                $absolutePath = $filesystem->isAbsolutePath($path)
+                    ? $path
+                    : $cwd.DIRECTORY_SEPARATOR.$path
+                ;
+
+                if (!file_exists($absolutePath)) {
+                    throw new InvalidConfigurationException(sprintf(
+                        'The path "%s" is not readable.',
+                        $path
+                    ));
+                }
+
+                return $absolutePath;
+            },
+            $this->options['path']
+        );
+    }
+
+    /**
+     * Resolve progress based on progress option and config instance.
+     */
+    private function resolveProgress()
+    {
+        $this->progress = $this->options['progress'] && !$this->config->getHideProgress();
+    }
+
+    /**
+     * Resolve rules.
+     */
+    private function resolveRules()
+    {
+        $this->ruleSet = new RuleSet($this->parseRules());
+    }
+
+    /**
+     * Resolve using cache.
+     */
+    private function resolveUsingCache()
+    {
+        if (null !== $this->options['using-cache']) {
+            $this->usingCache = 'yes' === $this->options['using-cache'];
+
+            return;
+        }
+
+        $this->usingCache = $this->config->getUsingCache();
+    }
+
+    /**
+     * Resolves cache file.
+     */
+    private function resolveCacheFile()
+    {
+        if (null !== $this->options['cache-file']) {
+            $this->cacheFile = $this->options['cache-file'];
+
+            return;
+>>>>>>> Configuration clean ups.
         }
 
         return Finder::create()->in($pathsByType['dir'])->append($pathsByType['file']);
@@ -639,7 +796,7 @@ final class ConfigurationResolver
     /**
      * @param iterable $iterable
      *
-     * @return Traversable
+     * @return \Traversable
      */
     private function iterableToTraversable($iterable)
     {
