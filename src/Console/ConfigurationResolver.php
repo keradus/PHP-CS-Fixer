@@ -12,6 +12,7 @@
 
 namespace PhpCsFixer\Console;
 
+use PhpCsFixer\Cache\CacheManagerInterface;
 use PhpCsFixer\Cache\FileCacheManager;
 use PhpCsFixer\Cache\FileHandler;
 use PhpCsFixer\Cache\NullCacheManager;
@@ -217,7 +218,7 @@ final class ConfigurationResolver
                     )
                 );
 
-                if (!empty($riskyFixers)) {
+                if (count($riskyFixers)) {
                     throw new InvalidConfigurationException(sprintf('The rules contain risky fixers (%s), but they are not allowed to run. Perhaps you forget to use --allow-risky option?', implode(', ', $riskyFixers)));
                 }
             }
@@ -562,7 +563,7 @@ final class ConfigurationResolver
             $this->getPath()
         ));
 
-        if (empty($paths)) {
+        if (!count($paths)) {
             if ($isIntersectionPathMode) {
                 return new \ArrayIterator(array());
             }
@@ -639,7 +640,7 @@ final class ConfigurationResolver
     /**
      * @param iterable $iterable
      *
-     * @return Traversable
+     * @return \Traversable
      */
     private function iterableToTraversable($iterable)
     {
