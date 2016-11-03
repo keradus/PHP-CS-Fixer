@@ -322,14 +322,7 @@ EOF
         $configFile = $resolver->getConfigFile();
 
         if (null !== $stdErr) {
-            $name = $config->getName();
-            $stdErr->writeln(
-                sprintf(
-                    'Loaded config%s%s.',
-                    null === $name ? '' : ' <comment>'.$name.'</comment>',
-                    null === $configFile ? '' : ' from "'.$configFile.'"'
-                )
-            );
+            $stdErr->writeln(sprintf('Loaded config <comment>%s</comment>%s.', $config->getName(), null === $configFile ? '' : ' from "'.$configFile.'"'));
         }
 
         if (null !== $stdErr && $resolver->getUsingCache()) {

@@ -51,7 +51,7 @@ interface ConfigInterface
      *
      * The name must be all lowercase and without any spaces.
      *
-     * @return string|null The name of the configuration
+     * @return string The name of the configuration
      */
     public function getName();
 

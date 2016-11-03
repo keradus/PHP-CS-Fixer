@@ -794,7 +794,7 @@ final class ConfigurationResolver
     }
 
     /**
-     * @param iterable|array $iterable
+     * @param iterable $iterable
      *
      * @return \Traversable
      */

@@ -26,7 +26,7 @@ final class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function testCustomConfig()
     {
-        $customConfigFile = __DIR__.'/Fixtures/ConfigurationResolverConfigFile/case_7_custom_config/.php_cs_custom.php';
+        $customConfigFile = __DIR__.'/Fixtures/.php_cs_custom.php';
         $command = new FixCommand();
         $commandTester = new CommandTester($command);
         $commandTester->execute(
@@ -42,7 +42,7 @@ final class ConfigTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertStringMatchesFormat(
-            sprintf("%%a\nLoaded config custom_config_test from \"%s\".\n%%a", $customConfigFile),
+            sprintf("%%A\nLoaded config custom_config_test from \"%s\".\n%%a", $customConfigFile),
             $commandTester->getDisplay(true)
         );
     }
