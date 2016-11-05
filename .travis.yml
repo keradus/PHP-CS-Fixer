@@ -2,6 +2,12 @@ language: php
 
 sudo: false
 
+env:
+    global:
+        - TASK_TESTS=1
+        - TASK_CS=1
+        - TASK_SCA=0
+
 matrix:
     fast_finish: true
     include:
@@ -16,6 +22,7 @@ matrix:
         - php: 7.0
           env: SYMFONY_VERSION="^2.8"
         - php: 7.1
+          env: TASK_SCA=1
         # Use the newer stack for HHVM as HHVM does not support Precise anymore since a long time and so Precise has an outdated version
         - php: hhvm-3.9
           env: SKIP_LINT_TEST_CASES=1
@@ -38,24 +45,43 @@ before_install:
       if [ $TRAVIS_TAG ]; then
           # for tag building for release we don't need to collect code coverage, let us turn off xdebug completely
           phpenv config-rm xdebug.ini || return 0
+          # also, we don't need to run SCA tools
+          export TASK_SCA=0
       else
           # for regular build we care about collecting code coverage, let us turn off xdebug only for installation part
           mv $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini $HOME/xdebug.ini || return 0
       fi
     - travis_retry composer global require hirak/prestissimo
     - 'if [ "$SYMFONY_VERSION" != "" ]; then sed -i "s/\"symfony\/\([^\"]*\)\": \"^2[^\"]*\"/\"symfony\/\1\": \"$SYMFONY_VERSION\"/g" composer.json; fi'
+    - echo $TASK_TESTS
+    - echo $TASK_CS
+    - echo $TASK_SCA
 
 install:
     - travis_retry composer update $COMPOSER_FLAGS --no-interaction
 
 script:
-    - cp $HOME/xdebug.ini $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini || return 0
-    - composer test-ci
-    - phpenv config-rm xdebug.ini || return 0
-    - php php-cs-fixer --diff --dry-run -v fix
+    - |
+      if [ $TASK_TESTS == 1 ]; then
+          cp $HOME/xdebug.ini $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini || return 0
+          composer test-ci
+          mv $HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini $HOME/xdebug.ini || return 0
+      fi
+    - |
+      if [ $TASK_CS == 1 ]; then
+          php php-cs-fixer --diff --dry-run -v fix
+      fi
+    - |
+      if [ $TASK_SCA == 1 ]; then
+          php php-cs-fixer fix --rules declare_strict_types -v
+          composer test
+      fi
 
 after_success:
-    - php vendor/bin/coveralls -v
+    - |
+      if [ $TASK_TESTS == 1 ]; then
+        php vendor/bin/coveralls -v
+      fi
 
 before_deploy:
     # install box2
