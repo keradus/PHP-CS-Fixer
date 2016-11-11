@@ -35,7 +35,7 @@ final class ReadmeCommand extends Command
     }
 
     /**
-     * @see Command
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

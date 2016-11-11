@@ -1,0 +1,5 @@
+adjust priority to run before phpdoc align + priority integration test
+adjust priority to run before phpdoc annotation ordering
+phpdoc_separation, phpdoc_align
+
+adds new line for phpdoc so needs to be whitesheet aware + new test
