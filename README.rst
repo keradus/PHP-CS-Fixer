@@ -174,6 +174,10 @@ automatically fix anything:
 
 Choose from the list of available rules:
 
+* **add_missing_argument_type**
+   | TODO.
+   | *Rule is: risky.*
+
 * **array_syntax**
    | PHP arrays should be declared using the configured syntax.
    | *Rule is: configurable.*
