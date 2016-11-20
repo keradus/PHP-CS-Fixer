@@ -39,7 +39,7 @@ interface RuleSetInterface
      *
      * @param string $rule name of rule
      *
-     * @return array|null
+     * @return null|array
      */
     public function getRuleConfiguration($rule);
 

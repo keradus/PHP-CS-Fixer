@@ -34,7 +34,7 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer
     );
 
     /**
-     * @param string[]|null $configuration
+     * @param null|string[] $configuration
      */
     public function configure(array $configuration = null)
     {

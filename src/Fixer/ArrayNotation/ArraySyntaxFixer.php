@@ -33,7 +33,7 @@ final class ArraySyntaxFixer extends AbstractFixer
     /**
      * Use 'syntax' => 'long'|'short'.
      *
-     * @param array|null $configuration
+     * @param null|array $configuration
      *
      * @throws InvalidFixerConfigurationException
      */

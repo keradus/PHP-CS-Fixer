@@ -38,7 +38,7 @@ final class Runner
     private $differ;
 
     /**
-     * @var EventDispatcher|null
+     * @var null|EventDispatcher
      */
     private $eventDispatcher;
 

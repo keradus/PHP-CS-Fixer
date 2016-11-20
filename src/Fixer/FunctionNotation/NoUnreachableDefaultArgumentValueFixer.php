@@ -89,7 +89,7 @@ final class NoUnreachableDefaultArgumentValueFixer extends AbstractFixer
      * @param int    $startIndex
      * @param int    $endIndex
      *
-     * @return int|null
+     * @return null|int
      */
     private function getLastNonDefaultArgumentIndex(Tokens $tokens, $startIndex, $endIndex)
     {

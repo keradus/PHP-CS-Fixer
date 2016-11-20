@@ -226,7 +226,7 @@ final class FixerFactory
     /**
      * @param FixerInterface $fixer
      *
-     * @return string[]|null
+     * @return null|string[]
      */
     private function getFixersConflicts(FixerInterface $fixer)
     {

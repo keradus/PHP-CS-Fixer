@@ -31,7 +31,7 @@ interface FixerInterface
      * eg `php_unit_strict` fixer allows to configure which methods should be fixed.
      * Finally, some fixers need configuration to work, eg `header_comment`.
      *
-     * @param array|null $configuration configuration depends on Fixer
+     * @param null|array $configuration configuration depends on Fixer
      */
     public function configure(array $configuration = null);
 

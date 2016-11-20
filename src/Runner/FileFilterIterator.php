@@ -26,7 +26,7 @@ use Symfony\Component\Finder\SplFileInfo as SymfonySplFileInfo;
 final class FileFilterIterator extends \FilterIterator
 {
     /**
-     * @var EventDispatcher|null
+     * @var null|EventDispatcher
      */
     private $eventDispatcher;
 

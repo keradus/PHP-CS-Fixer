@@ -217,7 +217,7 @@ final class TokensAnalyzer
      * Returns the attributes of the method under the given index.
      *
      * The array has the following items:
-     * 'visibility' int|null  T_PRIVATE, T_PROTECTED or T_PUBLIC
+     * 'visibility' null|int  T_PRIVATE, T_PROTECTED or T_PUBLIC
      * 'static'     bool
      * 'abstract'   bool
      * 'final'      bool

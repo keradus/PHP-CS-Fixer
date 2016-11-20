@@ -32,7 +32,7 @@ class Token
     /**
      * ID of token prototype, if available.
      *
-     * @var int|null
+     * @var null|int
      */
     private $id;
 
@@ -227,7 +227,7 @@ class Token
     /**
      * Get token's id.
      *
-     * @return int|null
+     * @return null|int
      */
     public function getId()
     {
@@ -500,7 +500,7 @@ class Token
     }
 
     /**
-     * @param string[]|null $options JSON encode option
+     * @param null|string[] $options JSON encode option
      *
      * @return string
      */

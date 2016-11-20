@@ -326,7 +326,7 @@ final class NoPhp4ConstructorFixer extends AbstractFixer
      * @param int    $startIndex the search start index
      * @param int    $endIndex   the search end index
      *
-     * @return array|null An associative array, if a match is found:
+     * @return null|array An associative array, if a match is found:
      *
      *     - nameIndex (int): The index of the function/method name.
      *     - startIndex (int): The index of the function/method start.

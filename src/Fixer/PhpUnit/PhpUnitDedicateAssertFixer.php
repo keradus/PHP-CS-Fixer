@@ -79,7 +79,7 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer
     private $configuration;
 
     /**
-     * @param array|null $configuration
+     * @param null|array $configuration
      */
     public function configure(array $configuration = null)
     {

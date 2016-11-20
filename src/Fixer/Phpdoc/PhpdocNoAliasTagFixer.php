@@ -41,7 +41,7 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer
     /**
      * Key value pairs of string, replace from -> to tags (without '@').
      *
-     * @param string[]|null $configuration
+     * @param null|string[] $configuration
      */
     public function configure(array $configuration = null)
     {

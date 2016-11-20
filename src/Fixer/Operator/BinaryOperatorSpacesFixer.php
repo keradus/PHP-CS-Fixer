@@ -26,7 +26,7 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
 final class BinaryOperatorSpacesFixer extends AbstractFixer
 {
     /**
-     * @var array<string, bool|null>
+     * @var array<string, null|bool>
      */
     private $configuration;
 
@@ -44,7 +44,7 @@ final class BinaryOperatorSpacesFixer extends AbstractFixer
      * Key any of; 'align_equals', 'align_double_arrow'.
      * Value 'bool': 'false' do unalign, 'true' do align, or 'null': do not modify.
      *
-     * @param array<string, bool|null> $configuration
+     * @param array<string, null|bool> $configuration
      */
     public function configure(array $configuration = null)
     {

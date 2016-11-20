@@ -36,7 +36,7 @@ final class VisibilityRequiredFixer extends AbstractFixer
      * Note: the 'const' configuration is only valid when running on PHP >= 7.1
      * Use 'null' for default configuration ('property', 'method').
      *
-     * @param string[]|null $configuration
+     * @param null|string[] $configuration
      */
     public function configure(array $configuration = null)
     {

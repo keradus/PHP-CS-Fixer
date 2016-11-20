@@ -70,7 +70,7 @@ final class PhpdocSummaryFixer extends AbstractFixer implements WhitespacesFixer
      *
      * @param Line[] $lines
      *
-     * @return int|null
+     * @return null|int
      */
     private function findShortDescriptionEnd(array $lines)
     {

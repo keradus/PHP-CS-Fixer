@@ -71,7 +71,7 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements W
      * - 'parenthesis_brace_block' remove blank lines after a parenthesis opening block brace ('(') and/or end block brace (')')
      * - 'square_brace_block' remove blank lines after a square opening block brace ('[') and/or end block brace (']')
      *
-     * @param string[]|null $configuration
+     * @param null|string[] $configuration
      */
     public function configure(array $configuration = null)
     {

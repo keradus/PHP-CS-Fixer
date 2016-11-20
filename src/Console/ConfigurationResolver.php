@@ -145,7 +145,7 @@ final class ConfigurationResolver
     }
 
     /**
-     * @return string|null
+     * @return null|string
      */
     public function getCacheFile()
     {

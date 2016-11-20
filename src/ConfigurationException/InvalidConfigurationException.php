@@ -25,7 +25,7 @@ class InvalidConfigurationException extends \InvalidArgumentException
 {
     /**
      * @param string   $message
-     * @param int|null $code
+     * @param null|int $code
      */
     public function __construct($message, $code = null)
     {

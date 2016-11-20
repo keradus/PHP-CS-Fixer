@@ -146,7 +146,7 @@ final class HeaderCommentFixer extends AbstractFixer implements WhitespacesFixer
      * @param Tokens $tokens
      * @param int    $headerNewIndex
      *
-     * @return int|null
+     * @return null|int
      */
     private function findHeaderCommentCurrentIndex(Tokens $tokens, $headerNewIndex)
     {
@@ -272,7 +272,7 @@ final class HeaderCommentFixer extends AbstractFixer implements WhitespacesFixer
     }
 
     /**
-     * @param array|null $configuration
+     * @param null|array $configuration
      *
      * @return array
      */
