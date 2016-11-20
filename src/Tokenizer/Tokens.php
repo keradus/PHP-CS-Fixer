@@ -25,7 +25,7 @@ use PhpCsFixer\Utils;
  *
  * @method Token current()
  */
-class Tokens extends \SplFixedArray
+class Tokens extends \SplDoublyLinkedList
 {
     const BLOCK_TYPE_PARENTHESIS_BRACE = 1;
     const BLOCK_TYPE_CURLY_BRACE = 2;
@@ -229,6 +229,14 @@ class Tokens extends \SplFixedArray
      */
     public function setSize($size)
     {
+        if ($this instanceof \SplDoublyLinkedList) {
+            while ($this->offsetExists($size)) {
+                $this->offsetUnset($size);
+            }
+
+            return;
+        }
+
         if ($this->getSize() !== $size) {
             $this->changed = true;
             parent::setSize($size);
@@ -258,6 +266,21 @@ class Tokens extends \SplFixedArray
     {
         $this->changed = true;
         $this->registerFoundToken($newval);
+
+        if ($this instanceof \SplDoublyLinkedList) {
+            $count = $this->count();
+
+            if ($index < $count) {
+                parent::offsetSet($index, $newval);
+            } elseif ($index === $count) {
+                $this->push($newval);
+            } else {
+                throw new \RuntimeException(sprintf("FRS - adding %d while there is only %d.", $index, $count));
+            }
+
+            return;
+        }
+
         parent::offsetSet($index, $newval);
     }
 
@@ -803,6 +826,14 @@ class Tokens extends \SplFixedArray
             return;
         }
 
+        if ($this instanceof \SplDoublyLinkedList) {
+            for ($i = $itemsCnt - 1; $i >= 0; --$i) {
+                $this->add($index, $items[$i]);
+            }
+
+            return;
+        }
+
         $oldSize = count($this);
         $this->changed = true;
         $this->setSize($oldSize + $itemsCnt);
@@ -1219,5 +1250,34 @@ class Tokens extends \SplFixedArray
         ;
 
         $this->foundTokenKinds[$tokenKind] = true;
+    }
+
+    // compat with SplFixedArray
+    public function toArray()
+    {
+        if ($this instanceof \SplDoublyLinkedList) {
+            $arr = [];
+            $count = $this->count();
+            for ($i = 0; $i < $count; ++$i) {
+                $arr[$i] = $this[$i];
+            }
+
+            return $arr;
+        }
+
+        return parent::toArray();
+    }
+
+    // compat with SplFixedArray
+    public function getSize()
+    {
+        return $this->count();
+    }
+
+    public function add($index, $newval)
+    {
+        $this->changed = true;
+        $this->registerFoundToken($newval);
+        parent::add($index, $newval);
     }
 }

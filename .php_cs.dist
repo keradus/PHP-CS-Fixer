@@ -27,6 +27,9 @@ return PhpCsFixer\Config::create()
         'psr4' => true,
         'strict_comparison' => true,
         'strict_param' => true,
+
+        // the only not working one
+        'ternary_operator_spaces' => false,
     ))
     ->setFinder(
         PhpCsFixer\Finder::create()
