@@ -14,6 +14,8 @@ namespace PhpCsFixer\Fixer\Operator;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
+use PhpCsFixer\FixerDescription;
+use PhpCsFixer\FixerDescriptionAwareInterface;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -21,7 +23,7 @@ use PhpCsFixer\Tokenizer\Tokens;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class ConcatSpaceFixer extends AbstractFixer
+final class ConcatSpaceFixer extends AbstractFixer implements FixerDescriptionAwareInterface
 {
     private $fixCallback;
 
@@ -75,6 +77,29 @@ final class ConcatSpaceFixer extends AbstractFixer
     public function getDescription()
     {
         return 'Concatenation should be spaced according configuration.';
+    }
+
+    public function getFixerDescription()
+    {
+        return new FixerDescription(
+            array(
+                array(
+                    "<?php\n\$foo = 'bar' . 3 . 'baz'.'qux';",
+                    null,
+                ),
+                array(
+                    "<?php\n\$foo = 'bar' . 3 . 'baz'.'qux';",
+                    array('spacing' => 'none'),
+                ),
+                array(
+                    "<?php\n\$foo = 'bar' . 3 . 'baz'.'qux';",
+                    array('spacing' => 'one'),
+                ),
+            ),
+            "Configuration must have one element 'spacing' with value 'none' (default) or 'one'.",
+            array('spacing' => 'none'),
+            null
+        );
     }
 
     /**
