@@ -51,7 +51,7 @@ final class PrintToEchoFixer extends AbstractFixer
     /**
      * {@inheritdoc}
      */
-    public function getDescription()
+    protected function getDescription()
     {
         return 'Converts print language construct to echo if possible.';
     }
