@@ -212,6 +212,10 @@ final class DescribeCommand extends Command
             "\n",
             array_map(
                 function ($string) {
+                    if (' ' === $string) {
+                        return '';
+                    }
+
                     $string = preg_replace('/^(\+.*)/', '<fg=green>\1</>', $string);
                     $string = preg_replace('/^(\-.*)/', '<fg=red>\1</>', $string);
                     $string = preg_replace('/^(@.*)/', '<fg=cyan>\1</>', $string);
