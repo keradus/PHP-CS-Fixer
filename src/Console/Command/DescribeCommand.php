@@ -67,15 +67,15 @@ final class DescribeCommand extends Command
         $name = $input->getArgument('name');
         try {
             if ('@' === $name[0]) {
-                $this->describeSet($output, $name);
+                $this->describeSet($input, $output, $name);
 
                 return;
             }
 
-            $this->describeRule($output, $name);
+            $this->describeRule($input, $output, $name);
         } catch (DescribeNameNotFoundException $e) {
             $alternative = $this->getAlternative($e->getType(), $name);
-            $this->describeList($output, $e->getType());
+            $this->describeList($input, $output, $e->getType());
 
             throw new \InvalidArgumentException(sprintf(
                 '%s %s not found.%s',
@@ -85,10 +85,11 @@ final class DescribeCommand extends Command
     }
 
     /**
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @param string          $name
      */
-    private function describeRule(OutputInterface $output, $name)
+    private function describeRule(InputInterface $input, OutputInterface $output, $name)
     {
         $fixers = $this->getFixers();
 
@@ -158,10 +159,11 @@ final class DescribeCommand extends Command
     }
 
     /**
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @param string          $name
      */
-    private function describeSet(OutputInterface $output, $name)
+    private function describeSet(InputInterface $input, OutputInterface $output, $name)
     {
         if (!in_array($name, $this->getSetNames(), true)) {
             throw new DescribeNameNotFoundException($name, 'set');
@@ -236,24 +238,20 @@ final class DescribeCommand extends Command
      */
     private function prepareDiff($isDecoratedOutput, $diff)
     {
-        if ($isDecoratedOutput) {
-            $template = "<comment>   ---------- begin diff ----------</comment>\n%s\n<comment>   ----------- end diff -----------</comment>";
-            $diff = implode(
-                PHP_EOL,
-                array_map(
-                    function ($string) {
-                        $string = preg_replace('/^(\+.*)/', '<fg=green>\1</>', $string);
-                        $string = preg_replace('/^(\-.*)/', '<fg=red>\1</>', $string);
-                        $string = preg_replace('/^(@.*)/', '<fg=cyan>\1</>', $string);
+        $template = "<comment>   ---------- begin diff ----------</comment>\n%s\n<comment>   ----------- end diff -----------</comment>";
+        $diff = implode(
+            PHP_EOL,
+            array_map(
+                function ($string) {
+                    $string = preg_replace('/^(\+.*)/', '<fg=green>\1</>', $string);
+                    $string = preg_replace('/^(\-.*)/', '<fg=red>\1</>', $string);
+                    $string = preg_replace('/^(@.*)/', '<fg=cyan>\1</>', $string);
 
-                        return '   '.$string;
-                    },
-                    preg_split("#\n\r|\n#", OutputFormatter::escape(rtrim($diff)))
-                )
-            );
-        } else {
-            $template = '      ---------- begin diff ----------%s      ----------- end diff -----------';
-        }
+                    return '   '.$string;
+                },
+                preg_split("#\n\r|\n#", OutputFormatter::escape(rtrim($diff)))
+            )
+        );
 
         return sprintf($template, $diff);
     }
@@ -309,7 +307,7 @@ final class DescribeCommand extends Command
 
         foreach ($alternatives as $alternative) {
             $distance = levenshtein($name, $alternative);
-            if ($distance < 2) {
+            if (3 > $distance) {
                 $other = $alternative;
 
                 break;
@@ -320,10 +318,11 @@ final class DescribeCommand extends Command
     }
 
     /**
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @param string          $type   'rule'|'set'
      */
-    private function describeList(OutputInterface $output, $type)
+    private function describeList(InputInterface $input, OutputInterface $output, $type)
     {
         if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
             $describe = array(
