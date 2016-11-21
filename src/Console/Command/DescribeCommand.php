@@ -13,6 +13,7 @@
 namespace PhpCsFixer\Console\Command;
 
 use PhpCsFixer\ConfigurationException\UnallowedFixerConfigurationException;
+use PhpCsFixer\Differ\DiffConsoleFormatter;
 use PhpCsFixer\Differ\SebastianBergmannDiffer;
 use PhpCsFixer\FixerDescriptionAwareInterface;
 use PhpCsFixer\FixerFactory;
@@ -21,7 +22,6 @@ use PhpCsFixer\RuleSet;
 use PhpCsFixer\StdinFileInfo;
 use PhpCsFixer\Tokenizer\Tokens;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -109,7 +109,13 @@ final class DescribeCommand extends Command
 
         if ($description && $description->getCodeSamples()) {
             $output->writeln('Fixing examples:');
+
             $differ = new SebastianBergmannDiffer();
+            $diffFormatter = new DiffConsoleFormatter($output->isDecorated(), sprintf(
+                '<comment>   ---------- begin diff ----------</comment>%s%%s%s<comment>   ----------- end diff -----------</comment>',
+                PHP_EOL,
+                PHP_EOL
+            ));
 
             foreach ($description->getCodeSamples() as $index => $codeSample) {
                 $old = $codeSample[0];
@@ -124,7 +130,7 @@ final class DescribeCommand extends Command
                 } else {
                     $output->writeln(sprintf(' * Example #%d. Fixing with configuration: <comment>%s</comment>.', $index + 1, $this->arrayToText($codeSample[1])));
                 }
-                $output->writeln($this->prepareDiff($diff));
+                $output->writeln($diffFormatter->format($diff, '   %s'));
                 $output->writeln('');
             }
         }
@@ -202,30 +208,5 @@ final class DescribeCommand extends Command
             array_values($replaces),
             var_export($data, true)
         );
-    }
-
-    private function prepareDiff($diff)
-    {
-        $template = "<comment>   ---------- begin diff ----------</comment>\n%s\n<comment>   ----------- end diff -----------</comment>";
-
-        $diff = implode(
-            "\n",
-            array_map(
-                function ($string) {
-                    if (' ' === $string) {
-                        return '';
-                    }
-
-                    $string = preg_replace('/^(\+.*)/', '<fg=green>\1</>', $string);
-                    $string = preg_replace('/^(\-.*)/', '<fg=red>\1</>', $string);
-                    $string = preg_replace('/^(@.*)/', '<fg=cyan>\1</>', $string);
-
-                    return '   '.$string;
-                },
-                preg_split("#\n\r|\n#", OutputFormatter::escape(rtrim($diff)))
-            )
-        );
-
-        return sprintf($template, $diff);
     }
 }
