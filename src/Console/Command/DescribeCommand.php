@@ -34,6 +34,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class DescribeCommand extends Command
 {
     /**
+     * @var string[]
+     */
+    private $setNames;
+
+    /**
+     * @var array<string, FixerInterface>
+     */
+    private $fixers;
+
+    /**
      * {@inheritdoc}
      */
     protected function configure()
@@ -55,25 +65,35 @@ final class DescribeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
+        try {
+            if ('@' === $name[0]) {
+                $this->describeSet($output, $name);
 
-        if ('@' === substr($name, 0, 1)) {
-            $this->describeSet($input, $output, $name);
-        } else {
-            $this->describeRule($input, $output, $name);
+                return;
+            }
+
+            $this->describeRule($output, $name);
+        } catch (DescribeNameNotFoundException $e) {
+            $alternative = $this->getAlternative($e->getType(), $name);
+            $this->describeList($output, $e->getType());
+
+            throw new \InvalidArgumentException(sprintf(
+                '%s %s not found.%s',
+                ucfirst($e->getType()), $name, null === $alternative ? '' : ' Did you mean "'.$alternative.'"?'
+            ));
         }
     }
 
-    private function describeRule(InputInterface $input, OutputInterface $output, $name)
+    /**
+     * @param OutputInterface $output
+     * @param string          $name
+     */
+    private function describeRule(OutputInterface $output, $name)
     {
-        $fixerFactory = new FixerFactory();
-        $fixers = array();
-
-        foreach ($fixerFactory->registerBuiltInFixers()->getFixers() as $fixer) {
-            $fixers[$fixer->getName()] = $fixer;
-        }
+        $fixers = $this->getFixers();
 
         if (!isset($fixers[$name])) {
-            throw new \InvalidArgumentException(sprintf('Rule "%s" does not exist.', $name));
+            throw new DescribeNameNotFoundException($name, 'rule');
         }
 
         $fixer = $fixers[$name];
@@ -124,7 +144,8 @@ final class DescribeCommand extends Command
                 } else {
                     $output->writeln(sprintf(' * Example #%d. Fixing with configuration: <comment>%s</comment>.', $index + 1, $this->arrayToText($codeSample[1])));
                 }
-                $output->writeln($this->prepareDiff(true, $diff));
+
+                $output->writeln($this->prepareDiff($output->isDecorated(), $diff));
                 $output->writeln('');
             }
         }
@@ -136,25 +157,27 @@ final class DescribeCommand extends Command
         }
     }
 
-    private function describeSet(InputInterface $input, OutputInterface $output, $name)
+    /**
+     * @param OutputInterface $output
+     * @param string          $name
+     */
+    private function describeSet(OutputInterface $output, $name)
     {
+        if (!in_array($name, $this->getSetNames(), true)) {
+            throw new DescribeNameNotFoundException($name, 'set');
+        }
+
         $ruleSet = new RuleSet(array($name => true));
         $rules = $ruleSet->getRules();
         ksort($rules);
 
-        $fixerFactory = new FixerFactory();
-        $fixers = array();
-
-        foreach ($fixerFactory->registerBuiltInFixers()->getFixers() as $fixer) {
-            $fixers[$fixer->getName()] = $fixer;
-        }
+        $fixers = $this->getFixers();
 
         $output->writeln(sprintf('<info>Description of %s set.</info>', $name));
         $output->writeln('');
 
         $help = '';
 
-        $count = count($rules) - 1;
         foreach ($rules as $rule => $config) {
             $help .= sprintf(
                 " * <info>%s</info>%s\n   | %s\n%s\n",
@@ -182,8 +205,9 @@ final class DescribeCommand extends Command
         } catch (UnallowedFixerConfigurationException $e) {
             return false;
         } catch (\Exception $e) {
-            return true;
         }
+
+        return true;
     }
 
     private function arrayToText(array $data)
@@ -204,24 +228,119 @@ final class DescribeCommand extends Command
         );
     }
 
+    /**
+     * @param bool   $isDecoratedOutput
+     * @param string $diff
+     *
+     * @return string
+     */
     private function prepareDiff($isDecoratedOutput, $diff)
     {
-        $template = "<comment>   ---------- begin diff ----------</comment>\n%s\n<comment>   ----------- end diff -----------</comment>";
+        if ($isDecoratedOutput) {
+            $template = "<comment>   ---------- begin diff ----------</comment>\n%s\n<comment>   ----------- end diff -----------</comment>";
+            $diff = implode(
+                PHP_EOL,
+                array_map(
+                    function ($string) {
+                        $string = preg_replace('/^(\+.*)/', '<fg=green>\1</>', $string);
+                        $string = preg_replace('/^(\-.*)/', '<fg=red>\1</>', $string);
+                        $string = preg_replace('/^(@.*)/', '<fg=cyan>\1</>', $string);
 
-        $diff = implode(
-            "\n",
-            array_map(
-                function ($string) {
-                    $string = preg_replace('/^(\+.*)/', '<fg=green>\1</>', $string);
-                    $string = preg_replace('/^(\-.*)/', '<fg=red>\1</>', $string);
-                    $string = preg_replace('/^(@.*)/', '<fg=cyan>\1</>', $string);
-
-                    return '   '.$string;
-                },
-                preg_split("#\n\r|\n#", OutputFormatter::escape(rtrim($diff)))
-            )
-        );
+                        return '   '.$string;
+                    },
+                    preg_split("#\n\r|\n#", OutputFormatter::escape(rtrim($diff)))
+                )
+            );
+        } else {
+            $template = '      ---------- begin diff ----------%s      ----------- end diff -----------';
+        }
 
         return sprintf($template, $diff);
+    }
+
+    /**
+     * @return array<string, FixerInterface>
+     */
+    private function getFixers()
+    {
+        if (null !== $this->fixers) {
+            return $this->fixers;
+        }
+
+        $fixerFactory = new FixerFactory();
+        $fixers = array();
+
+        foreach ($fixerFactory->registerBuiltInFixers()->getFixers() as $fixer) {
+            $fixers[$fixer->getName()] = $fixer;
+        }
+
+        $this->fixers = $fixers;
+        ksort($this->fixers);
+
+        return $this->fixers;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getSetNames()
+    {
+        if (null !== $this->setNames) {
+            return $this->setNames;
+        }
+
+        $set = new RuleSet();
+        $this->setNames = $set->getSetDefinitionNames();
+        sort($this->setNames);
+
+        return $this->setNames;
+    }
+
+    /**
+     * @param string $type 'rule'|'set'
+     * @param string $name
+     *
+     * @return string|null
+     */
+    private function getAlternative($type, $name)
+    {
+        $other = null;
+        $alternatives = 'set' === $type ? $this->getSetNames() : $this->getFixers();
+
+        foreach ($alternatives as $alternative) {
+            $distance = levenshtein($name, $alternative);
+            if ($distance < 2) {
+                $other = $alternative;
+
+                break;
+            }
+        }
+
+        return $other;
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string          $type   'rule'|'set'
+     */
+    private function describeList(OutputInterface $output, $type)
+    {
+        if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
+            $describe = array(
+                'set' => $this->getSetNames(),
+                'rules' => $this->getFixers(),
+            );
+        } elseif ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+            $describe = 'set' === $type ? array('set' => $this->getSetNames()) : array('rules' => $this->getFixers());
+        } else {
+            return;
+        }
+
+        foreach ($describe as $list => $items) {
+            $output->writeln(sprintf('<comment>Defined %s:</comment>', $list));
+            foreach ($items as $name => $item) {
+                $output->writeln(sprintf('- %s', is_string($name) ? $name : $item));
+            }
+        }
     }
 }
