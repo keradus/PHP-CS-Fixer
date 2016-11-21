@@ -284,7 +284,7 @@ final class DescribeCommand extends Command
     private function getAlternative($type, $name)
     {
         $other = null;
-        $alternatives = 'set' === $type ? $this->getSetNames() : $this->getFixers();
+        $alternatives = 'set' === $type ? $this->getSetNames() : array_keys($this->getFixers());
 
         foreach ($alternatives as $alternative) {
             $distance = levenshtein($name, $alternative);
