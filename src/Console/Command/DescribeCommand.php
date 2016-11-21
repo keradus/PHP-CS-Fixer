@@ -124,7 +124,7 @@ final class DescribeCommand extends Command
                 } else {
                     $output->writeln(sprintf(' * Example #%d. Fixing with configuration: <comment>%s</comment>.', $index + 1, $this->arrayToText($codeSample[1])));
                 }
-                $output->writeln($this->prepareDiff(true, $diff));
+                $output->writeln($this->prepareDiff($diff));
                 $output->writeln('');
             }
         }
@@ -204,7 +204,7 @@ final class DescribeCommand extends Command
         );
     }
 
-    private function prepareDiff($isDecoratedOutput, $diff)
+    private function prepareDiff($diff)
     {
         $template = "<comment>   ---------- begin diff ----------</comment>\n%s\n<comment>   ----------- end diff -----------</comment>";
 
