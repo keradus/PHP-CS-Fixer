@@ -42,6 +42,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  */
 final class FixCommand extends Command
 {
+    // exit status value 1 is reserved for PHP minimal version @see /php-cs-fixer
     const EXIT_STATUS_FLAG_HAS_INVALID_FILES = 4;
     const EXIT_STATUS_FLAG_HAS_CHANGED_FILES = 8;
     const EXIT_STATUS_FLAG_HAS_INVALID_CONFIG = 16;
@@ -282,6 +283,7 @@ Exit codes
 Exit code is build using following bit flags:
 
 *  0 OK
+*  1 PHP minimal version to run the Fixer not matched
 *  4 Some files have invalid syntax (only in dry-run mode)
 *  8 Some files need fixing (only in dry-run mode)
 * 16 Configuration error of the application
