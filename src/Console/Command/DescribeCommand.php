@@ -194,18 +194,21 @@ final class DescribeCommand extends Command
 
     private function arrayToText(array $data)
     {
+        // Output modifications:
+        // - remove new-lines
+        // - combine multiple whitespaces
+        // - switch array-syntax to short array-syntax
+        // - remove whitespace at array opening
+        // - remove trailing array comma and whitespace at array closing
+        // - remove numeric array indexes
         static $replaces = array(
-            '#\r|\n#' => '',
-            '#\s{1,}#' => ' ',
-            '#array\s*\((.*)\)#s' => '[$1]',
-            '#\[\s+#' => '[',
-            '#,\s*\]#' => ']',
-            '#\d+\s*=>\s*#' => '',
+            array('#\r|\n#', '#\s{1,}#', '#array\s*\((.*)\)#s', '#\[\s+#', '#,\s*\]#', '#\d+\s*=>\s*#'),
+            array('', ' ', '[$1]', '[', ']', ''),
         );
 
         return preg_replace(
-            array_keys($replaces),
-            array_values($replaces),
+            $replaces[0],
+            $replaces[1],
             var_export($data, true)
         );
     }
