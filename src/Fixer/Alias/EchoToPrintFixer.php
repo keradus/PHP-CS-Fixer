@@ -77,14 +77,6 @@ final class EchoToPrintFixer extends AbstractFixer
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getDescription()
-    {
-        return 'Converts echo language construct to print if possible.';
-    }
-
-    /**
      * EchoToPrintFixer should run after NoShortEchoTagFixer.
      *
      * {@inheritdoc}
@@ -92,5 +84,13 @@ final class EchoToPrintFixer extends AbstractFixer
     public function getPriority()
     {
         return -10;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDescription()
+    {
+        return 'Converts echo language construct to print if possible.';
     }
 }
