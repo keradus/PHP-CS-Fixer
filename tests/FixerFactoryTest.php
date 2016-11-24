@@ -362,7 +362,7 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testFixersDescriptionConsistency(FixerInterface $fixer)
     {
-        $this->assertRegExp('/^[A-Z@].*\.$/', $fixer->getDescription(), 'Description must start with capital letter or an @ and end with dot.');
+        $this->assertRegExp('/^[A-Z@].*\.$/', $fixer->getDefinition()->getSummary(), 'Description must start with capital letter or an @ and end with dot.');
     }
 
     public function provideFixersDescriptionConsistencyCases()

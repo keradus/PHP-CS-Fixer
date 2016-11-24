@@ -441,7 +441,7 @@ EOF
         foreach ($fixers as $i => $fixer) {
             $sets = $getSetsWithRule($fixer->getName());
 
-            $description = $fixer->getDescription();
+            $description = $fixer->getDefinition()->getSummary();
 
             $attributes = array();
 

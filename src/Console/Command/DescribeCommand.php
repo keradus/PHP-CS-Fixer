@@ -15,10 +15,10 @@ namespace PhpCsFixer\Console\Command;
 use PhpCsFixer\ConfigurationException\UnallowedFixerConfigurationException;
 use PhpCsFixer\Differ\DiffConsoleFormatter;
 use PhpCsFixer\Differ\SebastianBergmannDiffer;
-use PhpCsFixer\FixerDescriptionAwareInterface;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\FixerInterface;
 use PhpCsFixer\RuleSet;
+use PhpCsFixer\ShortFixerDefinition;
 use PhpCsFixer\StdinFileInfo;
 use PhpCsFixer\Tokenizer\Tokens;
 use Symfony\Component\Console\Command\Command;
@@ -98,17 +98,20 @@ final class DescribeCommand extends Command
         }
 
         $fixer = $fixers[$name];
-        $description = $fixer instanceof FixerDescriptionAwareInterface ? $fixer->getFixerDescription() : null;
+        $definition = $fixer->getDefinition();
 
         $output->writeln(sprintf('<info>Description of %s rule.</info>', $name));
-        $output->writeln($fixer->getDescription());
+        $output->writeln($definition->getSummary());
+        if ($definition->getDescription()) {
+            $output->writeln($definition->getDescription());
+        }
         $output->writeln('');
 
         if ($fixer->isRisky()) {
             $output->writeln('<error>Fixer applying this rule is risky.</error>');
 
-            if ($description && $description->getRiskyDescription()) {
-                $output->writeln($description->getRiskyDescription());
+            if ($definition->getRiskyDescription()) {
+                $output->writeln($definition->getRiskyDescription());
             }
 
             $output->writeln('');
@@ -117,18 +120,18 @@ final class DescribeCommand extends Command
         if ($this->isFixerConfigurable($fixer)) {
             $output->writeln('<comment>Fixer is configurable.</comment>');
 
-            if ($description && $description->getConfigurationDescription()) {
-                $output->writeln($description->getConfigurationDescription());
+            if ($definition->getConfigurationDescription()) {
+                $output->writeln($definition->getConfigurationDescription());
             }
 
-            if ($description && $description->getDefaultConfiguration()) {
-                $output->writeln(sprintf('Default configuration: <comment>%s</comment>.', $this->arrayToText($description->getDefaultConfiguration())));
+            if ($definition->getDefaultConfiguration()) {
+                $output->writeln(sprintf('Default configuration: <comment>%s</comment>.', $this->arrayToText($definition->getDefaultConfiguration())));
             }
 
             $output->writeln('');
         }
 
-        if ($description && $description->getCodeSamples()) {
+        if ($definition->getCodeSamples()) {
             $output->writeln('Fixing examples:');
 
             $differ = new SebastianBergmannDiffer();
@@ -138,7 +141,7 @@ final class DescribeCommand extends Command
                 PHP_EOL
             ));
 
-            foreach ($description->getCodeSamples() as $index => $codeSample) {
+            foreach ($definition->getCodeSamples() as $index => $codeSample) {
                 $old = $codeSample[0];
                 $tokens = Tokens::fromCode($old);
                 $fixer->configure($codeSample[1]);
@@ -156,7 +159,7 @@ final class DescribeCommand extends Command
             }
         }
 
-        if (!$description) {
+        if ($definition instanceof ShortFixerDefinition) {
             $output->writeln(sprintf('<question>This rule is not yet described, do you want to help us and describe it?</question>'));
             $output->writeln('Contribute at <comment>https://github.com/FriendsOfPHP/PHP-CS-Fixer</comment>');
             $output->writeln('');

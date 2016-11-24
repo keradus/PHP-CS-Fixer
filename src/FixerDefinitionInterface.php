@@ -15,10 +15,17 @@ namespace PhpCsFixer;
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-interface FixerDescriptionAwareInterface
+interface FixerDefinitionInterface
 {
-    /**
-     * @return FixerDescription
-     */
-    public function getFixerDescription();
+    public function getSummary();
+
+    public function getDescription();
+
+    public function getConfigurationDescription();
+
+    public function getDefaultConfiguration();
+
+    public function getRiskyDescription();
+
+    public function getCodeSamples();
 }
