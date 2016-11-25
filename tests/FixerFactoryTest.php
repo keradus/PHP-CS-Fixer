@@ -15,6 +15,7 @@ namespace PhpCsFixer\Tests;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\FixerInterface;
 use PhpCsFixer\RuleSet;
+use PhpCsFixer\ShortFixerDefinition;
 use Prophecy\Argument;
 
 /**
@@ -392,6 +393,29 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
         }
 
         return $cases;
+    }
+
+    /**
+     * This method is a guard to not introduce new Fixer using `ShortFixerDefinition`.
+     *
+     * Will be removed with `ShortFixerDefinition` removal.
+     */
+    public function testShortFixerDefinition()
+    {
+        $guard = 126;
+
+        $this->assertCount(
+            $guard,
+            array_filter(array_map(function (FixerInterface $fixer) {
+                return $fixer->getDefinition() instanceof ShortFixerDefinition;
+            }, $this->getAllFixers())),
+            implode("\n", array(
+                'Not valid amount of fixers using ShortFixerDefinition.',
+                'If this test is failing it means one of those scenario occured:',
+                '- you introduced new Fixer using `ShortFixerDefinition`, you should use `FixerDefinition` instead,',
+                '- you update the Fixer to stop using `ShortFixerDefinition`, you should decrease the guard value.',
+            ))
+        );
     }
 
     /**
