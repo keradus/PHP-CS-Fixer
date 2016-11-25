@@ -12,6 +12,7 @@
 
 namespace PhpCsFixer\Tests;
 
+use PhpCsFixer\FixerDefinitionInterface;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\FixerInterface;
 use PhpCsFixer\RuleSet;
@@ -359,21 +360,35 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provideFixersDescriptionConsistencyCases
+     * @dataProvider provideFixerDefinitionsCases
      */
-    public function testFixersDescriptionConsistency(FixerInterface $fixer)
+    public function testFixerDefinitions(FixerInterface $fixer)
     {
-        $this->assertRegExp('/^[A-Z@].*\.$/', $fixer->getDefinition()->getSummary(), 'Description must start with capital letter or an @ and end with dot.');
-    }
+        $definition = $fixer->getDefinition();
 
-    public function provideFixersDescriptionConsistencyCases()
-    {
-        $cases = array();
-        foreach ($this->getAllFixers() as $fixer) {
-            $cases[] = array($fixer);
+        $this->assertRegExp('/^[A-Z@].*\.$/', $definition->getSummary(), 'Description must start with capital letter or an @ and end with dot.');
+
+        if ($definition instanceof ShortFixerDefinition) {
+            $this->markTestIncomplete('ShortFixerDefinition does not contains all needed information.');
         }
 
-        return $cases;
+        $this->assertNotEmpty($definition->getCodeSamples(), 'Code samples are required.');
+
+        if ($this->isFixerConfigurable($fixer)) {
+            $this->assertNotEmpty($definition->getConfigurationDescription(), 'Configuration description is required.');
+            $this->assertNotEmpty($definition->getDefaultConfiguration(), 'Default configuration is required.');
+        }
+
+        if ($fixer->isRisky()) {
+            $this->assertNotEmpty($definition->getRiskyDescription(), 'Risky reasoning is required.');
+        }
+    }
+
+    public function provideFixerDefinitionsCases()
+    {
+        return array_map(function (FixerInterface $fixer) {
+            return array($fixer);
+        }, $this->getAllFixers());
     }
 
     /**
@@ -475,5 +490,26 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
         $fixer->configure(Argument::is(null))->willReturn(null);
 
         return $fixer->reveal();
+    }
+
+    /**
+     * @param FixerInterface $fixer
+     *
+     * @return bool
+     *
+     * @todo There is no need to have it at FixerInterface, but there are 3 places with this code copy-pasted,
+     *       it needs to be extracted to service.
+     */
+    private function isFixerConfigurable(FixerInterface $fixer)
+    {
+        try {
+            $fixer->configure(array());
+
+            return true;
+        } catch (UnallowedFixerConfigurationException $e) {
+            return false;
+        } catch (\Exception $e) {
+            return true;
+        }
     }
 }
