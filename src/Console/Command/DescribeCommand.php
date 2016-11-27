@@ -12,11 +12,14 @@
 
 namespace PhpCsFixer\Console\Command;
 
-use PhpCsFixer\ConfigurationException\UnallowedFixerConfigurationException;
 use PhpCsFixer\Differ\DiffConsoleFormatter;
 use PhpCsFixer\Differ\SebastianBergmannDiffer;
+use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\DescribedFixerInterface;
+use PhpCsFixer\Fixer\FixerInterface;
+use PhpCsFixer\FixerDefinition;
+use PhpCsFixer\FixerDefinitionInterface;
 use PhpCsFixer\FixerFactory;
-use PhpCsFixer\FixerInterface;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\ShortFixerDefinition;
 use PhpCsFixer\StdinFileInfo;
@@ -28,6 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ * @author SpacePossum
  *
  * @internal
  */
@@ -67,15 +71,15 @@ final class DescribeCommand extends Command
         $name = $input->getArgument('name');
         try {
             if ('@' === $name[0]) {
-                $this->describeSet($input, $output, $name);
+                $this->describeSet($output, $name);
 
                 return;
             }
 
-            $this->describeRule($input, $output, $name);
+            $this->describeRule($output, $name);
         } catch (DescribeNameNotFoundException $e) {
             $alternative = $this->getAlternative($e->getType(), $name);
-            $this->describeList($input, $output, $e->getType());
+            $this->describeList($output, $e->getType());
 
             throw new \InvalidArgumentException(sprintf(
                 '%s %s not found.%s',
@@ -85,11 +89,10 @@ final class DescribeCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
      * @param OutputInterface $output
      * @param string          $name
      */
-    private function describeRule(InputInterface $input, OutputInterface $output, $name)
+    private function describeRule(OutputInterface $output, $name)
     {
         $fixers = $this->getFixers();
 
@@ -97,10 +100,15 @@ final class DescribeCommand extends Command
             throw new DescribeNameNotFoundException($name, 'rule');
         }
 
+        /** @var FixerInterface $fixer */
         $fixer = $fixers[$name];
-        $definition = $fixer->getDefinition();
+        if ($fixer instanceof DescribedFixerInterface) {
+            $definition = $fixer->getDefinition();
+        } else {
+            $definition = new FixerDefinition('[n/a]', '[n/a]', array(), null);
+        }
 
-        $output->writeln(sprintf('<info>Description of %s rule.</info>', $name));
+        $output->writeln(sprintf('<info>Description of</info> %s <info>rule</info>.', $name));
         $output->writeln($definition->getSummary());
         if ($definition->getDescription()) {
             $output->writeln($definition->getDescription());
@@ -117,7 +125,7 @@ final class DescribeCommand extends Command
             $output->writeln('');
         }
 
-        if ($this->isFixerConfigurable($fixer)) {
+        if ($fixer instanceof ConfigurableFixerInterface) {
             $output->writeln('<comment>Fixer is configurable.</comment>');
 
             if ($definition->getConfigurationDescription()) {
@@ -144,7 +152,10 @@ final class DescribeCommand extends Command
             foreach ($definition->getCodeSamples() as $index => $codeSample) {
                 $old = $codeSample[0];
                 $tokens = Tokens::fromCode($old);
-                $fixer->configure($codeSample[1]);
+                if ($fixer instanceof ConfigurableFixerInterface) {
+                    $fixer->configure($codeSample[1]);
+                } // TODO better testing if samples are valid
+
                 $fixer->fix(new StdinFileInfo(), $tokens);
                 $new = $tokens->generateCode();
                 $diff = $differ->diff($old, $new);
@@ -167,11 +178,10 @@ final class DescribeCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
      * @param OutputInterface $output
      * @param string          $name
      */
-    private function describeSet(InputInterface $input, OutputInterface $output, $name)
+    private function describeSet(OutputInterface $output, $name)
     {
         if (!in_array($name, $this->getSetNames(), true)) {
             throw new DescribeNameNotFoundException($name, 'set');
@@ -183,18 +193,19 @@ final class DescribeCommand extends Command
 
         $fixers = $this->getFixers();
 
-        $output->writeln(sprintf('<info>Description of %s set.</info>', $name));
+        $output->writeln(sprintf('<info>Description of</info> %s <info>set.</info>', $name));
         $output->writeln('');
 
         $help = '';
 
         foreach ($rules as $rule => $config) {
+            /** @var FixerDefinitionInterface $definition */
+            $definition = $fixers[$rule]->getDefinition();
             $help .= sprintf(
-                " * <info>%s</info>%s\n   | %s\n%s\n",
+                " * <info>%s</info>%s%s\n",
                 $rule,
-                $fixers[$rule]->isRisky() ? ' <error>[risky]</error>' : '',
-                $fixers[$rule]->getDescription(),
-                true !== $config ? sprintf("   <comment>| Configuration: %s</comment>\n", $this->arrayToText($config)) : ''
+                $fixers[$rule]->isRisky() ? ' <error>risky</error>' : '',
+                $definition->getDescription()
             );
         }
 
@@ -202,23 +213,10 @@ final class DescribeCommand extends Command
     }
 
     /**
-     * @param FixerInterface $fixer
+     * @param array $data
      *
-     * @return bool
+     * @return string
      */
-    private function isFixerConfigurable(FixerInterface $fixer)
-    {
-        try {
-            $fixer->configure(array());
-
-            return true;
-        } catch (UnallowedFixerConfigurationException $e) {
-            return false;
-        } catch (\Exception $e) {
-            return true;
-        }
-    }
-
     private function arrayToText(array $data)
     {
         // Output modifications:
@@ -302,11 +300,10 @@ final class DescribeCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
      * @param OutputInterface $output
      * @param string          $type   'rule'|'set'
      */
-    private function describeList(InputInterface $input, OutputInterface $output, $type)
+    private function describeList(OutputInterface $output, $type)
     {
         if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
             $describe = array(
@@ -319,10 +316,11 @@ final class DescribeCommand extends Command
             return;
         }
 
+        /** @var string[] $items */
         foreach ($describe as $list => $items) {
             $output->writeln(sprintf('<comment>Defined %s:</comment>', $list));
             foreach ($items as $name => $item) {
-                $output->writeln(sprintf('- %s', is_string($name) ? $name : $item));
+                $output->writeln(sprintf('* <info>%s</info>', is_string($name) ? $name : $item));
             }
         }
     }

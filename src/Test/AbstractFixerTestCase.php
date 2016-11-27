@@ -13,8 +13,9 @@
 namespace PhpCsFixer\Test;
 
 use GeckoPackages\PHPUnit\Constraints\SameStringsConstraint;
+use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\FixerFactory;
-use PhpCsFixer\FixerInterface;
 use PhpCsFixer\Linter\Linter;
 use PhpCsFixer\Linter\LinterInterface;
 use PhpCsFixer\RuleSet;
@@ -34,7 +35,7 @@ abstract class AbstractFixerTestCase extends \PHPUnit_Framework_TestCase
     protected $linter;
 
     /**
-     * @var null|FixerInterface
+     * @var null|FixerInterface|ConfigurableFixerInterface
      */
     protected $fixer;
 
@@ -55,9 +56,8 @@ abstract class AbstractFixerTestCase extends \PHPUnit_Framework_TestCase
     protected function createFixer()
     {
         $fixerClassName = $this->getFixerClassName();
-        $fixer = new $fixerClassName();
 
-        return $fixer;
+        return new $fixerClassName();
     }
 
     /**

@@ -18,11 +18,10 @@ use PhpCsFixer\Differ\SebastianBergmannDiffer;
 use PhpCsFixer\Error\Error;
 use PhpCsFixer\Error\ErrorsManager;
 use PhpCsFixer\FileRemoval;
+use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\FixerFactory;
-use PhpCsFixer\FixerInterface;
 use PhpCsFixer\Linter\Linter;
 use PhpCsFixer\Linter\LinterInterface;
-use PhpCsFixer\RuleSet;
 use PhpCsFixer\Runner\Runner;
 use PhpCsFixer\WhitespacesFixerConfig;
 use Prophecy\Argument;
@@ -97,6 +96,8 @@ abstract class AbstractIntegrationTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param IntegrationCase $case
+     *
      * @dataProvider getTests
      *
      * @see doTest()
