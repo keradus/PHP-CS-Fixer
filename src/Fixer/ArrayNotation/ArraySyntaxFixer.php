@@ -89,12 +89,12 @@ final class ArraySyntaxFixer extends AbstractFixer implements ConfigurableFixerI
             array(
                 array(
                     "<?php\n[1,2];",
-                    array('syntax' => 'long')
+                    array('syntax' => 'long'),
                 ),
                 array(
                     "<?php\narray(1,2);",
-                    array('syntax' => 'short')
-                )
+                    array('syntax' => 'short'),
+                ),
             ),
             'Configure to write array declaration in long or short syntax.',
             array('syntax' => 'long')

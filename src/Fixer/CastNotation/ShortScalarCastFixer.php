@@ -59,7 +59,7 @@ final class ShortScalarCastFixer extends AbstractFixer
             'Cast "(boolean)" and "(integer)" should be written as "(bool)" and "(int)". "(double)" and "(real)" as "(float)".',
             null,
             array(
-                array("<?php\n\$a = (boolean) \$b; \$a = (integer) \$b; \$a = (boolean) \$b; \$a = (double) \$b;")
+                array("<?php\n\$a = (boolean) \$b; \$a = (integer) \$b; \$a = (boolean) \$b; \$a = (double) \$b;"),
             )
         );
     }
