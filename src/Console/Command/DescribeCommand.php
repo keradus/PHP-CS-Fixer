@@ -17,7 +17,6 @@ use PhpCsFixer\Differ\SebastianBergmannDiffer;
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\DescribedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
-use PhpCsFixer\FixerDefinition;
 use PhpCsFixer\FixerDefinitionInterface;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\RuleSet;
@@ -105,7 +104,7 @@ final class DescribeCommand extends Command
         if ($fixer instanceof DescribedFixerInterface) {
             $definition = $fixer->getDefinition();
         } else {
-            $definition = new FixerDefinition('[n/a]', '[n/a]', array(), null);
+            $definition = new ShortFixerDefinition('Description is not availble.');
         }
 
         $output->writeln(sprintf('<info>Description of</info> %s <info>rule</info>.', $name));
