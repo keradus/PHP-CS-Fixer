@@ -13,6 +13,7 @@
 namespace PhpCsFixer\Fixer\CastNotation;
 
 use PhpCsFixer\AbstractFixer;
+use PhpCsFixer\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -21,14 +22,6 @@ use PhpCsFixer\Tokenizer\Tokens;
  */
 final class ShortScalarCastFixer extends AbstractFixer
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function isCandidate(Tokens $tokens)
-    {
-        return $tokens->isAnyTokenKindsFound(Token::getCastTokenKinds());
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -60,8 +53,22 @@ final class ShortScalarCastFixer extends AbstractFixer
     /**
      * {@inheritdoc}
      */
-    protected function getDescription()
+    public function getDefinition()
     {
-        return 'Cast "(boolean)" and "(integer)" should be written as "(bool)" and "(int)". "(double)" and "(real)" as "(float)".';
+        return new FixerDefinition(
+            'Cast "(boolean)" and "(integer)" should be written as "(bool)" and "(int)". "(double)" and "(real)" as "(float)".',
+            null,
+            array(
+                array("<?php\n\$a = (boolean) \$b; \$a = (integer) \$b; \$a = (boolean) \$b; \$a = (double) \$b;")
+            )
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isCandidate(Tokens $tokens)
+    {
+        return $tokens->isAnyTokenKindsFound(Token::getCastTokenKinds());
     }
 }

@@ -158,11 +158,10 @@ final class DescribeCommand extends Command
                 $fixer->fix(new StdinFileInfo(), $tokens);
                 $new = $tokens->generateCode();
                 $diff = $differ->diff($old, $new);
-
-                if (null === $codeSample[1]) {
-                    $output->writeln(sprintf(' * Example #%d.', $index + 1));
-                } else {
+                if (isset($codeSample[1])) {
                     $output->writeln(sprintf(' * Example #%d. Fixing with configuration: <comment>%s</comment>.', $index + 1, $this->arrayToText($codeSample[1])));
+                } else {
+                    $output->writeln(sprintf(' * Example #%d.', $index + 1));
                 }
                 $output->writeln($diffFormatter->format($diff, '   %s'));
                 $output->writeln('');

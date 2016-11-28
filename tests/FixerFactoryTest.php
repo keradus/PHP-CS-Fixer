@@ -390,6 +390,8 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
             // test valid is string
             // test is valid PHP
             // test applies correctly (i.e. is candidate)
+
+            // configuration @ offset 1 is not required
         }
 
         if ($fixer instanceof ConfigurableFixerInterface) {
