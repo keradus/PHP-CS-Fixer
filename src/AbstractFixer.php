@@ -91,13 +91,6 @@ abstract class AbstractFixer implements FixerInterface, DescribedFixerInterface
         );
     }
 
-    /**
-     * Legacy, will be removed if proper description has been added to all fixers.
-     *
-     * @return string
-     */
-    abstract protected function getDescription();
-
     private function getDefaultWhitespacesFixerConfig()
     {
         static $defaultWhitespacesFixerConfig = null;
