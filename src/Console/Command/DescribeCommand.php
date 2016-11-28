@@ -15,7 +15,7 @@ namespace PhpCsFixer\Console\Command;
 use PhpCsFixer\Differ\DiffConsoleFormatter;
 use PhpCsFixer\Differ\SebastianBergmannDiffer;
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
-use PhpCsFixer\Fixer\DescribedFixerInterface;
+use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\FixerDefinitionInterface;
 use PhpCsFixer\FixerFactory;
@@ -101,7 +101,7 @@ final class DescribeCommand extends Command
 
         /** @var FixerInterface $fixer */
         $fixer = $fixers[$name];
-        if ($fixer instanceof DescribedFixerInterface) {
+        if ($fixer instanceof DefinedFixerInterface) {
             $definition = $fixer->getDefinition();
         } else {
             $definition = new ShortFixerDefinition('Description is not availble.');

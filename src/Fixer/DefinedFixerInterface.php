@@ -18,7 +18,7 @@ use PhpCsFixer\FixerDefinitionInterface;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-interface DescribedFixerInterface
+interface DefinedFixerInterface
 {
     /**
      * Returns the definition of the fixer.
