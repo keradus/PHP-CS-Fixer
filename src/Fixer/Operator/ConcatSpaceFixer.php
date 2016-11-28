@@ -71,10 +71,13 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurableFixerI
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDefinition()
     {
         return new FixerDefinition(
-            $this->getDescription(),
+            'Concatenation should be spaced according configuration.',
             null,
             array(
                 array(
@@ -102,14 +105,6 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurableFixerI
     public function isCandidate(Tokens $tokens)
     {
         return $tokens->isTokenKindFound('.');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDescription()
-    {
-        return 'Concatenation should be spaced according configuration.';
     }
 
     /**

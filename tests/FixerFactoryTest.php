@@ -12,13 +12,13 @@
 
 namespace PhpCsFixer\Tests;
 
+use GeckoPackages\PHPUnit\Asserts\StringsAssertTrait;
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\DescribedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\ShortFixerDefinition;
-use Prophecy\Argument;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -27,6 +27,8 @@ use Prophecy\Argument;
  */
 final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
 {
+    use StringsAssertTrait;
+
     public function testInterfaceIsFluent()
     {
         $factory = new FixerFactory();
@@ -378,15 +380,30 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
             $this->markTestIncomplete('ShortFixerDefinition does not contains all needed information.');
         }
 
-        $this->assertNotEmpty($definition->getCodeSamples(), 'Code samples are required.');
+        $samples = $definition->getCodeSamples();
+        $this->assertInternalType('array', $samples, 'Code samples must be an array.');
+        $this->assertNotEmpty($samples, 'Code samples are required.');
+
+        foreach ($samples as $sample) {
+            $this->assertInstanceOf('PhpCsFixer\FixerDefinition\CodeSampleInterface', $sample);
+            // TODO
+            // test valid is string
+            // test is valid PHP
+            // test applies correctly (i.e. is candidate)
+        }
 
         if ($fixer instanceof ConfigurableFixerInterface) {
-            $this->assertNotEmpty($definition->getConfigurationDescription(), 'Configuration description is required.');
-            $this->assertNotEmpty($definition->getDefaultConfiguration(), 'Default configuration is required.');
+            $this->assertStringIsNotEmpty($definition->getConfigurationDescription(), 'Configuration description is required.');
+            $this->assertStringIsNotEmpty($definition->getDefaultConfiguration(), 'Default configuration is required.');
+        } else {
+            $this->assertNull($definition->getConfigurationDescription());
+            $this->assertNull($definition->getDefaultConfiguration());
         }
 
         if ($fixer->isRisky()) {
-            $this->assertNotEmpty($definition->getRiskyDescription(), 'Risky reasoning is required.');
+            $this->assertStringIsNotEmpty($definition->getRiskyDescription(), 'Risky reasoning is required.');
+        } else {
+            $this->assertNull($definition->getRiskyDescription());
         }
     }
 
