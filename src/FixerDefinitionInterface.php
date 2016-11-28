@@ -23,7 +23,7 @@ interface FixerDefinitionInterface
     public function getSummary();
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getDescription();
 

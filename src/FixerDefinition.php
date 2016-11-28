@@ -38,7 +38,7 @@ final class FixerDefinition implements FixerDefinitionInterface
         array $codeSamples,
         $configurationDescription,
         array $defaultConfiguration = null,
-        $riskyDescription = null
+        $riskyDescription
     ) {
         $this->summary = $summary;
         $this->description = $description;

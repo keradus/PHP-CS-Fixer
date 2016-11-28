@@ -35,7 +35,7 @@ abstract class AbstractFixerTestCase extends \PHPUnit_Framework_TestCase
     protected $linter;
 
     /**
-     * @var null|FixerInterface|ConfigurableFixerInterface
+     * @var null|FixerInterface
      */
     protected $fixer;
 

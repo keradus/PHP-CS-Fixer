@@ -96,8 +96,6 @@ abstract class AbstractIntegrationTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param IntegrationCase $case
-     *
      * @dataProvider getTests
      *
      * @see doTest()
