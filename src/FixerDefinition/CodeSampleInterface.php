@@ -10,20 +10,20 @@
  * with this source code in the file LICENSE.
  */
 
-namespace PhpCsFixer\Fixer;
-
-use PhpCsFixer\FixerDefinition\FixerDefinitionInterface;
+namespace PhpCsFixer\FixerDefinition;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
- * @author SpacePossum
  */
-interface DefinedFixerInterface
+interface CodeSampleInterface
 {
     /**
-     * Returns the definition of the fixer.
-     *
-     * @return FixerDefinitionInterface
+     * @return string
      */
-    public function getDefinition();
+    public function getCode();
+
+    /**
+     * @return null|array
+     */
+    public function getConfiguration();
 }

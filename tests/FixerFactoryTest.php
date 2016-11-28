@@ -15,9 +15,9 @@ namespace PhpCsFixer\Tests;
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
+use PhpCsFixer\FixerDefinition\ShortFixerDefinition;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\RuleSet;
-use PhpCsFixer\ShortFixerDefinition;
 use Prophecy\Argument;
 
 /**

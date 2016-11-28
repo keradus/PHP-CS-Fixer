@@ -10,7 +10,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace PhpCsFixer;
+namespace PhpCsFixer\FixerDefinition;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -27,8 +27,8 @@ final class FixerDefinition implements FixerDefinitionInterface
     /**
      * @param string      $summary
      * @param null|string $description
-     * @param array       $codeSamples              array of samples, where single sample is [code, configuration]
-     * @param null|string $configurationDescription null for non-configurable fixer
+     * @param CodeSampleInterface[]       $codeSamples              array of samples, where single sample is [code, configuration]
+     * @param null|string            $configurationDescription null for non-configurable fixer
      * @param null|array  $defaultConfiguration     null for non-configurable fixer
      * @param null|string $riskyDescription         null for non-risky fixer
      */
