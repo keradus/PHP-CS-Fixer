@@ -10,12 +10,14 @@
  * with this source code in the file LICENSE.
  */
 
-namespace PhpCsFixer;
+namespace PhpCsFixer\Fixer;
+
+use PhpCsFixer\WhitespacesFixerConfig;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-interface WhitespacesFixerConfigAwareInterface
+interface WhitespacesAwareFixerInterface
 {
     public function setWhitespacesConfig(WhitespacesFixerConfig $config);
 }

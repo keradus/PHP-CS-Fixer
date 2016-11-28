@@ -16,6 +16,7 @@ use PhpCsFixer\ConfigurationException\RequiredFixerConfigurationException;
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\DescribedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
+use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -39,7 +40,7 @@ abstract class AbstractFixer implements FixerInterface, DescribedFixerInterface
             }
         }
 
-        if ($this instanceof WhitespacesFixerConfigAwareInterface) {
+        if ($this instanceof WhitespacesAwareFixerInterface) {
             $this->whitespacesConfig = $this->getDefaultWhitespacesFixerConfig();
         }
     }
