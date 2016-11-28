@@ -25,12 +25,12 @@ final class FixerDefinition implements FixerDefinitionInterface
     private $description;
 
     /**
-     * @param string      $summary
-     * @param null|string $description
-     * @param CodeSampleInterface[]       $codeSamples              array of samples, where single sample is [code, configuration]
-     * @param null|string            $configurationDescription null for non-configurable fixer
-     * @param null|array  $defaultConfiguration     null for non-configurable fixer
-     * @param null|string $riskyDescription         null for non-risky fixer
+     * @param string                $summary
+     * @param null|string           $description
+     * @param CodeSampleInterface[] $codeSamples              array of samples, where single sample is [code, configuration]
+     * @param null|string           $configurationDescription null for non-configurable fixer
+     * @param null|array            $defaultConfiguration     null for non-configurable fixer
+     * @param null|string           $riskyDescription         null for non-risky fixer
      */
     public function __construct(
         $summary,

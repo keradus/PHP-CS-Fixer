@@ -48,7 +48,8 @@ final class CodeSample implements CodeSampleInterface
     /**
      * @return null|array
      */
-    public function getConfiguration() {
+    public function getConfiguration()
+    {
         return $this->configuration;
     }
 }
