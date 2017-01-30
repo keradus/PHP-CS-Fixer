@@ -17,29 +17,7 @@ matrix:
     fast_finish: true
     include:
         - php: 7.0
-          env: DEPLOY=yes TASK_TESTS_COVERAGE=1
         - php: 7.1
-          env: TASK_SCA=1
-        - php: 5.3
-          env: SKIP_LINT_TEST_CASES=1 COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
-        - php: 5.4
-          env: SKIP_LINT_TEST_CASES=1
-        - php: 5.5
-          env: SKIP_LINT_TEST_CASES=1
-        - php: 5.6
-        - php: 7.1
-          env: SYMFONY_VERSION="^2.8"
-        # Use the newer stack for HHVM as HHVM does not support Precise anymore since a long time and so Precise has an outdated version
-        - php: hhvm-3.9
-          env: SKIP_LINT_TEST_CASES=1
-          sudo: required
-          dist: trusty
-          group: edge
-        - php: hhvm
-          env: SKIP_LINT_TEST_CASES=1
-          sudo: required
-          dist: trusty
-          group: edge
 
 cache:
     directories:
@@ -74,14 +52,7 @@ install:
     - composer info -D | sort
 
 script:
-    - if [ $TASK_SCA == 1 ]; then php php-cs-fixer fix --rules declare_strict_types -q; fi
-
-    - if [ $TASK_TESTS == 1 ] && [ $TASK_TESTS_COVERAGE == 0 ]; then vendor/bin/phpunit --verbose; fi
-    - if [ $TASK_TESTS == 1 ] && [ $TASK_TESTS_COVERAGE == 1 ]; then phpdbg -qrr vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml; fi
-
-    - if [ $TASK_SCA == 1 ]; then git checkout . -q; fi
-
-    - if [ $TASK_CS == 1 ]; then php php-cs-fixer --diff --dry-run -v fix; fi
+    - vendor/bin/phpunit tests/IntegrationTest.php
 
 after_success:
     - if [ $TASK_TESTS_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
