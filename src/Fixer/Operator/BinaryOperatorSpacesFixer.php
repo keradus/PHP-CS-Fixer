@@ -14,10 +14,10 @@ namespace PhpCsFixer\Fixer\Operator;
 
 use PhpCsFixer\AbstractAlignFixerHelper;
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -26,51 +26,27 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class BinaryOperatorSpacesFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class BinaryOperatorSpacesFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var array<string, bool|null>
-     */
-    private $configuration;
-
-    /**
-     * @var array
-     */
-    private static $defaultConfiguration = array(
-        'align_equals' => false,
-        'align_double_arrow' => false,
-    );
-
     /**
      * @var AbstractAlignFixerHelper[]
      */
     private $alignFixerHelpers = array();
 
     /**
-     * Key any of; 'align_equals', 'align_double_arrow'.
-     * Value 'bool': 'false' do unalign, 'true' do align, or 'null': do not modify.
-     *
-     * @param array<string, bool|null> $configuration
+     * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
+    public function getConfigurationDefinition()
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        $configurationDefinition = new OptionsResolver();
 
-            return;
-        }
+        return $configurationDefinition
+            ->setDefault('align_equals', false)
+            ->setAllowedValues('align_equals', array(true, false, null))
 
-        foreach ($configuration as $name => $value) {
-            if (!array_key_exists($name, self::$defaultConfiguration)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown configuration option "%s". Expected any of "%s".', $name, implode('", "', array_keys(self::$defaultConfiguration))));
-            }
-
-            if (null !== $value && !is_bool($value)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Invalid value type for configuration option "%s". Expected "bool" or "null" got "%s".', $name, is_object($value) ? get_class($value) : gettype($value)));
-            }
-        }
-
-        $this->configuration = array_merge(self::$defaultConfiguration, $configuration);
+            ->setDefault('align_double_arrow', false)
+            ->setAllowedValues('align_double_arrow', array(true, false, null))
+        ;
     }
 
     /**
@@ -159,7 +135,7 @@ $foo = array(
             ),
             null,
             'Aligns or unaligns `=` in consecutive assignments, or `=>` in array initializations',
-            self::$defaultConfiguration
+            $this->getDefaultConfiguration()
         );
     }
 

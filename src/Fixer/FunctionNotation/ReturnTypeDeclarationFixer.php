@@ -13,57 +13,30 @@
 namespace PhpCsFixer\Fixer\FunctionNotation;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class ReturnTypeDeclarationFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class ReturnTypeDeclarationFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var array
-     */
-    private static $defaultConfiguration = array(
-        'space_before' => 'none',
-    );
-
-    /**
-     * @var string
-     */
-    private $configuration;
-
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
+    public function getConfigurationDefinition()
     {
-        if (null === $configuration) {
-            $this->configuration = 'none';
+        $configurationDefinition = new OptionsResolver();
 
-            return;
-        }
-
-        $key = 'space_before';
-        $values = array('one', 'none');
-
-        if (!array_key_exists($key, $configuration) || !in_array($configuration[$key], $values, true)) {
-            throw new InvalidFixerConfigurationException(
-                $this->getName(),
-                sprintf(
-                    'Configuration must define "%s" being "%s".',
-                    $key,
-                    implode('" or "', $values)
-                )
-            );
-        }
-
-        $this->configuration = $configuration[$key];
+        return $configurationDefinition
+            ->setDefault('space_before', 'none')
+            ->setAllowedValues('space_before', array('one', 'none'))
+        ;
     }
 
     /**
@@ -71,6 +44,8 @@ final class ReturnTypeDeclarationFixer extends AbstractFixer implements Configur
      */
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
+        $oneSpaceBefore = 'one' === $this->configuration['space_before'];
+
         for ($index = 0, $limit = $tokens->count(); $index < $limit; ++$index) {
             $token = $tokens[$index];
 
@@ -81,12 +56,12 @@ final class ReturnTypeDeclarationFixer extends AbstractFixer implements Configur
             $previousToken = $tokens[$index - 1];
 
             if ($previousToken->isWhitespace()) {
-                if ('none' === $this->configuration) {
-                    $previousToken->clear();
-                } else {
+                if ($oneSpaceBefore) {
                     $previousToken->setContent(' ');
+                } else {
+                    $previousToken->clear();
                 }
-            } elseif ('one' === $this->configuration) {
+            } elseif ($oneSpaceBefore) {
                 $tokens->ensureWhitespaceAtIndex($index, 0, ' ');
                 ++$index;
             }
@@ -123,7 +98,7 @@ final class ReturnTypeDeclarationFixer extends AbstractFixer implements Configur
             ),
             'Rule is applied only in a PHP 7+ environment.',
             "Configuration must have one element 'space_before' with value 'none' (default) or 'one'.",
-            self::$defaultConfiguration
+            $this->getDefaultConfiguration()
         );
     }
 

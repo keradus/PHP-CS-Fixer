@@ -13,17 +13,19 @@
 namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author SpacePossum
  */
-final class PhpUnitDedicateAssertFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class PhpUnitDedicateAssertFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
     private static $fixMap = array(
         'array_key_exists' => array('assertArrayNotHasKey', 'assertArrayHasKey'),
@@ -50,56 +52,65 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
     );
 
     /**
-     * @var string[]
-     */
-    private static $defaultConfiguration = array(
-        'array_key_exists',
-        'empty',
-        'file_exists',
-        'is_infinite',
-        'is_nan',
-        'is_null',
-        'is_array',
-        'is_bool',
-        'is_boolean',
-        'is_callable',
-        'is_double',
-        'is_float',
-        'is_int',
-        'is_integer',
-        'is_long',
-        'is_​numeric',
-        'is_object',
-        'is_real',
-        'is_​resource',
-        'is_scalar',
-        'is_string',
-    );
-
-    /**
-     * @var string[]
-     */
-    private $configuration;
-
-    /**
-     * @param array|null $configuration
+     * {@inheritdoc}
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        if (is_array($configuration) && count($configuration) && !array_key_exists('functions', $configuration)) {
+            @trigger_error(
+                'Passing functions at the root of the configuration is deprecated and will not be supported in 3.0, use "functions" => array(...) option instead.',
+                E_USER_DEPRECATED
+            );
 
-            return;
+            $configuration = array('functions' => $configuration);
         }
 
-        $this->configuration = array();
-        foreach ($configuration as $method) {
-            if (!array_key_exists($method, self::$fixMap)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown configuration method "%s".', $method));
-            }
+        parent::configure($configuration);
+    }
 
-            $this->configuration[] = $method;
-        }
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigurationDefinition()
+    {
+        $functions = array(
+            'array_key_exists',
+            'empty',
+            'file_exists',
+            'is_infinite',
+            'is_nan',
+            'is_null',
+            'is_array',
+            'is_bool',
+            'is_boolean',
+            'is_callable',
+            'is_double',
+            'is_float',
+            'is_int',
+            'is_integer',
+            'is_long',
+            'is_​numeric',
+            'is_object',
+            'is_real',
+            'is_​resource',
+            'is_scalar',
+            'is_string',
+        );
+        $configurationDefinition = new OptionsResolver();
+
+        return $configurationDefinition
+            ->setDefault('functions', $functions)
+            ->setAllowedTypes('functions', 'array')
+            ->setNormalizer('functions', function (Options $options, $value) use ($functions) {
+                foreach ($value as $method) {
+                    if (!in_array($method, $functions, true)) {
+                        throw new InvalidOptionsException(sprintf('Function "%s" is not handled by this fixer.', $method));
+                    }
+                }
+
+                return $value;
+            })
+        ;
     }
 
     /**
@@ -167,7 +178,7 @@ $this->assertTrue(is_nan($a));
             ),
             null,
             'List of strings which methods should be modified.',
-            self::$defaultConfiguration,
+            $this->getDefaultConfiguration(),
             'Fixer could be risky if one is overwritting PHPUnit\'s native methods.'
         );
     }
@@ -260,7 +271,7 @@ $this->assertTrue(is_nan($a));
         ) = $assertIndexes;
 
         $content = strtolower($tokens[$testIndex]->getContent());
-        if (!in_array($content, $this->configuration, true)) {
+        if (!in_array($content, $this->configuration['functions'], true)) {
             return $assertCallCloseIndex;
         }
 

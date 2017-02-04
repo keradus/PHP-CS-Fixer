@@ -24,22 +24,23 @@ use PhpCsFixer\WhitespacesFixerConfig;
  */
 final class ClassDefinitionFixerTest extends AbstractFixerTestCase
 {
-    private static $defaultTestConfig = array(
-        'singleLine' => false,
-        'singleItemSingleLine' => false,
-        'multiLineExtendsEachSingleLine' => false,
-    );
-
     public function testConfigureDefaultToNull()
     {
+        $defaultConfig = array(
+            'singleLine' => false,
+            'singleItemSingleLine' => false,
+            'multiLineExtendsEachSingleLine' => false,
+        );
+
         $fixer = new ClassDefinitionFixer();
-        $fixer->configure(self::$defaultTestConfig);
+        $fixer->configure($defaultConfig);
+        $this->assertAttributeSame($defaultConfig, 'configuration', $fixer);
+
         $fixer->configure(null);
+        $this->assertAttributeSame($defaultConfig, 'configuration', $fixer);
 
-        $defaultConfigProperty = new \ReflectionProperty('PhpCsFixer\Fixer\ClassNotation\ClassDefinitionFixer', 'defaultConfiguration');
-        $defaultConfigProperty->setAccessible(true);
-
-        $this->assertAttributeSame($defaultConfigProperty->getValue(), 'config', $fixer);
+        $fixer->configure(array());
+        $this->assertAttributeSame($defaultConfig, 'configuration', $fixer);
     }
 
     /**
@@ -66,7 +67,7 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
      */
     public function testFixingClasses($expected, $input)
     {
-        $this->fixer->configure(self::$defaultTestConfig);
+        $this->fixer->configure(array());
 
         $this->doTest($expected, $input);
     }
@@ -93,7 +94,7 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
      */
     public function testFixingInterfaces($expected, $input)
     {
-        $this->fixer->configure(self::$defaultTestConfig);
+        $this->fixer->configure(array());
 
         $this->doTest($expected, $input);
     }
@@ -110,16 +111,16 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
             $this->markTestSkipped('Test requires traits.');
         }
 
-        $this->fixer->configure(self::$defaultTestConfig);
+        $this->fixer->configure(array());
 
         $this->doTest($expected, $input);
     }
 
     public function testInvalidConfigurationKey()
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '/^\[class_definition\] Unknown configuration item "a", expected any of "singleLine, singleItemSingleLine, multiLineExtendsEachSingleLine".$/'
+            '[class_definition] Invalid configuration: The option "a" does not exist.'
         );
 
         $fixer = new ClassDefinitionFixer();
@@ -128,9 +129,9 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
 
     public function testInvalidConfigurationValueType()
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '/^\[class_definition\] Configuration value for item "singleLine" must be a bool, got "string".$/'
+            '[class_definition] Invalid configuration: The option "singleLine" with value "z" is expected to be of type "bool", but is of type "string".'
         );
 
         $fixer = new ClassDefinitionFixer();
@@ -540,7 +541,7 @@ namespace {
      */
     public function testFixPHP7($expected, $input = null)
     {
-        $this->fixer->configure(self::$defaultTestConfig);
+        $this->fixer->configure(array());
 
         $this->doTest($expected, $input);
     }
@@ -590,7 +591,7 @@ $a = new class implements
     public function testMessyWhitespaces($expected, $input = null)
     {
         $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig("\t", "\r\n"));
-        $this->fixer->configure(self::$defaultTestConfig);
+        $this->fixer->configure(array());
 
         $this->doTest($expected, $input);
     }

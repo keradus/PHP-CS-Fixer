@@ -25,9 +25,9 @@ final class ArraySyntaxFixerTest extends AbstractFixerTestCase
 {
     public function testInvalidConfiguration()
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '#^\[array_syntax\] Configuration must define "syntax" being "short" or "long".$#'
+            '[array_syntax] Invalid configuration: The option "a" does not exist.'
         );
 
         $this->fixer->configure(array('a' => 1));
@@ -36,6 +36,12 @@ final class ArraySyntaxFixerTest extends AbstractFixerTestCase
     public function testFixWithDefaultConfiguration()
     {
         $this->fixer->configure(null);
+        $this->doTest(
+            '<?php $a = array(); $b = array();',
+            '<?php $a = array(); $b = [];'
+        );
+
+        $this->fixer->configure(array());
         $this->doTest(
             '<?php $a = array(); $b = array();',
             '<?php $a = array(); $b = [];'

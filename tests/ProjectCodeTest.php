@@ -73,6 +73,8 @@ final class ProjectCodeTest extends \PHPUnit_Framework_TestCase
         $allowedMethods[] = '__wakeup';
 
         $exceptionMethods = array(
+            'configure', // due to AbstractFixer::configure
+            'getDefaultConfiguration', // due to AbstractFixer::getDefaultConfiguration
             'setWhitespacesConfig', // due to AbstractFixer::setWhitespacesConfig
         );
 
@@ -145,7 +147,7 @@ final class ProjectCodeTest extends \PHPUnit_Framework_TestCase
         $exceptionPropsPerClass = array(
             'PhpCsFixer\AbstractPhpdocTypesFixer' => array('tags'),
             'PhpCsFixer\AbstractAlignFixerHelper' => array('deepestLevel'),
-            'PhpCsFixer\AbstractFixer' => array('whitespacesConfig'),
+            'PhpCsFixer\AbstractFixer' => array('configuration', 'whitespacesConfig'),
             'PhpCsFixer\AbstractProxyFixer' => array('proxyFixer'),
             'PhpCsFixer\Test\AbstractFixerTestCase' => array('fixer', 'linter'),
             'PhpCsFixer\Test\AbstractIntegrationTestCase' => array('linter'),

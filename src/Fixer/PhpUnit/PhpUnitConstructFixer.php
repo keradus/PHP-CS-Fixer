@@ -13,32 +13,19 @@
 namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var string[]
-     */
-    private static $defaultConfiguration = array(
-        'assertEquals',
-        'assertSame',
-        'assertNotEquals',
-        'assertNotSame',
-    );
-
-    /**
-     * @var string[]
-     */
-    private $configuration;
-
     private static $assertionFixers = array(
         'assertSame' => 'fixAssertPositive',
         'assertEquals' => 'fixAssertPositive',
@@ -51,19 +38,47 @@ final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurableF
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        if (is_array($configuration) && count($configuration) && !array_key_exists('assertions', $configuration)) {
+            @trigger_error(
+                'Passing assertions at the root of the configuration is deprecated and will not be supported in 3.0, use "assertions" => array(...) option.',
+                E_USER_DEPRECATED
+            );
 
-            return;
+            $configuration = array('assertions' => $configuration);
         }
 
-        foreach ($configuration as $method) {
-            if (!array_key_exists($method, self::$assertionFixers)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Configured method "%s" cannot be fixed by this fixer.', $method));
-            }
-        }
+        parent::configure($configuration);
+    }
 
-        $this->configuration = $configuration;
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigurationDefinition()
+    {
+        $fixers = self::$assertionFixers;
+        $configurationDefinition = new OptionsResolver();
+
+        return $configurationDefinition
+            ->setDefault('assertions', array(
+                'assertEquals',
+                'assertSame',
+                'assertNotEquals',
+                'assertNotSame',
+            ))
+            ->setAllowedTypes('assertions', 'array')
+            ->setNormalizer('assertions', function (Options $options, $value) use ($fixers) {
+                foreach ($value as $method) {
+                    if (!array_key_exists($method, $fixers)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Configured method "%s" cannot be fixed by this fixer.',
+                            $method
+                        ));
+                    }
+                }
+
+                return $value;
+            })
+        ;
     }
 
     /**
@@ -88,11 +103,11 @@ final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurableF
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
         // no assertions to be fixed - fast return
-        if (empty($this->configuration)) {
+        if (empty($this->configuration['assertions'])) {
             return;
         }
 
-        foreach ($this->configuration as $assertionMethod) {
+        foreach ($this->configuration['assertions'] as $assertionMethod) {
             $assertionFixer = self::$assertionFixers[$assertionMethod];
 
             for ($index = 0, $limit = $tokens->count(); $index < $limit; ++$index) {
@@ -133,7 +148,7 @@ $this->assertNotSame(null, $d);
             ),
             null,
             'List of strings which methods should be modified.',
-            self::$defaultConfiguration,
+            $this->getDefaultConfiguration(),
             'Fixer could be risky if one is overwritting PHPUnit\'s native methods.'
         );
     }

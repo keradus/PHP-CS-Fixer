@@ -13,52 +13,61 @@
 namespace PhpCsFixer\Fixer\Whitespace;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Javier Spagnoletti <phansys@gmail.com>
  */
-final class NoSpacesAroundOffsetFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class NoSpacesAroundOffsetFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var string[]
-     */
-    private $configuration = array();
-
-    /**
-     * Default target/configuration.
-     *
-     * @var string[]
-     */
-    private static $defaultConfiguration = array(
-        'inside',
-        'outside',
-    );
-
     /**
      * {@inheritdoc}
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        if (is_array($configuration) && count($configuration) && !array_key_exists('positions', $configuration)) {
+            @trigger_error(
+                'Passing positions at the root of the configuration is deprecated and will not be supported in 3.0, use "positions" => array(...) option instead.',
+                E_USER_DEPRECATED
+            );
 
-            return;
+            $configuration = array('positions' => $configuration);
         }
 
-        foreach ($configuration as $name) {
-            if (!in_array($name, self::$defaultConfiguration, true)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown configuration option "%s".', $name));
-            }
-        }
+        parent::configure($configuration);
+    }
 
-        $this->configuration = $configuration;
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigurationDefinition()
+    {
+        $configurationDefinition = new OptionsResolver();
+
+        return $configurationDefinition
+            ->setDefault('positions', array('inside', 'outside'))
+            ->setAllowedTypes('positions', 'array')
+            ->setNormalizer('positions', function (Options $options, $value) {
+                foreach ($value as $position) {
+                    if (!in_array($position, array('inside', 'outside'), true)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Unknown position "%s".',
+                            $position
+                        ));
+                    }
+                }
+
+                return $value;
+            })
+        ;
     }
 
     /**
@@ -71,7 +80,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
                 continue;
             }
 
-            if (in_array('inside', $this->configuration, true)) {
+            if (in_array('inside', $this->configuration['positions'], true)) {
                 if ($token->equals('[')) {
                     $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_INDEX_SQUARE_BRACE, $index);
                 } else {
@@ -85,7 +94,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
                 $this->removeWhitespaceToken($tokens[$endIndex - 1]);
             }
 
-            if (in_array('outside', $this->configuration, true)) {
+            if (in_array('outside', $this->configuration['positions'], true)) {
                 $prevNonWhitespaceIndex = $tokens->getPrevNonWhitespace($index);
                 if ($tokens[$prevNonWhitespaceIndex]->isComment()) {
                     continue;
@@ -110,7 +119,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
             ),
             null,
             'Configure if the fixer must fix spaces inside or outside the offset braces or both (default).',
-            self::$defaultConfiguration
+            $this->getDefaultConfiguration()
         );
     }
 

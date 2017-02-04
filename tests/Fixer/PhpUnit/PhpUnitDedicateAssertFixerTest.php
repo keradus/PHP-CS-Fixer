@@ -30,6 +30,36 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
     public function testInternalTypeMethods($expected, $input = null)
     {
         $this->doTest($expected, $input);
+
+        $defaultFunctions = array(
+            'array_key_exists',
+            'empty',
+            'file_exists',
+            'is_infinite',
+            'is_nan',
+            'is_null',
+            'is_array',
+            'is_bool',
+            'is_boolean',
+            'is_callable',
+            'is_double',
+            'is_float',
+            'is_int',
+            'is_integer',
+            'is_long',
+            'is_​numeric',
+            'is_object',
+            'is_real',
+            'is_​resource',
+            'is_scalar',
+            'is_string',
+        );
+
+        $this->fixer->configure($defaultFunctions);
+        $this->doTest($expected, $input);
+
+        $this->fixer->configure(array('functions' => $defaultFunctions));
+        $this->doTest($expected, $input);
     }
 
     public function provideInternalTypeMethods()
@@ -198,13 +228,25 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
                     $this->assertTrue(is_infinite($a));
             '
         );
+
+        $this->fixer->configure(array('functions' => array('file_exists')));
+        $this->doTest(
+            '<?php
+                    $this->assertFileExists($a);
+                    $this->assertTrue(is_infinite($a));
+            ',
+            '<?php
+                    $this->assertTrue(file_exists($a));
+                    $this->assertTrue(is_infinite($a));
+            '
+        );
     }
 
     public function testInvalidConfig()
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '/^\[php_unit_dedicate_assert\] Unknown configuration method "_unknown_".$/'
+            '[php_unit_dedicate_assert] Invalid configuration: Function "_unknown_" is not handled by this fixer.'
         );
 
         $this->fixer->configure(array('_unknown_'));

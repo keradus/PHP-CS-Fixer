@@ -13,28 +13,21 @@
 namespace PhpCsFixer\Fixer\Phpdoc;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
 use PhpCsFixer\DocBlock\DocBlock;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author SpacePossum
  */
-final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    private static $defaultConfiguration = array(
-        'this' => '$this',
-        '@this' => '$this',
-        '$self' => 'self',
-        '@self' => 'self',
-        '$static' => 'static',
-        '@static' => 'static',
-    );
-
     private static $toTypes = array(
         '$this',
         'static',
@@ -42,53 +35,70 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
     );
 
     /**
-     * @var array<string, string>
-     */
-    private $configuration;
-
-    /**
      * {@inheritdoc}
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        if (is_array($configuration) && count($configuration) && !array_key_exists('replacements', $configuration)) {
+            @trigger_error(
+                'Passing replacements at the root of the configuration is deprecated and will not be supported in 3.0, use "replacements" => array(...) option instead.',
+                E_USER_DEPRECATED
+            );
 
-            return;
+            $configuration = array('replacements' => $configuration);
         }
 
-        $newConfig = array();
-        foreach ($configuration as $key => $value) {
-            if (is_string($key)) {
-                $key = strtolower($key);
-            }
+        parent::configure($configuration);
+    }
 
-            if (!isset(self::$defaultConfiguration[$key])) {
-                throw new InvalidFixerConfigurationException(
-                    $this->getName(),
-                    sprintf(
-                        'Unknown key "%s", expected any of "%s".',
-                        is_object($key) ? get_class($key) : gettype($key).(is_resource($key) ? '' : '#'.$key),
-                        implode('", "', array_keys(self::$defaultConfiguration))
-                    )
-                );
-            }
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigurationDefinition()
+    {
+        $toTypes = self::$toTypes;
+        $default = array(
+            'this' => '$this',
+            '@this' => '$this',
+            '$self' => 'self',
+            '@self' => 'self',
+            '$static' => 'static',
+            '@static' => 'static',
+        );
+        $configurationDefinition = new OptionsResolver();
 
-            if (!in_array($value, self::$toTypes, true)) {
-                throw new InvalidFixerConfigurationException(
-                    $this->getName(),
-                    sprintf(
-                        'Unknown value "%s", expected any of "%s".',
-                        is_object($value) ? get_class($value) : gettype($value).(is_resource($value) ? '' : '#'.$value),
-                        implode('", "', self::$toTypes)
-                    )
-                );
-            }
+        return $configurationDefinition
+            ->setDefault('replacements', $default)
+            ->addAllowedTypes('replacements', 'array')
+            ->setNormalizer('replacements', function (Options $options, $value) use ($toTypes, $default) {
+                $normalizedValue = array();
+                foreach ($value as $from => $to) {
+                    if (is_string($from)) {
+                        $from = strtolower($from);
+                    }
 
-            $newConfig[strtolower($key)] = $value;
-        }
+                    if (!isset($default[$from])) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Unknown key "%s", expected any of "%s".',
+                            is_object($from) ? get_class($from) : gettype($from).(is_resource($from) ? '' : '#'.$from),
+                            implode('", "', array_keys($default))
+                        ));
+                    }
 
-        $this->configuration = $newConfig;
+                    if (!in_array($to, $toTypes, true)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Unknown value "%s", expected any of "%s".',
+                            is_object($to) ? get_class($to) : gettype($to).(is_resource($to) ? '' : '#'.$to),
+                            implode('", "', $toTypes)
+                        ));
+                    }
+
+                    $normalizedValue[$from] = $to;
+                }
+
+                return $normalizedValue;
+            })
+        ;
     }
 
     /**
@@ -109,6 +119,8 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
      */
     public function getDefinition()
     {
+        $defaultConfiguration = $this->getDefaultConfiguration();
+
         return new FixerDefinition(
             'The type of `@return` annotations of methods returning a reference to itself must the configured one.',
             array(new CodeSample('
@@ -127,10 +139,10 @@ class Sample
             '',
             sprintf(
                 'Fixer can be configured to fix any of (case insensitive) `%s` to any of `%s`.',
-                implode('`,`', array_keys(self::$defaultConfiguration)),
+                implode('`,`', array_keys($defaultConfiguration)),
                 implode('`,`', self::$toTypes)
             ),
-            self::$defaultConfiguration
+            $defaultConfiguration
         );
     }
 
@@ -183,7 +195,7 @@ class Sample
         $newTypes = array();
         foreach ($types as $type) {
             $lower = strtolower($type);
-            $newTypes[] = isset($this->configuration[$lower]) ? $this->configuration[$lower] : $type;
+            $newTypes[] = isset($this->configuration['replacements'][$lower]) ? $this->configuration['replacements'][$lower] : $type;
         }
 
         if ($types === $newTypes) {

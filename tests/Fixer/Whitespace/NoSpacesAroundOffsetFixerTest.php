@@ -279,6 +279,9 @@ $var = $arr[0]{     0
     {
         $this->fixer->configure($configuration);
         $this->doTest($expected, $input);
+
+        $this->fixer->configure(array('positions' => $configuration));
+        $this->doTest($expected, $input);
     }
 
     public function provideConfigurationCases()
@@ -328,9 +331,9 @@ EOT
 
     public function testWrongConfig()
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '/^\[no_spaces_around_offset\] Unknown configuration option "foo"\.$/'
+             '[no_spaces_around_offset] Invalid configuration: Unknown position "foo".'
         );
 
         $this->fixer->configure(array('foo'));

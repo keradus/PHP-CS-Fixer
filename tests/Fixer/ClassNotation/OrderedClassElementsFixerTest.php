@@ -431,7 +431,9 @@ class Foo
 EOT;
 
         $this->fixer->configure($configuration);
+        $this->doTest($expected, $input);
 
+        $this->fixer->configure(array('order' => $configuration));
         $this->doTest($expected, $input);
     }
 
@@ -571,7 +573,7 @@ EOT
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[ordered_class_elements] Unknown class element type "foo".'
+            '[ordered_class_elements] Invalid configuration: Unknow class element "foo".'
         );
 
         $this->fixer->configure(array('foo'));

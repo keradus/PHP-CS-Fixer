@@ -13,56 +13,90 @@
 namespace PhpCsFixer\Fixer\Alias;
 
 use PhpCsFixer\AbstractFunctionReferenceFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Vladimir Reznichenko <kalessil@gmail.com>
  */
-final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer implements ConfigurableFixerInterface
+final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer implements ConfigurationDefinitionFixerInterface
 {
     /**
      * @var array
      */
-    private $configuration;
-
-    /**
-     * @var array
-     */
-    private static $defaultConfiguration = array(
-        'getrandmax' => array('alternativeName' => 'mt_getrandmax', 'argumentCount' => array(0)),
-        'mt_rand' => array('alternativeName' => 'mt_rand', 'argumentCount' => array(1, 2)),
-        'rand' => array('alternativeName' => 'mt_rand', 'argumentCount' => array(0, 2)),
-        'srand' => array('alternativeName' => 'mt_srand', 'argumentCount' => array(0, 1)),
+    private static $argumentCounts = array(
+        'getrandmax' => array(0),
+        'mt_rand' => array(1, 2),
+        'rand' => array(0, 2),
+        'srand' => array(0, 1),
     );
 
     /**
-     * @param string[]|null $configuration
+     * {@inheritdoc}
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        if (is_array($configuration) && count($configuration) && !array_key_exists('replacements', $configuration)) {
+            @trigger_error(
+                'Passing replacements at the root of the configuration is deprecated and will not be supported in 3.0, use "replacements" => array(...) option instead.',
+                E_USER_DEPRECATED
+            );
 
-            return;
+            $configuration = array('replacements' => $configuration);
         }
 
-        foreach ($configuration as $functionName => $replacement) {
-            if (!array_key_exists($functionName, self::$defaultConfiguration)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('"%s" is not handled by the fixer.', $functionName));
-            }
+        parent::configure($configuration);
 
-            if (!is_string($replacement)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Expected string got "%s".', is_object($replacement) ? get_class($replacement) : gettype($replacement)));
-            }
-
-            $configuration[$functionName] = array('alternativeName' => $replacement, 'argumentCount' => self::$defaultConfiguration[$functionName]['argumentCount']);
+        foreach ($this->configuration['replacements'] as $functionName => $replacement) {
+            $this->configuration['replacements'][$functionName] = array(
+                'alternativeName' => $replacement,
+                'argumentCount' => self::$argumentCounts[$functionName],
+            );
         }
+    }
 
-        $this->configuration = $configuration;
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigurationDefinition()
+    {
+        $argumentCounts = self::$argumentCounts;
+        $configurationDefinition = new OptionsResolver();
+
+        return $configurationDefinition
+            ->setDefault('replacements', array(
+                'getrandmax' => 'mt_getrandmax',
+                'mt_rand' => 'mt_rand',
+                'rand' => 'mt_rand',
+                'srand' => 'mt_srand',
+            ))
+            ->setAllowedTypes('replacements', 'array')
+            ->setNormalizer('replacements', function (Options $options, $value) use ($argumentCounts) {
+                foreach ($value as $functionName => $replacement) {
+                    if (!array_key_exists($functionName, $argumentCounts)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Function "%s" is not handled by the fixer.',
+                            $functionName
+                        ));
+                    }
+
+                    if (!is_string($replacement)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Replacement for function "%s" must be a string, "%s" given.',
+                            $functionName,
+                            is_object($replacement) ? get_class($replacement) : gettype($replacement)
+                        ));
+                    }
+                }
+
+                return $value;
+            })
+        ;
     }
 
     /**
@@ -70,7 +104,7 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
      */
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
-        foreach ($this->configuration as $functionIdentity => $functionReplacement) {
+        foreach ($this->configuration['replacements'] as $functionIdentity => $functionReplacement) {
             if ($functionIdentity === $functionReplacement['alternativeName']) {
                 continue;
             }
@@ -111,12 +145,7 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
             ),
             null,
             'Configure any of the functions `getrandmax`, `rand` and `srand` to be replaced with modern versions.',
-            array(
-                'getrandmax' => 'mt_getrandmax',
-                'rand' => 'mt_rand',
-                'mt_rand' => 'mt_rand',
-                'srand' => 'mt_srand',
-            ),
+            $this->getDefaultConfiguration(),
             'Risky when the configured functions are overridden.'
         );
     }

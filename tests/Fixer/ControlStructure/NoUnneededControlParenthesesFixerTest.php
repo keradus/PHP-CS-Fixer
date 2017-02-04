@@ -30,10 +30,16 @@ final class NoUnneededControlParenthesesFixerTest extends AbstractFixerTestCase
         parent::setUpBeforeClass();
 
         $fixer = new NoUnneededControlParenthesesFixer();
-        $fixer->configure(null);
-        $controlStatementsProperty = new \ReflectionProperty($fixer, 'controlStatements');
+        $controlStatementsProperty = new \ReflectionProperty($fixer, 'configuration');
         $controlStatementsProperty->setAccessible(true);
-        self::$defaultStatements = $controlStatementsProperty->getValue($fixer);
+
+        $fixer->configure(null);
+        $configuration = $controlStatementsProperty->getValue($fixer);
+        self::$defaultStatements = $configuration['control_statements'];
+
+        $fixer->configure(array());
+        $configuration = $controlStatementsProperty->getValue($fixer);
+        self::$defaultStatements = $configuration['control_statements'];
     }
 
     /**
@@ -459,7 +465,12 @@ final class NoUnneededControlParenthesesFixerTest extends AbstractFixerTestCase
     private function fixerTest($expected, $input = null, $fixStatement = null)
     {
         // Default config. Fixes all statements.
+        $this->doTest($expected, $input);
+
         $this->fixer->configure(self::$defaultStatements);
+        $this->doTest($expected, $input);
+
+        $this->fixer->configure(array('control_statements' => self::$defaultStatements));
         $this->doTest($expected, $input);
 
         // Empty array config. Should not fix anything.

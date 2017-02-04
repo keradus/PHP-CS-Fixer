@@ -13,9 +13,10 @@
 namespace PhpCsFixer\Fixer\Basic;
 
 use PhpCsFixer\AbstractPsrAutoloadingFixer;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\FileSpecificCodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -24,29 +25,19 @@ use PhpCsFixer\Tokenizer\Tokens;
  * @author Bram Gotink <bram@gotink.me>
  * @author Graham Campbell <graham@alt-three.com>
  */
-final class Psr0Fixer extends AbstractPsrAutoloadingFixer implements ConfigurableFixerInterface
+final class Psr0Fixer extends AbstractPsrAutoloadingFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var array
-     */
-    private static $defaultConfiguration = array();
-
-    private $configuration = array();
-
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
+    public function getConfigurationDefinition()
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        $configurationDefinition = new OptionsResolver();
 
-            return;
-        }
-
-        if (isset($configuration['dir'])) {
-            $this->configuration['dir'] = $configuration['dir'];
-        }
+        return $configurationDefinition
+            ->setDefined('dir')
+            ->setAllowedTypes('dir', 'string')
+        ;
     }
 
     /**
@@ -168,7 +159,7 @@ class InvalidName {}
             ),
             null,
             'One could set up `dir` where the code is placed under project location.',
-            self::$defaultConfiguration,
+            $this->getDefaultConfiguration(),
             'This fixer may change you class name, which will break the code that is depended on old name.'
         );
     }

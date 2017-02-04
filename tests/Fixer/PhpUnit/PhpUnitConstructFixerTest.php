@@ -47,11 +47,22 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
         ));
         $this->doTest($expected, $input);
 
-        $this->fixer->configure(array());
-        $this->doTest($input ?: $expected, null);
+        $this->fixer->configure(array('assertions' => array(
+            'assertEquals',
+            'assertSame',
+            'assertNotEquals',
+            'assertNotSame',
+        )));
+        $this->doTest($expected, $input);
 
         foreach (array('assertSame', 'assertEquals', 'assertNotEquals', 'assertNotSame') as $method) {
             $this->fixer->configure(array($method));
+            $this->doTest(
+                $expected,
+                $input && false !== strpos($input, $method) ? $input : null
+            );
+
+            $this->fixer->configure(array('assertions' => array($method)));
             $this->doTest(
                 $expected,
                 $input && false !== strpos($input, $method) ? $input : null
@@ -100,7 +111,7 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[php_unit_construct] Configured method "__TEST__" cannot be fixed by this fixer.'
+            '[php_unit_construct] Invalid configuration: Configured method "__TEST__" cannot be fixed by this fixer.'
         );
 
         $this->fixer->configure(array('__TEST__'));

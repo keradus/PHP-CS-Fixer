@@ -96,6 +96,14 @@ class Test {
 }
 EOF;
         $this->doTest($this->removeLinesFromString($template, $lineNumberRemoved), $template);
+
+        if (null === $config) {
+            $this->fixer->configure(array());
+        } else {
+            $this->fixer->configure(array('tokens' => $config));
+        }
+
+        $this->doTest($this->removeLinesFromString($template, $lineNumberRemoved), $template);
     }
 
     public function provideConfigTests()
@@ -137,12 +145,6 @@ EOF;
             $all[1] = array_merge($test[1], $all[1]);
         }
         $tests[] = $all;
-
-        // default configuration test
-        $tests[] = array(
-            array(23, 24),
-            null,
-        );
 
         return $tests;
     }
@@ -423,7 +425,7 @@ EOF
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[no_extra_consecutive_blank_lines] Unknown configuration item "__TEST__" passed.'
+            '[no_extra_consecutive_blank_lines] Invalid configuration: Unknown token "__TEST__".'
         );
 
         $this->fixer->configure(array('__TEST__'));
@@ -840,12 +842,13 @@ class Foo
     }
 
     /**
+     * @param array       $config
      * @param string      $expected
      * @param null|string $input
      *
      * @dataProvider provideMessyWhitespacesCases
      */
-    public function testMessyWhitespaces(array $config = null, $expected, $input = null)
+    public function testMessyWhitespaces(array $config, $expected, $input = null)
     {
         $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig("\t", "\r\n"));
         $this->fixer->configure($config);
@@ -857,7 +860,7 @@ class Foo
     {
         return array(
             array(
-                null,
+                array(),
                 "<?php\r\nuse AAA;\r\n\r\nuse BBB;\r\n\r\n",
                 "<?php\r\nuse AAA;\r\n\r\n\r\n\r\nuse BBB;\r\n\r\n",
             ),

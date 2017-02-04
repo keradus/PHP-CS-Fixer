@@ -14,39 +14,46 @@ namespace PhpCsFixer\Fixer\Phpdoc;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\DocBlock\DocBlock;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @author Graham Campbell <graham@alt-three.com>
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var string[]
-     */
-    protected $configuration;
-
-    /**
-     * @var array
-     */
-    private static $defaultConfiguration = array();
-
     /**
      * {@inheritdoc}
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        if (is_array($configuration) && count($configuration) && !array_key_exists('annotations', $configuration)) {
+            @trigger_error(
+                'Passing annotations at the root of the configuration is deprecated and will not be supported in 3.0, use "annotations" => array(...) option.',
+                E_USER_DEPRECATED
+            );
 
-            return;
+            $configuration = array('annotations' => $configuration);
         }
 
-        $this->configuration = $configuration;
+        parent::configure($configuration);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigurationDefinition()
+    {
+        $configurationDefinition = new OptionsResolver();
+
+        return $configurationDefinition
+            ->setDefault('annotations', array())
+            ->setAllowedTypes('annotations', 'array')
+        ;
     }
 
     /**
@@ -54,7 +61,7 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
      */
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
-        if (!count($this->configuration)) {
+        if (!count($this->configuration['annotations'])) {
             return;
         }
 
@@ -64,7 +71,7 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
             }
 
             $doc = new DocBlock($token->getContent());
-            $annotations = $doc->getAnnotationsOfType($this->configuration);
+            $annotations = $doc->getAnnotationsOfType($this->configuration['annotations']);
 
             // nothing to do if there are no annotations
             if (empty($annotations)) {
@@ -99,7 +106,7 @@ function foo() {}',
             ),
             null,
             'Array of not wanted annotations could be configured, eg `[\'@author\']`.',
-            self::$defaultConfiguration
+            $this->getDefaultConfiguration()
         );
     }
 
