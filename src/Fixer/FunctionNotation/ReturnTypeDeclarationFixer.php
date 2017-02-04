@@ -36,6 +36,7 @@ final class ReturnTypeDeclarationFixer extends AbstractFixer implements Configur
         return $configurationDefinition
             ->setDefault('space_before', 'none')
             ->setAllowedValues('space_before', array('one', 'none'))
+            ->setDescription('space_before', 'spacing to apply before colon')
         ;
     }
 

@@ -41,12 +41,15 @@ final class ClassDefinitionFixer extends AbstractFixer implements ConfigurationD
         return $configurationDefinition
             ->setDefault('singleLine', false)
             ->setAllowedTypes('singleLine', 'bool')
+            ->setDescription('singleLine', 'whether definitions should be single line')
 
             ->setDefault('singleItemSingleLine', false)
             ->setAllowedTypes('singleItemSingleLine', 'bool')
+            ->setDescription('singleItemSingleLine', 'whether definitions should be single line when including a single item')
 
             ->setDefault('multiLineExtendsEachSingleLine', false)
             ->setAllowedTypes('multiLineExtendsEachSingleLine', 'bool')
+            ->setDescription('multiLineExtendsEachSingleLine', 'whether definitions should be multiline')
         ;
     }
 

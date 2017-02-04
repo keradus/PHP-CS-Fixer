@@ -53,6 +53,7 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
         return $configurationDefinition
             ->setDefault('annotations', array())
             ->setAllowedTypes('annotations', 'array')
+            ->setDescription('annotations', 'list of annotations to remove, e.g. ["@author"]')
         ;
     }
 

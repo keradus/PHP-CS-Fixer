@@ -149,6 +149,7 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
 
                 return $value;
             })
+            ->setDescription('tokens', 'list of tokens to fix')
         ;
     }
 

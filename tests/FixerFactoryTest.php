@@ -13,6 +13,7 @@
 namespace PhpCsFixer\Tests;
 
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSampleInterface;
 use PhpCsFixer\FixerFactory;
@@ -441,6 +442,35 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
         return array_map(function (FixerInterface $fixer) {
             return array($fixer);
         }, $this->getAllFixers());
+    }
+
+    /**
+     * @param ConfigurationDefinitionFixerInterface $fixer
+     *
+     * @dataProvider provideFixerConfigurationDefinitionsCases
+     */
+    public function testFixerConfigurationDefinitions(ConfigurationDefinitionFixerInterface $fixer)
+    {
+        $configurationDefinition = $fixer->getConfigurationDefinition();
+
+        $this->assertInstanceOf('PhpCsFixer\OptionsResolver', $configurationDefinition);
+
+        foreach ($configurationDefinition->getDefinedOptions() as $option) {
+            $description = $configurationDefinition->getDescription($option);
+
+            $this->assertNotNull($description);
+        }
+    }
+
+    public function provideFixerConfigurationDefinitionsCases()
+    {
+        $fixers = array_filter($this->getAllFixers(), function (FixerInterface $fixer) {
+            return $fixer instanceof ConfigurationDefinitionFixerInterface;
+        });
+
+        return array_map(function (FixerInterface $fixer) {
+            return array($fixer);
+        }, $fixers);
     }
 
     /**

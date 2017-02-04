@@ -51,6 +51,7 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
         return $configurationDefinition
             ->setDefault('space', 'none')
             ->setAllowedValues('space', array('single', 'none'))
+            ->setDescription('space', 'spacing to apply around the equal sign')
         ;
     }
 

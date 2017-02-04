@@ -67,6 +67,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
 
                 return $value;
             })
+            ->setDescription('positions', 'whether spacing should be fixed inside and/or outside the offset braces')
         ;
     }
 

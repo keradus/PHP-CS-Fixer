@@ -69,6 +69,7 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
         return $configurationDefinition
             ->setDefault('sortAlgorithm', self::SORT_ALPHA)
             ->setAllowedValues('sortAlgorithm', $this->supportedSortAlgorithms)
+            ->setDescription('sortAlgorithm', 'whether the statements should be sorted alphabetically or by length')
 
             ->setDefault('importsOrder', null)
             ->setAllowedTypes('importsOrder', array('array', 'null'))
@@ -95,6 +96,7 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
 
                 return $value;
             })
+            ->setDescription('importsOrder', 'defines the order of import types')
         ;
     }
 

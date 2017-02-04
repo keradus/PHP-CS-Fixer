@@ -43,9 +43,11 @@ final class BinaryOperatorSpacesFixer extends AbstractFixer implements Configura
         return $configurationDefinition
             ->setDefault('align_equals', false)
             ->setAllowedValues('align_equals', array(true, false, null))
+            ->setDescription('align_equals', 'whether to apply, remove or ignore equals alignment')
 
             ->setDefault('align_double_arrow', false)
             ->setAllowedValues('align_double_arrow', array(true, false, null))
+            ->setDescription('align_double_arrow', 'whether to apply, remove or ignore double arrows alignment')
         ;
     }
 

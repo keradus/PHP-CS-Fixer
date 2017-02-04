@@ -26,6 +26,21 @@ class OptionsResolver extends BaseOptionsResolver
     private $defaults = array();
 
     /**
+     * @var string[]
+     */
+    private $descriptions = array();
+
+    /**
+     * @var array
+     */
+    private $allowedValues = array();
+
+    /**
+     * @var array
+     */
+    private $allowedTypes = array();
+
+    /**
      * {@inheritdoc}
      */
     public function setDefault($option, $value)
@@ -70,6 +85,149 @@ class OptionsResolver extends BaseOptionsResolver
     }
 
     /**
+     * Sets the description of an option.
+     *
+     * @param string $option      The name of the option
+     * @param string $description The description of the option
+     *
+     * @throws UndefinedOptionsException When the option is not defined
+     *
+     * @return $this
+     */
+    public function setDescription($option, $description)
+    {
+        if (!$this->isDefined($option)) {
+            throw new UndefinedOptionsException(sprintf('The option "%s" does not exist.', $option));
+        }
+
+        $this->descriptions[$option] = $description;
+
+        return $this;
+    }
+
+    /**
+     * Returns the description of an option.
+     *
+     * @param string $option The name of the option
+     *
+     * @throws UndefinedOptionsException When the option is not defined
+     *
+     * @return string|null The default value of the option if set, null otherwise
+     */
+    public function getDescription($option)
+    {
+        if (!$this->isDefined($option)) {
+            throw new UndefinedOptionsException(sprintf('The option "%s" does not exist.', $option));
+        }
+
+        if (!array_key_exists($option, $this->descriptions)) {
+            return null;
+        }
+
+        return $this->descriptions[$option];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAllowedValues($option, $allowedValues = null)
+    {
+        parent::setAllowedValues($option, $allowedValues);
+
+        $this->allowedValues[$option] = is_array($allowedValues) ? $allowedValues : array($allowedValues);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addAllowedValues($option, $allowedValues = null)
+    {
+        parent::addAllowedValues($option, $allowedValues);
+
+        if (!is_array($allowedValues)) {
+            $allowedValues = array($allowedValues);
+        }
+
+        if (!isset($this->allowedValues[$option])) {
+            $this->allowedValues[$option] = $allowedValues;
+        } else {
+            $this->allowedValues[$option] = array_merge($this->allowedValues[$option], $allowedValues);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns the allowed values of an option.
+     *
+     * @param string $option
+     *
+     * @return array|null
+     */
+    public function getAllowedValues($option)
+    {
+        if (!$this->isDefined($option)) {
+            throw new UndefinedOptionsException(sprintf('The option "%s" does not exist.', $option));
+        }
+
+        if (!array_key_exists($option, $this->allowedValues)) {
+            return null;
+        }
+
+        return $this->allowedValues[$option];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAllowedTypes($option, $allowedTypes = null)
+    {
+        parent::setAllowedTypes($option, $allowedTypes);
+
+        $this->allowedTypes[$option] = (array) $allowedTypes;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addAllowedTypes($option, $allowedTypes = null)
+    {
+        parent::addAllowedTypes($option, $allowedTypes);
+
+        if (!isset($this->allowedTypes[$option])) {
+            $this->allowedTypes[$option] = (array) $allowedTypes;
+        } else {
+            $this->allowedTypes[$option] = array_merge($this->allowedTypes[$option], (array) $allowedTypes);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns the allowed types of an option.
+     *
+     * @param string $option
+     *
+     * @return array|null
+     */
+    public function getAllowedTypes($option)
+    {
+        if (!$this->isDefined($option)) {
+            throw new UndefinedOptionsException(sprintf('The option "%s" does not exist.', $option));
+        }
+
+        if (!array_key_exists($option, $this->allowedTypes)) {
+            return null;
+        }
+
+        return $this->allowedTypes[$option];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function remove($optionNames)
@@ -77,7 +235,12 @@ class OptionsResolver extends BaseOptionsResolver
         parent::remove($optionNames);
 
         foreach ((array) $optionNames as $option) {
-            unset($this->defaults[$option]);
+            unset(
+                $this->defaults[$option],
+                $this->descriptions[$option],
+                $this->allowedValues[$option],
+                $this->allowedTypes[$option]
+            );
         }
 
         return $this;
@@ -91,6 +254,9 @@ class OptionsResolver extends BaseOptionsResolver
         parent::clear();
 
         $this->defaults = array();
+        $this->descriptions = array();
+        $this->allowedValues = array();
+        $this->allowedTypes = array();
 
         return $this;
     }

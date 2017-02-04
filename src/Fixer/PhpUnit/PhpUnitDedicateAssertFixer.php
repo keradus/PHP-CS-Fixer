@@ -110,6 +110,7 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
 
                 return $value;
             })
+            ->setDescription('functions', 'list of assertions to fix')
         ;
     }
 

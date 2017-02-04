@@ -78,6 +78,223 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSetDescriptionWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->setDescription('foo', 'Foo');
+    }
+
+    public function testSetDescription()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->setDescription('foo', 'Foo')
+        );
+    }
+
+    public function testGetDescription()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertNull($optionsResolver->getDescription('foo'));
+
+        $optionsResolver->setDescription('foo', 'Foo');
+
+        $this->assertSame('Foo', $optionsResolver->getDescription('foo'));
+    }
+
+    public function testGetDescriptionWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getDescription('foo');
+    }
+
+    public function testSetAllowedValuesWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->setAllowedValues('foo', array('bar', 'baz'));
+    }
+
+    public function testSetAllowedValues()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->setAllowedValues('foo', 'bar')
+        );
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->setAllowedValues('foo', array('bar', 'baz'))
+        );
+    }
+
+    public function testGetAllowedValues()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertNull($optionsResolver->getAllowedValues('foo'));
+
+        $optionsResolver->setAllowedValues('foo', 'bar');
+
+        $this->assertSame(
+            array('bar'),
+            $optionsResolver->getAllowedValues('foo')
+        );
+
+        $optionsResolver->setAllowedValues('foo', array('bar', 'baz'));
+
+        $this->assertSame(
+            array('bar', 'baz'),
+            $optionsResolver->getAllowedValues('foo')
+        );
+    }
+
+    public function testGetAllowedValuesWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getAllowedValues('foo');
+    }
+
+    public function testAddAllowedValues()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->addAllowedValues('foo', 'bar')
+        );
+
+        $this->assertSame(
+            array('bar'),
+            $optionsResolver->getAllowedValues('foo')
+        );
+
+        $optionsResolver->addAllowedValues('foo', 'baz');
+
+        $this->assertSame(
+            array('bar', 'baz'),
+            $optionsResolver->getAllowedValues('foo')
+        );
+    }
+
+    public function testAddAllowedValuesWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->addAllowedValues('foo', 'bar');
+    }
+
+    public function testSetAllowedTypesWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->setAllowedTypes('foo', array('bar', 'baz'));
+    }
+
+    public function testSetAllowedTypes()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->setAllowedTypes('foo', 'bar')
+        );
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->setAllowedTypes('foo', array('bar', 'baz'))
+        );
+    }
+
+    public function testGetAllowedTypes()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertNull($optionsResolver->getAllowedTypes('foo'));
+
+        $optionsResolver->setAllowedTypes('foo', 'bar');
+
+        $this->assertSame(
+            array('bar'),
+            $optionsResolver->getAllowedTypes('foo')
+        );
+
+        $optionsResolver->setAllowedTypes('foo', array('bar', 'baz'));
+
+        $this->assertSame(
+            array('bar', 'baz'),
+            $optionsResolver->getAllowedTypes('foo')
+        );
+    }
+
+    public function testGetAllowedTypesWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getAllowedTypes('foo');
+    }
+
+    public function testAddAllowedTypesWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->addAllowedTypes('foo', 'bar');
+    }
+
+    public function testAddAllowedTypes()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->addAllowedTypes('foo', 'bar')
+        );
+
+        $this->assertSame(
+            array('bar'),
+            $optionsResolver->getAllowedTypes('foo')
+        );
+
+        $optionsResolver->addAllowedTypes('foo', 'baz');
+
+        $this->assertSame(
+            array('bar', 'baz'),
+            $optionsResolver->getAllowedTypes('foo')
+        );
+    }
+
     public function testRemove()
     {
         $optionsResolver = new OptionsResolver();
@@ -123,6 +340,75 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         $optionsResolver->remove('foo');
 
         $this->assertSame(array(), $optionsResolver->getDefaults());
+    }
+
+    public function testGetDescriptionAfterRemove()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setDescription('foo', 'Foo');
+        $optionsResolver->remove('foo');
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getDescription('foo');
+    }
+
+    public function testGetDescriptionAfterRemoveAndDefine()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setDescription('foo', 'Foo');
+        $optionsResolver->remove('foo');
+        $optionsResolver->setDefined('foo');
+
+        $this->assertNull($optionsResolver->getDescription('foo'));
+    }
+
+    public function testGetAllowedValuesAfterRemove()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setAllowedValues('foo', 'bar');
+        $optionsResolver->remove('foo');
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getAllowedValues('foo');
+    }
+
+    public function testGetAllowedValuesAfterRemoveAndDefine()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setAllowedValues('foo', 'bar');
+        $optionsResolver->remove('foo');
+        $optionsResolver->setDefined('foo');
+
+        $this->assertNull($optionsResolver->getAllowedValues('foo'));
+    }
+
+    public function testGetAllowedTypesAfterRemove()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setAllowedTypes('foo', 'bar');
+        $optionsResolver->remove('foo');
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getAllowedTypes('foo');
+    }
+
+    public function testGetAllowedTypesAfterRemoveAndDefine()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setAllowedTypes('foo', 'bar');
+        $optionsResolver->remove('foo');
+        $optionsResolver->setDefined('foo');
+
+        $this->assertNull($optionsResolver->getAllowedTypes('foo'));
     }
 
     public function testClear()
@@ -171,5 +457,41 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         $optionsResolver->clear();
 
         $this->assertSame(array(), $optionsResolver->getDefaults());
+    }
+
+    public function testGetDescriptionAfterClear()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setDescription('foo', 'Foo');
+        $optionsResolver->clear();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getDescription('foo');
+    }
+
+    public function testGetAllowedValuesAfterClear()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setAllowedValues('foo', 'bar');
+        $optionsResolver->clear();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getAllowedValues('foo');
+    }
+
+    public function testGetAllowedTypesAfterClear()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setAllowedTypes('foo', 'bar');
+        $optionsResolver->clear();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->getAllowedTypes('foo');
     }
 }

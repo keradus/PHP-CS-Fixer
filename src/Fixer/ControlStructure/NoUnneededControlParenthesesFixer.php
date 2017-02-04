@@ -88,6 +88,7 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
                 'yield',
             ))
             ->setAllowedTypes('control_statements', 'array')
+            ->setDescription('control_statements', 'list of control statements to fix')
         ;
     }
 

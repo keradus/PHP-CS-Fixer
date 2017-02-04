@@ -37,6 +37,7 @@ final class Psr0Fixer extends AbstractPsrAutoloadingFixer implements Configurati
         return $configurationDefinition
             ->setDefined('dir')
             ->setAllowedTypes('dir', 'string')
+            ->setDescription('dir', 'the directory where the project code is placed')
         ;
     }
 

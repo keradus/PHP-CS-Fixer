@@ -78,6 +78,7 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
 
                 return $value;
             })
+            ->setDescription('assertions', 'list of assertion methods to fix')
         ;
     }
 

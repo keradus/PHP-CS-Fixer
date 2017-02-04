@@ -102,6 +102,7 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer implements Configuration
 
                 return $normalizedValue;
             })
+            ->setDescription('replacements', 'mapping between replaced annotations with new ones')
         ;
     }
 

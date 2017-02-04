@@ -55,15 +55,19 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
 
                 return $comment.' */';
             })
+            ->setDescription('header', 'proper header content')
 
             ->setDefault('commentType', 'comment')
             ->setAllowedValues('commentType', array('PHPDoc', 'comment'))
+            ->setDescription('commentType', 'comment syntax type')
 
             ->setDefault('location', 'after_declare_strict')
             ->setAllowedValues('location', array('after_open', 'after_declare_strict'))
+            ->setDescription('location', 'the location of the inserted header')
 
             ->setDefault('separate', 'both')
             ->setAllowedValues('separate', array('both', 'top', 'bottom', 'none'))
+            ->setDescription('separate', 'whether the header should be separated from the file content with a new line')
         ;
     }
 

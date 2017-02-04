@@ -160,6 +160,7 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
 
                 return $value;
             })
+            ->setDescription('order', 'list of strings defining order of elements')
         ;
     }
 

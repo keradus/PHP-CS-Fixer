@@ -73,6 +73,7 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
 
                 return $value;
             })
+            ->setDescription('elements', 'list of strings which element should be modified')
         ;
     }
 

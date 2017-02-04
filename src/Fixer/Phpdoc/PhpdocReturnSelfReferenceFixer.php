@@ -98,6 +98,7 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
 
                 return $normalizedValue;
             })
+            ->setDescription('replacements', 'mapping between replaced return types with new ones')
         ;
     }
 

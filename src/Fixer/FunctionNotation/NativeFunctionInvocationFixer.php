@@ -49,6 +49,7 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
 
                 return $value;
             })
+            ->setDescription('exclude', 'list of functions to ignore')
         ;
     }
 

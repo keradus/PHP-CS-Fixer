@@ -96,6 +96,7 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
 
                 return $value;
             })
+            ->setDescription('replacements', 'mapping between replaced functions with the new ones')
         ;
     }
 
