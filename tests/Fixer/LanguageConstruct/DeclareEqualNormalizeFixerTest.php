@@ -72,13 +72,16 @@ final class DeclareEqualNormalizeFixerTest extends AbstractFixerTestCase
     }
 
     /**
+     * @param array $config
+     * @param mixed $expectedMessage
+     *
      * @dataProvider provideInvalidConfig
      */
-    public function testInvalidConfig(array $config)
+    public function testInvalidConfig(array $config, $expectedMessage)
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[declare_equal_normalize] Configuration must define "space" being "single" or "none".'
+            sprintf('[declare_equal_normalize] Invalid configuration: %s', $expectedMessage)
         );
 
         $this->fixer->configure($config);
@@ -87,9 +90,14 @@ final class DeclareEqualNormalizeFixerTest extends AbstractFixerTestCase
     public function provideInvalidConfig()
     {
         return array(
-            array(array()),
-            array(array(1, 2)),
-            array(array('space' => 'tab')),
+            array(
+                array(1, 2),
+                'The options "0", "1" do not exist.',
+            ),
+            array(
+                array('space' => 'tab'),
+                'The option "space" with value "tab" is invalid.',
+            ),
         );
     }
 }

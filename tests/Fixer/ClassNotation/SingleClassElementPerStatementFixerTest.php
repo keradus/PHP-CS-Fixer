@@ -606,7 +606,9 @@ class Foo
 EOT;
 
         $this->fixer->configure($configuration);
+        $this->doTest($expected, $input);
 
+        $this->fixer->configure(array('elements' => $configuration));
         $this->doTest($expected, $input);
     }
 
@@ -658,9 +660,9 @@ EOT
 
     public function testWrongConfig()
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '/^\[single_class_element_per_statement\] Unknown configuration option "foo"\. Expected any of "const", "property"\.$/'
+            '[single_class_element_per_statement] Invalid configuration: The option "elements" contains an invalid value.'
         );
 
         $this->fixer->configure(array('foo'));

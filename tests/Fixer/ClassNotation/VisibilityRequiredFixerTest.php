@@ -431,9 +431,9 @@ EOF;
 
     public function testInvalidConfigurationType()
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '/^\[visibility_required\] Expected string got "NULL".$/'
+            '[visibility_required] Invalid configuration: The option "elements" contains an invalid value.'
         );
 
         $this->fixer->configure(array(null));
@@ -441,9 +441,9 @@ EOF;
 
     public function testInvalidConfigurationValue()
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '/^\[visibility_required\] Unknown configuration item "_unknown_", expected any of "property", "method", "const".$/'
+            '[visibility_required] Invalid configuration: The option "elements" contains an invalid value.'
         );
 
         $this->fixer->configure(array('_unknown_'));
@@ -455,9 +455,9 @@ EOF;
             $this->markTestSkipped('PHP version to high.');
         }
 
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '/^\[visibility_required\] Invalid configuration item "const" for PHP ".+".$/'
+            '[visibility_required] Invalid configuration: "const" option can only be enabled with PHP 7.1+.'
         );
 
         $this->fixer->configure(array('const'));
@@ -473,6 +473,9 @@ EOF;
     public function testFixClassConst($expected, $input)
     {
         $this->fixer->configure(array('const'));
+        $this->doTest($expected, $input);
+
+        $this->fixer->configure(array('elements' => array('const')));
         $this->doTest($expected, $input);
     }
 

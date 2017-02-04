@@ -13,6 +13,7 @@
 namespace PhpCsFixer\Console\Command;
 
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\FixerFactory;
@@ -25,7 +26,7 @@ use PhpCsFixer\RuleSet;
  *
  * @internal
  */
-final class FixCommandHelp
+final class CommandHelp
 {
     /**
      * @return string
@@ -238,6 +239,36 @@ EOF
         );
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return string
+     */
+    public static function toString($value)
+    {
+        if (is_array($value)) {
+            // Output modifications:
+            // - remove new-lines
+            // - combine multiple whitespaces
+            // - switch array-syntax to short array-syntax
+            // - remove whitespace at array opening
+            // - remove trailing array comma and whitespace at array closing
+            // - remove numeric array indexes
+            static $replaces = array(
+                array('#\r|\n#', '#\s{1,}#', '#array\s*\((.*)\)#s', '#\[\s+#', '#,\s*\]#', '#\d+\s*=>\s*#'),
+                array('', ' ', '[$1]', '[', ']', ''),
+            );
+
+            return preg_replace(
+                $replaces[0],
+                $replaces[1],
+                var_export($value, true)
+            );
+        }
+
+        return var_export($value, true);
+    }
+
     private static function getFixersHelp()
     {
         $help = '';
@@ -279,16 +310,6 @@ EOF
                 $description = '[n/a]';
             }
 
-            $attributes = array();
-
-            if ($fixer->isRisky()) {
-                $attributes[] = 'risky';
-            }
-
-            if ($fixer instanceof ConfigurableFixerInterface) {
-                $attributes[] = 'configurable';
-            }
-
             $description = wordwrap($description, 72, "\n   | ");
             $description = str_replace('`', '``', $description);
 
@@ -298,9 +319,49 @@ EOF
                 $help .= sprintf(" * <comment>%s</comment>\n   | %s\n", $fixer->getName(), $description);
             }
 
-            if (count($attributes)) {
-                sort($attributes);
-                $help .= sprintf("   | *Rule is: %s.*\n", implode(', ', $attributes));
+            if ($fixer->isRisky()) {
+                $help .= "   | *Risky rule.*\n";
+            }
+
+            if ($fixer instanceof ConfigurationDefinitionFixerInterface) {
+                $configurationDefinition = $fixer->getConfigurationDefinition();
+                if (count($configurationDefinition->getDefinedOptions())) {
+                    $help .= "   |\n   | Configuration options:\n";
+
+                    foreach ($configurationDefinition->getDefinedOptions() as $option) {
+                        $line = '<info>'.$option.'</info>';
+
+                        $allowed = $configurationDefinition->getAllowedValues($option);
+                        if (null !== $allowed) {
+                            foreach ($allowed as &$value) {
+                                $value = self::toString($value);
+                            }
+                        } else {
+                            $allowed = $configurationDefinition->getAllowedTypes($option);
+                        }
+
+                        if (null !== $allowed) {
+                            $line .= ' (<comment>'.implode('</comment>, <comment>', $allowed).'</comment>)';
+                        }
+
+                        if (null !== $description = $configurationDefinition->getDescription($option)) {
+                            $line .= ': '.$description;
+                        }
+
+                        $line .= null !== $description ? '; ' : ': ';
+                        if ($configurationDefinition->hasDefault($option)) {
+                            $line .= 'defaults to <comment>'.self::toString($configurationDefinition->getDefault($option)).'</comment>';
+                        } else {
+                            $line .= 'required';
+                        }
+
+                        foreach (self::wordwrap($line, 72) as $index => $line) {
+                            $help .= (0 === $index ? '   | - ' : '   |   ').$line."\n";
+                        }
+                    }
+                }
+            } elseif ($fixer instanceof ConfigurableFixerInterface) {
+                $help .= "   | *Configurable rule.*\n";
             }
 
             if ($count !== $i) {
@@ -309,5 +370,36 @@ EOF
         }
 
         return $help;
+    }
+
+    /**
+     * @param string $string
+     * @param int    $width
+     *
+     * @return string[]
+     */
+    private static function wordwrap($string, $width)
+    {
+        $result = array();
+        $currentLine = 0;
+        $lineLength = 0;
+        foreach (explode(' ', $string) as $word) {
+            $wordLength = strlen(preg_replace('~</?(\w+)>~', '', $word));
+            if (0 !== $lineLength) {
+                ++$wordLength; // space before word
+            }
+
+            if ($lineLength + $wordLength > $width) {
+                ++$currentLine;
+                $lineLength = 0;
+            }
+
+            $result[$currentLine][] = $word;
+            $lineLength += $wordLength;
+        }
+
+        return array_map(function ($line) {
+            return implode(' ', $line);
+        }, $result);
     }
 }

@@ -13,10 +13,10 @@
 namespace PhpCsFixer\Fixer\LanguageConstruct;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -24,13 +24,8 @@ use PhpCsFixer\Tokenizer\Tokens;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class DeclareEqualNormalizeFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class DeclareEqualNormalizeFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var array<string, string>
-     */
-    private static $defaultConfiguration = array('space' => 'none');
-
     /**
      * @var string
      */
@@ -41,17 +36,23 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $configuration = self::$defaultConfiguration;
-        } elseif (
-            1 !== count($configuration)
-            || !isset($configuration['space'])
-            || ('none' !== $configuration['space'] && 'single' !== $configuration['space'])
-        ) {
-            throw new InvalidFixerConfigurationException($this->getName(), 'Configuration must define "space" being "single" or "none".');
-        }
+        parent::configure($configuration);
 
-        $this->callback = 'none' === $configuration['space'] ? 'removeWhitespaceAroundToken' : 'ensureWhitespaceAroundToken';
+        $this->callback = 'none' === $this->configuration['space'] ? 'removeWhitespaceAroundToken' : 'ensureWhitespaceAroundToken';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigurationDefinition()
+    {
+        $configurationDefinition = new OptionsResolver();
+
+        return $configurationDefinition
+            ->setDefault('space', 'none')
+            ->setAllowedValues('space', array('single', 'none'))
+            ->setDescription('space', 'spacing to apply around the equal sign')
+        ;
     }
 
     /**
@@ -78,10 +79,7 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
     {
         return new FixerDefinition(
             'Equal sign in declare statement should be surrounded by spaces or not following configuration.',
-            array(new CodeSample("<?php\ndeclare(ticks =  1);")),
-            null,
-            'Configure `[\'space\' => \'none\']` or `[\'space\' => \'single\']`.',
-            self::$defaultConfiguration
+            array(new CodeSample("<?php\ndeclare(ticks =  1);"))
         );
     }
 

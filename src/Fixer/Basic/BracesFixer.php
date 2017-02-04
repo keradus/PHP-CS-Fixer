@@ -13,11 +13,11 @@
 namespace PhpCsFixer\Fixer\Basic;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -28,39 +28,20 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
  *
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class BracesFixer extends AbstractFixer implements ConfigurableFixerInterface, WhitespacesAwareFixerInterface
+final class BracesFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface, WhitespacesAwareFixerInterface
 {
     /**
-     * @var array
+     * {@inheritdoc}
      */
-    private $configuration;
-
-    private static $defaultConfiguration = array(
-        'allow_single_line_closure' => false,
-    );
-
-    /**
-     * @param array<string, bool>|null $configuration
-     */
-    public function configure(array $configuration = null)
+    public function getConfigurationDefinition()
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        $configurationDefinition = new OptionsResolver();
 
-            return;
-        }
-
-        foreach ($configuration as $functionName => $replacement) {
-            if (!array_key_exists($functionName, self::$defaultConfiguration)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('"%s" is not handled by the fixer.', $functionName));
-            }
-
-            if (!is_bool($replacement)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Expected bool got "%s".', is_object($replacement) ? get_class($replacement) : gettype($replacement)));
-            }
-        }
-
-        $this->configuration = $configuration;
+        return $configurationDefinition
+            ->setDefault('allow_single_line_closure', false)
+            ->setAllowedTypes('allow_single_line_closure', 'bool')
+            ->setDescription('allow_single_line_closure', 'whether single line lambda notation should be allowed')
+        ;
     }
 
     /**
@@ -120,10 +101,7 @@ $negative = function ($item) {
 ',
                     array('allow_single_line_closure' => true)
                 ),
-            ),
-            null,
-            'The `allow_single_line_closure` key could be set to `true` to allow for single line lambda notation.',
-            self::$defaultConfiguration
+            )
         );
     }
 

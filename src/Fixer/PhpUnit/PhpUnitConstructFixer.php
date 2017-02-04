@@ -13,32 +13,17 @@
 namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
-    /**
-     * @var string[]
-     */
-    private static $defaultConfiguration = array(
-        'assertEquals',
-        'assertSame',
-        'assertNotEquals',
-        'assertNotSame',
-    );
-
-    /**
-     * @var string[]
-     */
-    private $configuration;
-
     private static $assertionFixers = array(
         'assertSame' => 'fixAssertPositive',
         'assertEquals' => 'fixAssertPositive',
@@ -49,21 +34,21 @@ final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurableF
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
+    public function getConfigurationDefinition()
     {
-        if (null === $configuration) {
-            $this->configuration = self::$defaultConfiguration;
+        $configurationDefinition = new OptionsResolver();
 
-            return;
-        }
-
-        foreach ($configuration as $method) {
-            if (!array_key_exists($method, self::$assertionFixers)) {
-                throw new InvalidFixerConfigurationException($this->getName(), sprintf('Configured method "%s" cannot be fixed by this fixer.', $method));
-            }
-        }
-
-        $this->configuration = $configuration;
+        return $configurationDefinition
+            ->setDefault('assertions', array(
+                'assertEquals',
+                'assertSame',
+                'assertNotEquals',
+                'assertNotSame',
+            ))
+            ->setAllowedValueIsSubsetOf('assertions', array_keys(self::$assertionFixers))
+            ->setDescription('assertions', 'list of assertion methods to fix')
+            ->mapRootConfigurationTo('assertions')
+        ;
     }
 
     /**
@@ -88,11 +73,11 @@ final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurableF
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
         // no assertions to be fixed - fast return
-        if (empty($this->configuration)) {
+        if (empty($this->configuration['assertions'])) {
             return;
         }
 
-        foreach ($this->configuration as $assertionMethod) {
+        foreach ($this->configuration['assertions'] as $assertionMethod) {
             $assertionFixer = self::$assertionFixers[$assertionMethod];
 
             for ($index = 0, $limit = $tokens->count(); $index < $limit; ++$index) {
@@ -132,8 +117,6 @@ $this->assertNotSame(null, $d);
                 ),
             ),
             null,
-            'List of strings which methods should be modified.',
-            self::$defaultConfiguration,
             'Fixer could be risky if one is overwritting PHPUnit\'s native methods.'
         );
     }

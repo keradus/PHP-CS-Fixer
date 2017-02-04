@@ -276,18 +276,23 @@ final class NoMixedEchoPrintFixerTest extends AbstractFixerTestCase
         $this->fixer->configure(null);
 
         $this->assertAttributeSame(T_PRINT, 'candidateTokenType', $this->fixer);
+
+        $this->fixer->configure(array());
+
+        $this->assertAttributeSame(T_PRINT, 'candidateTokenType', $this->fixer);
     }
 
     /**
      * @dataProvider provideWrongConfig
      *
-     * @param mixed $wrongConfig
+     * @param mixed  $wrongConfig
+     * @param string $expectedMessage
      */
-    public function testWrongConfig($wrongConfig)
+    public function testWrongConfig($wrongConfig, $expectedMessage)
     {
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '#^\[no_mixed_echo_print\] Expected array of element \"use\" with value \"echo\" or \"print\", got \"array \([\S\s]*\)\".$#'
+            $expectedMessage
         );
 
         $this->fixer->configure($wrongConfig);
@@ -296,11 +301,22 @@ final class NoMixedEchoPrintFixerTest extends AbstractFixerTestCase
     public function provideWrongConfig()
     {
         return array(
-            array(array()),
-            array(array('a' => 'b')),
-            array(array('a' => 'b', 'b' => 'c')),
-            array(array(1)),
-            array(array('use' => '_invalid_')),
+            array(
+                array('a' => 'b'),
+                '[no_mixed_echo_print] Invalid configuration: The option "a" does not exist.',
+            ),
+            array(
+                array('a' => 'b', 'b' => 'c'),
+                '[no_mixed_echo_print] Invalid configuration: The options "a", "b" do not exist.',
+            ),
+            array(
+                array(1),
+                '[no_mixed_echo_print] Invalid configuration: The option "0" does not exist.',
+            ),
+            array(
+                array('use' => '_invalid_'),
+                '[no_mixed_echo_print] Invalid configuration: The option "use" with value "_invalid_" is invalid. Accepted values are: "print", "echo".',
+            ),
         );
     }
 }

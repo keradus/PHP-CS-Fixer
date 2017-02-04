@@ -13,13 +13,13 @@
 namespace PhpCsFixer\Fixer\Whitespace;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
-use PhpCsFixer\Fixer\ConfigurableFixerInterface;
+use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
+use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -29,24 +29,23 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements ConfigurableFixerInterface, WhitespacesAwareFixerInterface
+final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface, WhitespacesAwareFixerInterface
 {
     /**
-     * @var array
+     * @var string[]
      */
-    private static $defaultConfiguration = array(
+    private $availableTokens = array(
+        'break',
+        'continue',
         'extra',
+        'return',
+        'throw',
+        'use',
+        'useTrait',
+        'curly_brace_block',
+        'parenthesis_brace_block',
+        'square_brace_block',
     );
-
-    /**
-     * @var array<int, string> key is token id, value is name of callback
-     */
-    private static $defaultTokenKindCallbackMap = array(T_WHITESPACE => 'removeMultipleBlankLines');
-
-    /**
-     * @var array<string, string> token prototype, value is name of callback
-     */
-    private static $defaultTokenEqualsMap = array();
 
     /**
      * @var array<int, string> key is token id, value is name of callback
@@ -69,34 +68,15 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
     private $tokensAnalyzer;
 
     /**
-     * Set configuration.
-     *
-     * Valid configuration options are:
-     * - 'break' remove blank lines after a line with a 'break' statement
-     * - 'continue' remove blank lines after a line with a 'continue' statement
-     * - 'extra' [default] consecutive blank lines are squashed into one
-     * - 'return' remove blank lines after a line with a 'return' statement
-     * - 'throw' remove blank lines after a line with a 'throw' statement
-     * - 'use' remove blank lines between 'use' import statements
-     * - 'useTrait' remove blank lines between 'use' trait statements
-     * - 'curly_brace_block' remove blank lines after a curly opening block brace ('{') and/or end block brace ('}')
-     * - 'parenthesis_brace_block' remove blank lines after a parenthesis opening block brace ('(') and/or end block brace (')')
-     * - 'square_brace_block' remove blank lines after a square opening block brace ('[') and/or end block brace (']')
-     *
-     * @param string[]|null $configuration
+     * {@inheritdoc}
      */
     public function configure(array $configuration = null)
     {
-        if (null === $configuration) {
-            $this->tokenKindCallbackMap = self::$defaultTokenKindCallbackMap;
-            $this->tokenEqualsMap = self::$defaultTokenEqualsMap;
-
-            return;
-        }
+        parent::configure($configuration);
 
         $this->tokenKindCallbackMap = array();
         $this->tokenEqualsMap = array();
-        foreach ($configuration as $item) {
+        foreach ($this->configuration['tokens'] as $item) {
             switch ($item) {
                 case 'break':
                     $this->tokenKindCallbackMap[T_BREAK] = 'fixAfterToken';
@@ -127,11 +107,24 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
                     break;
                 case 'square_brace_block':
                     $this->tokenKindCallbackMap[CT::T_ARRAY_SQUARE_BRACE_OPEN] = 'fixStructureOpenCloseIfMultiLine'; // typeless '[' tokens should not be fixed (too rare)
-                    break;
-                default:
-                    throw new InvalidFixerConfigurationException($this->getName(), sprintf('Unknown configuration item "%s" passed.', $item));
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigurationDefinition()
+    {
+        $tokens = $this->availableTokens;
+        $configurationDefinition = new OptionsResolver();
+
+        return $configurationDefinition
+            ->setDefault('tokens', array('extra'))
+            ->setAllowedValueIsSubsetOf('tokens', $tokens)
+            ->setDescription('tokens', 'list of tokens to fix')
+            ->mapRootConfigurationTo('tokens')
+        ;
     }
 
     /**
@@ -294,13 +287,7 @@ class Foo
 }',
                     array('useTrait')
                 ),
-            ),
-            null,
-            sprintf(
-                'Configure to use any combination of "%s"',
-                implode('", "', $values)
-            ),
-            array('extra')
+            )
         );
     }
 

@@ -31,6 +31,22 @@ final class PhpUnitStrictFixerTest extends AbstractFixerTestCase
     public function testFix($expected, $input = null)
     {
         $this->doTest($expected, $input);
+
+        $this->fixer->configure(array(
+            'assertAttributeEquals',
+            'assertAttributeNotEquals',
+            'assertEquals',
+            'assertNotEquals',
+        ));
+        $this->doTest($expected, $input);
+
+        $this->fixer->configure(array('assertions' => array(
+            'assertAttributeEquals',
+            'assertAttributeNotEquals',
+            'assertEquals',
+            'assertNotEquals',
+        )));
+        $this->doTest($expected, $input);
     }
 
     public function provideTestFixCases()

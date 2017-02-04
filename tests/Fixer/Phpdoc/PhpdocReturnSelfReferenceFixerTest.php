@@ -32,6 +32,11 @@ final class PhpdocReturnSelfReferenceFixerTest extends AbstractFixerTestCase
     {
         $this->fixer->configure($configuration);
         $this->doTest($expected, $input);
+
+        if (null === $configuration) {
+            $this->fixer->configure(array());
+            $this->doTest($expected, $input);
+        }
     }
 
     public function provideTestCases()
@@ -147,13 +152,13 @@ class F
         return array(
             array(
                 array(1 => 'a'),
-                'Unknown key "integer#1", expected any of "this", "@this", "$self", "@self", "$static", "@static".',
+                'Invalid configuration: Unknown key "integer#1", expected any of "this", "@this", "$self", "@self", "$static", "@static".',
             ),
             array(
                 array(
                     'this' => 'foo',
                 ),
-                'Unknown value "string#foo", expected any of "$this", "static", "self".',
+                'Invalid configuration: Unknown value "string#foo", expected any of "$this", "static", "self".',
             ),
         );
     }
