@@ -36,23 +36,6 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
-    {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('elements', $configuration)) {
-            @trigger_error(
-                'Passing elements at the root of the configuration is deprecated and will not be supported in 3.0, use "elements" => array(...) option.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('elements' => $configuration);
-        }
-
-        parent::configure($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new OptionsResolver();
@@ -84,6 +67,7 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
                 return $value;
             })
             ->setDescription('elements', 'the structural elements to fix (PHP >= 7.1 required for "const")')
+            ->mapRootConfigurationTo('elements')
         ;
     }
 

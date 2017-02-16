@@ -78,15 +78,6 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
      */
     public function configure(array $configuration = null)
     {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('order', $configuration)) {
-            @trigger_error(
-                'Passing elements order at the root of the configuration is deprecated and will not be supported in 3.0, use "order" => array(...) option instead.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('order' => $configuration);
-        }
-
         parent::configure($configuration);
 
         $this->typePosition = array();
@@ -161,6 +152,7 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
                 return $value;
             })
             ->setDescription('order', 'list of strings defining order of elements')
+            ->mapRootConfigurationTo('order')
         ;
     }
 

@@ -29,23 +29,6 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
-    {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('annotations', $configuration)) {
-            @trigger_error(
-                'Passing annotations at the root of the configuration is deprecated and will not be supported in 3.0, use "annotations" => array(...) option.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('annotations' => $configuration);
-        }
-
-        parent::configure($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new OptionsResolver();
@@ -54,6 +37,7 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
             ->setDefault('annotations', array())
             ->setAllowedTypes('annotations', 'array')
             ->setDescription('annotations', 'list of annotations to remove, e.g. ["@author"]')
+            ->mapRootConfigurationTo('annotations')
         ;
     }
 

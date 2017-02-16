@@ -54,23 +54,6 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
-    {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('functions', $configuration)) {
-            @trigger_error(
-                'Passing functions at the root of the configuration is deprecated and will not be supported in 3.0, use "functions" => array(...) option instead.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('functions' => $configuration);
-        }
-
-        parent::configure($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigurationDefinition()
     {
         $functions = array(
@@ -111,6 +94,7 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
                 return $value;
             })
             ->setDescription('functions', 'list of assertions to fix')
+            ->mapRootConfigurationTo('functions')
         ;
     }
 

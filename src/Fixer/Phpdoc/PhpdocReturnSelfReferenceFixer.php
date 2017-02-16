@@ -37,23 +37,6 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
-    {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('replacements', $configuration)) {
-            @trigger_error(
-                'Passing replacements at the root of the configuration is deprecated and will not be supported in 3.0, use "replacements" => array(...) option instead.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('replacements' => $configuration);
-        }
-
-        parent::configure($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigurationDefinition()
     {
         $toTypes = self::$toTypes;
@@ -99,6 +82,7 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
                 return $normalizedValue;
             })
             ->setDescription('replacements', 'mapping between replaced return types with new ones')
+            ->mapRootConfigurationTo('replacements')
         ;
     }
 

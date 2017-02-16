@@ -74,15 +74,6 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
      */
     public function configure(array $configuration = null)
     {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('tokens', $configuration)) {
-            @trigger_error(
-                'Passing tokens at the root of the configuration is deprecated and will not be supported in 3.0, use "tokens" => array(...) option.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('tokens' => $configuration);
-        }
-
         parent::configure($configuration);
 
         $this->tokenKindCallbackMap = array();
@@ -150,6 +141,7 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
                 return $value;
             })
             ->setDescription('tokens', 'list of tokens to fix')
+            ->mapRootConfigurationTo('tokens')
         ;
     }
 

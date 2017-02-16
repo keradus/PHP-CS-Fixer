@@ -31,23 +31,6 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
-    {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('positions', $configuration)) {
-            @trigger_error(
-                'Passing positions at the root of the configuration is deprecated and will not be supported in 3.0, use "positions" => array(...) option instead.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('positions' => $configuration);
-        }
-
-        parent::configure($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new OptionsResolver();
@@ -68,6 +51,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
                 return $value;
             })
             ->setDescription('positions', 'whether spacing should be fixed inside and/or outside the offset braces')
+            ->mapRootConfigurationTo('positions')
         ;
     }
 

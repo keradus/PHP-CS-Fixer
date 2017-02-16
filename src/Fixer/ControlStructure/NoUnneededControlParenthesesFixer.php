@@ -56,23 +56,6 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
-    {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('control_statements', $configuration)) {
-            @trigger_error(
-                'Passing control statements at the root of the configuration is deprecated and will not be supported in 3.0, use "control_statements" => array(...) option instead.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('control_statements' => $configuration);
-        }
-
-        parent::configure($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new OptionsResolver();
@@ -89,6 +72,7 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
             ))
             ->setAllowedTypes('control_statements', 'array')
             ->setDescription('control_statements', 'list of control statements to fix')
+            ->mapRootConfigurationTo('control_statements')
         ;
     }
 

@@ -34,23 +34,6 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer implements Configuration
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
-    {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('replacements', $configuration)) {
-            @trigger_error(
-                'Passing replacements at the root of the configuration is deprecated and will not be supported in 3.0, use "replacements" => array(...) option.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('replacements' => $configuration);
-        }
-
-        parent::configure($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new OptionsResolver();
@@ -103,6 +86,7 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer implements Configuration
                 return $normalizedValue;
             })
             ->setDescription('replacements', 'mapping between replaced annotations with new ones')
+            ->mapRootConfigurationTo('replacements')
         ;
     }
 

@@ -37,23 +37,6 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
     /**
      * {@inheritdoc}
      */
-    public function configure(array $configuration = null)
-    {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('elements', $configuration)) {
-            @trigger_error(
-                'Passing elements at the root of the configuration is deprecated and will not be supported in 3.0, use "elements" => array(...) option.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('elements' => $configuration);
-        }
-
-        parent::configure($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new OptionsResolver();
@@ -74,6 +57,7 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
                 return $value;
             })
             ->setDescription('elements', 'list of strings which element should be modified')
+            ->mapRootConfigurationTo('elements')
         ;
     }
 

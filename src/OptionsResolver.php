@@ -21,6 +21,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver as BaseOptionsResolver;
 class OptionsResolver extends BaseOptionsResolver
 {
     /**
+     * @var string|null
+     */
+    private $rootConfigurationOption;
+
+    /**
      * @var array
      */
     private $defaults = array();
@@ -39,6 +44,26 @@ class OptionsResolver extends BaseOptionsResolver
      * @var array
      */
     private $allowedTypes = array();
+
+    /**
+     * Maps list of tokens in the root configuration array to the given option.
+     *
+     * @param string|null $option
+     *
+     * @return $this
+     *
+     * @deprecated will be removed in 3.0
+     */
+    public function mapRootConfigurationTo($option)
+    {
+        if (!$this->isDefined($option)) {
+            throw new UndefinedOptionsException(sprintf('The option "%s" does not exist.', $option));
+        }
+
+        $this->rootConfigurationOption = $option;
+
+        return $this;
+    }
 
     /**
      * {@inheritdoc}
@@ -241,6 +266,10 @@ class OptionsResolver extends BaseOptionsResolver
                 $this->allowedValues[$option],
                 $this->allowedTypes[$option]
             );
+
+            if ($option === $this->rootConfigurationOption) {
+                $this->rootConfigurationOption = null;
+            }
         }
 
         return $this;
@@ -253,11 +282,29 @@ class OptionsResolver extends BaseOptionsResolver
     {
         parent::clear();
 
+        $this->rootConfigurationOption = null;
         $this->defaults = array();
         $this->descriptions = array();
         $this->allowedValues = array();
         $this->allowedTypes = array();
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve(array $options = array())
+    {
+        if (null !== $this->rootConfigurationOption && !array_key_exists($this->rootConfigurationOption, $options) && count($options)) {
+            @trigger_error(sprintf(
+                'Passing %1$s at the root of the configuration is deprecated and will not be supported in 3.0, use "%1$s" => array(...) option instead.',
+                $this->rootConfigurationOption
+            ), E_USER_DEPRECATED);
+
+            $options = array($this->rootConfigurationOption => $options);
+        }
+
+        return parent::resolve($options);
     }
 }

@@ -41,15 +41,6 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
      */
     public function configure(array $configuration = null)
     {
-        if (is_array($configuration) && count($configuration) && !array_key_exists('replacements', $configuration)) {
-            @trigger_error(
-                'Passing replacements at the root of the configuration is deprecated and will not be supported in 3.0, use "replacements" => array(...) option instead.',
-                E_USER_DEPRECATED
-            );
-
-            $configuration = array('replacements' => $configuration);
-        }
-
         parent::configure($configuration);
 
         foreach ($this->configuration['replacements'] as $functionName => $replacement) {
@@ -97,6 +88,7 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
                 return $value;
             })
             ->setDescription('replacements', 'mapping between replaced functions with the new ones')
+            ->mapRootConfigurationTo('replacements')
         ;
     }
 

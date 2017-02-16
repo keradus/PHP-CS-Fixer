@@ -78,6 +78,31 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testMapRootConfigurationToWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->mapRootConfigurationTo('foo');
+    }
+
+    public function testMapRootConfigurationTo()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->mapRootConfigurationTo('foo')
+        );
+
+        $this->assertSame(
+            array('foo' => array('bar', 'baz')),
+            $optionsResolver->resolve(array('bar', 'baz'))
+        );
+    }
+
     public function testSetDescriptionWithUndefinedOption()
     {
         $optionsResolver = new OptionsResolver();
@@ -342,6 +367,21 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(array(), $optionsResolver->getDefaults());
     }
 
+    public function testRootConfigurationMappingAfterRemove()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->mapRootConfigurationTo('foo');
+        $optionsResolver->remove('foo');
+
+        $this->setExpectedException(
+            'Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException',
+            'The option "0" does not exist.'
+        );
+
+        $optionsResolver->resolve(array('bar'));
+    }
+
     public function testGetDescriptionAfterRemove()
     {
         $optionsResolver = new OptionsResolver();
@@ -457,6 +497,21 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         $optionsResolver->clear();
 
         $this->assertSame(array(), $optionsResolver->getDefaults());
+    }
+
+    public function testRootConfigurationMappingAfterClear()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->mapRootConfigurationTo('foo');
+        $optionsResolver->clear();
+
+        $this->setExpectedException(
+            'Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException',
+            'The option "0" does not exist.'
+        );
+
+        $optionsResolver->resolve(array('bar'));
     }
 
     public function testGetDescriptionAfterClear()
