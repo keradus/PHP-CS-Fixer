@@ -13,6 +13,7 @@
 namespace PhpCsFixer\Tests;
 
 use PhpCsFixer\OptionsResolver;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @internal
@@ -320,6 +321,88 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testAddNormalizerWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->addNormalizer('foo', function () {});
+    }
+
+    public function testAddNormalizer()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+                return $value.'_1';
+            })
+        );
+
+        $this->assertSame(
+            array('foo' => 'test_1'),
+            $optionsResolver->resolve(array('foo' => 'test'))
+        );
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+                return $value.'_2';
+            })
+        );
+
+        $this->assertSame(
+            array('foo' => 'test_1_2'),
+            $optionsResolver->resolve(array('foo' => 'test'))
+        );
+    }
+
+    public function testSetNormalizerWithUndefinedOption()
+    {
+        $optionsResolver = new OptionsResolver();
+
+        $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
+
+        $optionsResolver->setNormalizer('foo', function () {});
+    }
+
+    public function testSetNormalizer()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->setNormalizer('foo', function (Options $options, $value) {
+                return (int) $value;
+            })
+        );
+
+        $this->assertSame(
+            array('foo' => 42),
+            $optionsResolver->resolve(array('foo' => '42'))
+        );
+
+        $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+            return $value + 1;
+        });
+
+        $this->assertSame(
+            $optionsResolver,
+            $optionsResolver->setNormalizer('foo', function (Options $options, $value) {
+                return (int) $value;
+            })
+        );
+
+        $this->assertSame(
+            array('foo' => 42),
+            $optionsResolver->resolve(array('foo' => '42'))
+        );
+    }
+
     public function testRemove()
     {
         $optionsResolver = new OptionsResolver();
@@ -451,6 +534,44 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($optionsResolver->getAllowedTypes('foo'));
     }
 
+    public function testAddNormalizerAfterRemove()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+            return $value.'_1';
+        });
+        $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+            return $value.'_2';
+        });
+        $optionsResolver->remove('foo');
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+            return $value.'_3';
+        });
+
+        $this->assertSame(
+            array('foo' => 'test_3'),
+            $optionsResolver->resolve(array('foo' => 'test'))
+        );
+    }
+
+    public function testSetNormalizerAfterRemove()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setNormalizer('foo', function (Options $options, $value) {
+            return (int) $value;
+        });
+        $optionsResolver->remove('foo');
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            array('foo' => '42'),
+            $optionsResolver->resolve(array('foo' => '42'))
+        );
+    }
+
     public function testClear()
     {
         $optionsResolver = new OptionsResolver();
@@ -548,5 +669,43 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
 
         $optionsResolver->getAllowedTypes('foo');
+    }
+
+    public function testAddNormalizerAfterClear()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+            return $value.'_1';
+        });
+        $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+            return $value.'_2';
+        });
+        $optionsResolver->clear();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->addNormalizer('foo', function (Options $options, $value) {
+            return $value.'_3';
+        });
+
+        $this->assertSame(
+            array('foo' => 'test_3'),
+            $optionsResolver->resolve(array('foo' => 'test'))
+        );
+    }
+
+    public function testSetNormalizerAfterClear()
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined('foo');
+        $optionsResolver->setNormalizer('foo', function (Options $options, $value) {
+            return (int) $value;
+        });
+        $optionsResolver->clear();
+        $optionsResolver->setDefined('foo');
+
+        $this->assertSame(
+            array('foo' => '42'),
+            $optionsResolver->resolve(array('foo' => '42'))
+        );
     }
 }

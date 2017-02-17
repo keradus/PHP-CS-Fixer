@@ -662,7 +662,7 @@ EOT
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[single_class_element_per_statement] Invalid configuration: Element "foo" is not handled by this fixer.'
+            '[single_class_element_per_statement] Invalid configuration: The option "elements" contains an invalid value.'
         );
 
         $this->fixer->configure(array('foo'));

@@ -18,8 +18,6 @@ use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -38,7 +36,6 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
      */
     public function getConfigurationDefinition()
     {
-        $map = self::$assertionMap;
         $configurationDefinition = new OptionsResolver();
 
         return $configurationDefinition
@@ -48,19 +45,7 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
                 'assertEquals',
                 'assertNotEquals',
             ))
-            ->setAllowedTypes('assertions', 'array')
-            ->setNormalizer('assertions', function (Options $options, $value) use ($map) {
-                foreach ($value as $method) {
-                    if (!array_key_exists($method, $map)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Configured method "%s" cannot be fixed by this fixer.',
-                            $method
-                        ));
-                    }
-                }
-
-                return $value;
-            })
+            ->setAllowedValueIsSubsetOf('assertions', array_keys(self::$assertionMap))
             ->setDescription('assertions', 'list of assertion methods to fix')
             ->mapRootConfigurationTo('assertions')
         ;

@@ -246,7 +246,7 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[php_unit_dedicate_assert] Invalid configuration: Function "_unknown_" is not handled by this fixer.'
+            '[php_unit_dedicate_assert] Invalid configuration: The option "functions" contains an invalid value.'
         );
 
         $this->fixer->configure(array('_unknown_'));

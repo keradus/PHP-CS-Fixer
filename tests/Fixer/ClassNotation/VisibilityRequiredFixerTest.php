@@ -433,7 +433,7 @@ EOF;
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[visibility_required] Invalid configuration: Element must be a string, NULL given.'
+            '[visibility_required] Invalid configuration: The option "elements" contains an invalid value.'
         );
 
         $this->fixer->configure(array(null));
@@ -443,7 +443,7 @@ EOF;
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[visibility_required] Invalid configuration: Element "_unknown_" is not handled by this fixer.'
+            '[visibility_required] Invalid configuration: The option "elements" contains an invalid value.'
         );
 
         $this->fixer->configure(array('_unknown_'));

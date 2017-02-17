@@ -333,7 +333,7 @@ EOT
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-             '[no_spaces_around_offset] Invalid configuration: Unknown position "foo".'
+             '[no_spaces_around_offset] Invalid configuration: The option "positions" contains an invalid value.'
         );
 
         $this->fixer->configure(array('foo'));

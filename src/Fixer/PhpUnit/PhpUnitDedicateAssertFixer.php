@@ -19,8 +19,6 @@ use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author SpacePossum
@@ -83,16 +81,7 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
 
         return $configurationDefinition
             ->setDefault('functions', $functions)
-            ->setAllowedTypes('functions', 'array')
-            ->setNormalizer('functions', function (Options $options, $value) use ($functions) {
-                foreach ($value as $method) {
-                    if (!in_array($method, $functions, true)) {
-                        throw new InvalidOptionsException(sprintf('Function "%s" is not handled by this fixer.', $method));
-                    }
-                }
-
-                return $value;
-            })
+            ->setAllowedValueIsSubsetOf('functions', $functions)
             ->setDescription('functions', 'list of assertions to fix')
             ->mapRootConfigurationTo('functions')
         ;

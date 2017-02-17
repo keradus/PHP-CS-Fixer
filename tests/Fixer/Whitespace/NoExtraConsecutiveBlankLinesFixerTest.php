@@ -425,7 +425,7 @@ EOF
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[no_extra_consecutive_blank_lines] Invalid configuration: Unknown token "__TEST__".'
+            '[no_extra_consecutive_blank_lines] Invalid configuration: The option "tokens" contains an invalid value.'
         );
 
         $this->fixer->configure(array('__TEST__'));

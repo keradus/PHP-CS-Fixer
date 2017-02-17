@@ -20,8 +20,6 @@ use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Gregor Harlan <gharlan@web.de>
@@ -121,7 +119,6 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
      */
     public function getConfigurationDefinition()
     {
-        $types = array_merge(self::$typeHierarchy, self::$specialTypes);
         $configurationDefinition = new OptionsResolver();
 
         return $configurationDefinition
@@ -141,16 +138,7 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
                 'method_protected',
                 'method_private',
             ))
-            ->setAllowedTypes('order', 'array')
-            ->setNormalizer('order', function (Options $options, $value) use ($types) {
-                foreach ($value as $type) {
-                    if (!array_key_exists($type, $types)) {
-                        throw new InvalidOptionsException(sprintf('Unknow class element "%s".', $type));
-                    }
-                }
-
-                return $value;
-            })
+            ->setAllowedValueIsSubsetOf('order', array_keys(array_merge(self::$typeHierarchy, self::$specialTypes)))
             ->setDescription('order', 'list of strings defining order of elements')
             ->mapRootConfigurationTo('order')
         ;

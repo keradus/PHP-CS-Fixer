@@ -25,7 +25,7 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
     {
         $this->setExpectedException(
             'InvalidArgumentException',
-            'Configured method "MyTest" cannot be fixed by this fixer.'
+            'The option "assertions" contains an invalid value.'
         );
 
         $this->fixer->configure(array('MyTest'));
@@ -111,7 +111,7 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[php_unit_construct] Invalid configuration: Configured method "__TEST__" cannot be fixed by this fixer.'
+            '[php_unit_construct] Invalid configuration: The option "assertions" contains an invalid value.'
         );
 
         $this->fixer->configure(array('__TEST__'));

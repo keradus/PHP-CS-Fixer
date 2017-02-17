@@ -24,8 +24,6 @@ use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -123,23 +121,7 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
 
         return $configurationDefinition
             ->setDefault('tokens', array('extra'))
-            ->setAllowedTypes('tokens', 'array')
-            ->setNormalizer('tokens', function (Options $options, $value) use ($tokens) {
-                foreach ($value as $token) {
-                    if (!is_string($token)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Token must be a string, %s given.',
-                            is_object($token) ? get_class($token) : gettype($token)
-                        ));
-                    }
-
-                    if (!in_array($token, $tokens, true)) {
-                        throw new InvalidOptionsException(sprintf('Unknown token "%s".', $token));
-                    }
-                }
-
-                return $value;
-            })
+            ->setAllowedValueIsSubsetOf('tokens', $tokens)
             ->setDescription('tokens', 'list of tokens to fix')
             ->mapRootConfigurationTo('tokens')
         ;

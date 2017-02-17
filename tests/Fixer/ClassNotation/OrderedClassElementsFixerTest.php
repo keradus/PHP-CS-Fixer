@@ -573,7 +573,7 @@ EOT
     {
         $this->setExpectedException(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[ordered_class_elements] Invalid configuration: Unknow class element "foo".'
+            '[ordered_class_elements] Invalid configuration: The option "order" contains an invalid value.'
         );
 
         $this->fixer->configure(array('foo'));

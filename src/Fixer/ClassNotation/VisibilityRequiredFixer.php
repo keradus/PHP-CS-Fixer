@@ -42,26 +42,10 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
 
         return $configurationDefinition
             ->setDefault('elements', array('property', 'method'))
-            ->setAllowedTypes('elements', 'array')
-            ->setNormalizer('elements', function (Options $options, $value) {
-                foreach ($value as $element) {
-                    if (!is_string($element)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Element must be a string, %s given.',
-                            is_object($element) ? get_class($element) : gettype($element)
-                        ));
-                    }
-
-                    if (!in_array($element, array('property', 'method', 'const'), true)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Element "%s" is not handled by this fixer.',
-                            $element
-                        ));
-                    }
-
-                    if ('const' === $element && PHP_VERSION_ID < 70100) {
-                        throw new InvalidOptionsException('"const" option can only be enabled with PHP 7.1+.');
-                    }
+            ->setAllowedValueIsSubsetOf('elements', array('property', 'method', 'const'))
+            ->addNormalizer('elements', function (Options $options, $value) {
+                if (in_array('const', $value, true) && PHP_VERSION_ID < 70100) {
+                    throw new InvalidOptionsException('"const" option can only be enabled with PHP 7.1+.');
                 }
 
                 return $value;

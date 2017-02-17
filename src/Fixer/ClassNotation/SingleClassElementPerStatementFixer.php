@@ -22,8 +22,6 @@ use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Options;
 
 /**
  * Fixer for rules defined in PSR2 ¶4.2.
@@ -41,21 +39,11 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
     {
         $configurationDefinition = new OptionsResolver();
 
-        return $configurationDefinition
-            ->setDefault('elements', array('const', 'property'))
-            ->setAllowedTypes('elements', 'array')
-            ->setNormalizer('elements', function (Options $options, $value) {
-                foreach ($value as $element) {
-                    if (!in_array($element, array('const', 'property'), true)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Element "%s" is not handled by this fixer.',
-                            $element
-                        ));
-                    }
-                }
+        $elements = array('const', 'property');
 
-                return $value;
-            })
+        return $configurationDefinition
+            ->setDefault('elements', $elements)
+            ->setAllowedValueIsSubsetOf('elements', $elements)
             ->setDescription('elements', 'list of strings which element should be modified')
             ->mapRootConfigurationTo('elements')
         ;

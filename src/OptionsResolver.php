@@ -12,7 +12,9 @@
 
 namespace PhpCsFixer;
 
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver as BaseOptionsResolver;
 
 /**
@@ -44,6 +46,11 @@ class OptionsResolver extends BaseOptionsResolver
      * @var array
      */
     private $allowedTypes = array();
+
+    /**
+     * @var array
+     */
+    private $normalizers = array();
 
     /**
      * Maps list of tokens in the root configuration array to the given option.
@@ -233,6 +240,44 @@ class OptionsResolver extends BaseOptionsResolver
     }
 
     /**
+     * Adds a normalizer for the given option.
+     *
+     * @param string   $option
+     * @param \Closure $normalizer
+     *
+     * @return $this
+     */
+    public function addNormalizer($option, \Closure $normalizer)
+    {
+        if (!isset($this->normalizers[$option])) {
+            return $this->setNormalizer($option, $normalizer);
+        }
+
+        $this->normalizers[$option][] = $normalizer;
+        $normalizers = $this->normalizers[$option];
+
+        return parent::setNormalizer($option, $this->unbind(function (Options $options, $value) use ($normalizers) {
+            foreach ($normalizers as $normalizer) {
+                $value = $normalizer($options, $value);
+            }
+
+            return $value;
+        }));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNormalizer($option, \Closure $normalizer)
+    {
+        parent::setNormalizer($option, $normalizer);
+
+        $this->normalizers[$option][] = $normalizer;
+
+        return $this;
+    }
+
+    /**
      * Returns the allowed types of an option.
      *
      * @param string $option
@@ -253,6 +298,33 @@ class OptionsResolver extends BaseOptionsResolver
     }
 
     /**
+     * Sets the given option to only accept an array with a subset of the given values.
+     *
+     * @param string $option
+     * @param array  $allowedArrayValues
+     *
+     * @return $this
+     */
+    public function setAllowedValueIsSubsetOf($option, array $allowedArrayValues)
+    {
+        return $this
+            ->setAllowedTypes($option, 'array')
+            ->setNormalizer($option, $this->unbind(function (Options $options, $values) use ($option, $allowedArrayValues) {
+                foreach ($values as $value) {
+                    if (!in_array($value, $allowedArrayValues, true)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'The option "%s" contains an invalid value.',
+                            $option
+                        ));
+                    }
+                }
+
+                return $values;
+            }))
+        ;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function remove($optionNames)
@@ -264,7 +336,8 @@ class OptionsResolver extends BaseOptionsResolver
                 $this->defaults[$option],
                 $this->descriptions[$option],
                 $this->allowedValues[$option],
-                $this->allowedTypes[$option]
+                $this->allowedTypes[$option],
+                $this->normalizers[$option]
             );
 
             if ($option === $this->rootConfigurationOption) {
@@ -287,6 +360,7 @@ class OptionsResolver extends BaseOptionsResolver
         $this->descriptions = array();
         $this->allowedValues = array();
         $this->allowedTypes = array();
+        $this->normalizers = array();
 
         return $this;
     }
@@ -306,5 +380,22 @@ class OptionsResolver extends BaseOptionsResolver
         }
 
         return parent::resolve($options);
+    }
+
+    /**
+     * Unbinds the given closure to avoid memory leaks. See {@see https://bugs.php.net/bug.php?id=69639 Bug #69639} for
+     * details.
+     *
+     * @param \Closure $closure
+     *
+     * @return \Closure
+     */
+    private function unbind(\Closure $closure)
+    {
+        if (PHP_VERSION_ID < 50400) {
+            return $closure;
+        }
+
+        return $closure->bindTo(null);
     }
 }

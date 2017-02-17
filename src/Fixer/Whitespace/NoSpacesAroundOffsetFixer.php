@@ -20,8 +20,6 @@ use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Javier Spagnoletti <phansys@gmail.com>
@@ -34,22 +32,11 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new OptionsResolver();
+        $positions = array('inside', 'outside');
 
         return $configurationDefinition
-            ->setDefault('positions', array('inside', 'outside'))
-            ->setAllowedTypes('positions', 'array')
-            ->setNormalizer('positions', function (Options $options, $value) {
-                foreach ($value as $position) {
-                    if (!in_array($position, array('inside', 'outside'), true)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Unknown position "%s".',
-                            $position
-                        ));
-                    }
-                }
-
-                return $value;
-            })
+            ->setDefault('positions', $positions)
+            ->setAllowedValueIsSubsetOf('positions', $positions)
             ->setDescription('positions', 'whether spacing should be fixed inside and/or outside the offset braces')
             ->mapRootConfigurationTo('positions')
         ;
