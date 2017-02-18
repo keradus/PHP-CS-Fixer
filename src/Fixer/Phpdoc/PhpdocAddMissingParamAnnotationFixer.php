@@ -185,10 +185,7 @@ function f9(string $foo, $bar, $baz) {}',
 function f9(string $foo, $bar, $baz) {}',
                     array('only_untyped' => false)
                 ),
-            ),
-            null,
-            'The following can be configured: `only_untyped => boolean`',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

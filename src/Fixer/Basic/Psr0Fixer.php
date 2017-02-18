@@ -159,8 +159,6 @@ class InvalidName {}
                 ),
             ),
             null,
-            'One could set up `dir` where the code is placed under project location.',
-            $this->getDefaultConfiguration(),
             'This fixer may change you class name, which will break the code that is depended on old name.'
         );
     }

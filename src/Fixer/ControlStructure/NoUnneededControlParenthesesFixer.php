@@ -173,10 +173,7 @@ yield(2);
 ',
                     array('break', 'continue')
                 ),
-            ),
-            null,
-            'List of strings which control structures should be modified.',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

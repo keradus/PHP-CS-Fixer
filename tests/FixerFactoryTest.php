@@ -417,18 +417,8 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue($tokens->isChanged(), sprintf('[%s] Sample #%d is not changed during fixing.', $fixer->getName(), $sampleCounter));
         }
 
-        if ($fixer instanceof ConfigurableFixerInterface) {
-            $this->assertStringIsNotEmpty($definition->getConfigurationDescription(), sprintf('[%s] Configuration description is required.', $fixer->getName()));
-            $default = $definition->getDefaultConfiguration();
-            $this->assertInternalType('array', $default, sprintf('[%s] Default configuration must be an array.', $fixer->getName()));
-
-            if (!in_array($fixer->getName(), array('general_phpdoc_annotation_remove', 'psr0'), true)) {
-                $this->assertNotEmpty($default, sprintf('[%s] Default configuration is required.', $fixer->getName()));
-            }
-        } else {
-            $this->assertNull($definition->getConfigurationDescription(), sprintf('[%s] No configuration description expected.', $fixer->getName()));
-            $this->assertNull($definition->getDefaultConfiguration(), sprintf('[%s] No default configuration expected.', $fixer->getName()));
-        }
+        $this->assertNull($definition->getConfigurationDescription(), sprintf('[%s] No configuration description expected.', $fixer->getName()));
+        $this->assertNull($definition->getDefaultConfiguration(), sprintf('[%s] No default configuration expected.', $fixer->getName()));
 
         if ($fixer->isRisky()) {
             $this->assertStringIsNotEmpty($definition->getRiskyDescription(), sprintf('[%s] Risky reasoning is required.', $fixer->getName()));

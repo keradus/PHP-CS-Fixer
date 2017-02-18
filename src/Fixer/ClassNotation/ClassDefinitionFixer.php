@@ -133,10 +133,7 @@ interface Bar extends
 ',
                     array('multiLineExtendsEachSingleLine' => true)
                 ),
-            ),
-            null,
-            'Configure to have extra whitespace around the keywords of a class, trait or interface definition removed.',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

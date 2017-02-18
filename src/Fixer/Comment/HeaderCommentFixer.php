@@ -155,16 +155,7 @@ echo 1;
                         'location' => 'after_declare_strict',
                     )
                 ),
-            ),
-            null,
-            'The following configuration options are allowed:
-- header       proper header content here, this option is required
-- commentType  PHPDoc|comment*
-- location     after_open|after_declare_strict*
-- separate     top|bottom|none|both*
-
-* is the default when the item is omitted',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

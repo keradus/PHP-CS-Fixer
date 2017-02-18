@@ -151,8 +151,6 @@ $this->assertTrue(is_nan($a));
                 ),
             ),
             null,
-            'List of strings which methods should be modified.',
-            $this->getDefaultConfiguration(),
             'Fixer could be risky if one is overwritting PHPUnit\'s native methods.'
         );
     }

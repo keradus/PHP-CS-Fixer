@@ -88,10 +88,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
                 new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];"),
                 new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('inside')),
                 new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('outside')),
-            ),
-            null,
-            'Configure if the fixer must fix spaces inside or outside the offset braces or both (default).',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

@@ -287,13 +287,7 @@ class Foo
 }',
                     array('useTrait')
                 ),
-            ),
-            null,
-            sprintf(
-                'Configure to use any combination of "%s"',
-                implode('", "', $values)
-            ),
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

@@ -88,10 +88,7 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
 function foo() {}',
                     array('author')
                 ),
-            ),
-            null,
-            'Array of not wanted annotations could be configured, eg `[\'@author\']`.',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

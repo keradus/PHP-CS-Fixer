@@ -101,10 +101,7 @@ final class Example
 ',
                     array('property')
                 ),
-            ),
-            null,
-            'List of strings which element should be modified, possible values: `const`, `property`.',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

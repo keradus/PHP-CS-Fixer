@@ -116,10 +116,7 @@ class Sample
                     new VersionSpecification(70100),
                     array('const')
                 ),
-            ),
-            null,
-            'The following type of properties can be configured to fix `property`, `method` and `const`. For `const` PHP >= 7.1 is required.',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

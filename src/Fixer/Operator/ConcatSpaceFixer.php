@@ -88,10 +88,7 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurationDefin
                     "<?php\n\$foo = 'bar' . 3 . 'baz'.'qux';",
                     array('spacing' => 'one')
                 ),
-            ),
-            null,
-            "Configuration must have one element 'spacing' with value 'none' (default) or 'one'.",
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

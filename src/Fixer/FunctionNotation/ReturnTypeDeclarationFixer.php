@@ -97,9 +97,7 @@ final class ReturnTypeDeclarationFixer extends AbstractFixer implements Configur
                     array('space_before' => 'one')
                 ),
             ),
-            'Rule is applied only in a PHP 7+ environment.',
-            "Configuration must have one element 'space_before' with value 'none' (default) or 'one'.",
-            $this->getDefaultConfiguration()
+            'Rule is applied only in a PHP 7+ environment.'
         );
     }
 

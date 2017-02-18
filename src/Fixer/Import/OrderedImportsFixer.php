@@ -213,10 +213,7 @@ use function CCC\AA;
                         ),
                     )
                 ),
-            ),
-            null,
-            'Configure how \'use\' statements should be ordered, alphabetically or by length. Also specify how import types should be ordered.',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

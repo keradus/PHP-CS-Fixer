@@ -106,8 +106,6 @@ final class MyTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
             null,
-            'Configure which of the following functions should be replaced `assertAttributeEquals`, `assertAttributeNotEquals`, `assertEquals`, `assertNotEquals`',
-            $this->getDefaultConfiguration(),
             'Risky when the any of functions are overridden.'
         );
     }

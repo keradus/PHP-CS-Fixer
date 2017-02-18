@@ -101,10 +101,7 @@ $negative = function ($item) {
 ',
                     array('allow_single_line_closure' => true)
                 ),
-            ),
-            null,
-            'The `allow_single_line_closure` key could be set to `true` to allow for single line lambda notation.',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

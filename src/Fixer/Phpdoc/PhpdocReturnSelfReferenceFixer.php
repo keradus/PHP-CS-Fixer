@@ -104,8 +104,6 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
      */
     public function getDefinition()
     {
-        $defaultConfiguration = $this->getDefaultConfiguration();
-
         return new FixerDefinition(
             'The type of `@return` annotations of methods returning a reference to itself must the configured one.',
             array(new CodeSample('
@@ -120,14 +118,7 @@ class Sample
         return $this;
     }
 }'
-            )),
-            '',
-            sprintf(
-                'Fixer can be configured to fix any of (case insensitive) `%s` to any of `%s`.',
-                implode('`,`', array_keys($defaultConfiguration)),
-                implode('`,`', self::$toTypes)
-            ),
-            $defaultConfiguration
+            ))
         );
     }
 

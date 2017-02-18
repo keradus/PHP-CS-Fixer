@@ -137,8 +137,6 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
                 new CodeSample("<?php\n\$a = getrandmax();\n\$a = rand(\$b, \$c);\n\$a = srand();", array('getrandmax' => 'mt_getrandmax')),
             ),
             null,
-            'Configure any of the functions `getrandmax`, `rand` and `srand` to be replaced with modern versions.',
-            $this->getDefaultConfiguration(),
             'Risky when the configured functions are overridden.'
         );
     }

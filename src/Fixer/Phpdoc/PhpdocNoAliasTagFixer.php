@@ -160,10 +160,7 @@ final class Example
 ',
                     array('link' => 'website')
                 ),
-            ),
-            null,
-            'Array that maps current annotations into new ones.',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 }

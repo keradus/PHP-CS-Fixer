@@ -126,15 +126,6 @@ abstract class AbstractFixer implements FixerInterface, DefinedFixerInterface
         }
     }
 
-    public function getDefaultConfiguration()
-    {
-        if (!$this instanceof ConfigurationDefinitionFixerInterface) {
-            throw new \LogicException('Cannot run method for class not implementing `ConfigurationDefinitionFixerInterface`.');
-        }
-
-        return $this->getConfigurationDefinition()->getDefaults();
-    }
-
     public function setWhitespacesConfig(WhitespacesFixerConfig $config)
     {
         if (!$this instanceof WhitespacesAwareFixerInterface) {

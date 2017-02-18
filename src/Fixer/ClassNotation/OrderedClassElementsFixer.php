@@ -224,10 +224,7 @@ final class Example
 }
 '
                 ),
-            ),
-            null,
-            sprintf('List of strings defining order of elements. Possible values: %s.', implode(', ', $types)),
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

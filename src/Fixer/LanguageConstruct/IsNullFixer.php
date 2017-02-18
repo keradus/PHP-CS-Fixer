@@ -158,8 +158,6 @@ final class IsNullFixer extends AbstractFixer implements ConfigurationDefinition
                 new CodeSample("<?php\n\$a = is_null(\$b);", array('use_yoda_style' => false)),
             ),
             null,
-            'The following can be configured: `use_yoda_style => boolean`',
-            $this->getDefaultConfiguration(),
             'Risky when the function `is_null()` is overridden.'
         );
     }

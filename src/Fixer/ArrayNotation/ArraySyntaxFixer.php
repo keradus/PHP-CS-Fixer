@@ -101,10 +101,7 @@ final class ArraySyntaxFixer extends AbstractFixer implements ConfigurationDefin
                     new VersionSpecification(50400),
                     array('syntax' => 'short')
                 ),
-            ),
-            null,
-            'The following can be configured: `syntax => "long"|"short"`',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

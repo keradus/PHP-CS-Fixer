@@ -134,10 +134,7 @@ $foo = array(
 ',
                     array('align_double_arrow' => true)
                 ),
-            ),
-            null,
-            'Aligns or unaligns `=` in consecutive assignments, or `=>` in array initializations',
-            $this->getDefaultConfiguration()
+            )
         );
     }
 

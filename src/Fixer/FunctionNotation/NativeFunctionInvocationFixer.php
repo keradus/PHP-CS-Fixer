@@ -156,8 +156,6 @@ function baz($options)
                 ),
             ),
             null,
-            'Configure names of functions to exclude, for example, when mocking.',
-            $this->getDefaultConfiguration(),
             $riskyDescription
         );
     }
