@@ -116,12 +116,11 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
      */
     public function getConfigurationDefinition()
     {
-        $tokens = $this->availableTokens;
         $configurationDefinition = new OptionsResolver();
 
         return $configurationDefinition
             ->setDefault('tokens', array('extra'))
-            ->setAllowedValueIsSubsetOf('tokens', $tokens)
+            ->setAllowedValueIsSubsetOf('tokens', $this->availableTokens)
             ->setDescription('tokens', 'list of tokens to fix')
             ->mapRootConfigurationTo('tokens')
         ;
