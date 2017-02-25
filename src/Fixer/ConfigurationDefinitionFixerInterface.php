@@ -12,17 +12,14 @@
 
 namespace PhpCsFixer\Fixer;
 
-use PhpCsFixer\OptionsResolver;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverInterface;
 
-/**
- * @deprecated Will be merged into ConfigurableFixerInterface in 3.0
- */
 interface ConfigurationDefinitionFixerInterface extends ConfigurableFixerInterface
 {
     /**
      * Defines the available configuration options of the fixer.
      *
-     * @return OptionsResolver $configurationDefinition
+     * @return FixerConfigurationResolverInterface
      */
     public function getConfigurationDefinition();
 }

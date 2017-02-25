@@ -17,9 +17,10 @@ use PhpCsFixer\DocBlock\DocBlock;
 use PhpCsFixer\DocBlock\Line;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -32,12 +33,16 @@ final class PhpdocAddMissingParamAnnotationFixer extends AbstractFunctionReferen
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $onlyUntyped = new FixerOption('only_untyped', 'Whether to add missing `@param` annotations for untyped parameters only.');
+        $onlyUntyped
+            ->setDefault(true)
+            ->setAllowedTypes('bool')
+        ;
 
         return $configurationDefinition
-            ->setDefault('only_untyped', true)
-            ->setAllowedTypes('only_untyped', 'bool')
-            ->setDescription('only_untyped', 'whether to add missing @param annotations for untyped parameters only')
+            ->addOption($onlyUntyped)
         ;
     }
 

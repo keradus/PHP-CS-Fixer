@@ -15,9 +15,10 @@ namespace PhpCsFixer\Fixer\Basic;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -35,12 +36,16 @@ final class BracesFixer extends AbstractFixer implements ConfigurationDefinition
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $allowSingleLineClosure = new FixerOption('allow_single_line_closure', 'Whether single line lambda notation should be allowed.');
+        $allowSingleLineClosure
+            ->setAllowedTypes('bool')
+            ->setDefault(false)
+        ;
 
         return $configurationDefinition
-            ->setDefault('allow_single_line_closure', false)
-            ->setAllowedTypes('allow_single_line_closure', 'bool')
-            ->setDescription('allow_single_line_closure', 'whether single line lambda notation should be allowed')
+            ->addOption($allowSingleLineClosure)
         ;
     }
 

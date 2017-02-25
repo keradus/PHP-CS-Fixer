@@ -20,16 +20,7 @@ use PhpCsFixer\WhitespacesFixerConfig;
  */
 final class NoExtraConsecutiveBlankLinesFixerTest extends AbstractFixerTestCase
 {
-    /**
-     * @param int[]         $lineNumberRemoved Line numbers expected to be removed after fixing
-     * @param null|string[] $config
-     *
-     * @dataProvider provideConfigTests
-     */
-    public function testWithConfig(array $lineNumberRemoved, array $config = null)
-    {
-        $this->fixer->configure($config);
-        $template = <<<'EOF'
+    private $template = <<<'EOF'
 <?php
 use \DateTime;
 
@@ -95,15 +86,44 @@ class Test {
     }
 }
 EOF;
-        $this->doTest($this->removeLinesFromString($template, $lineNumberRemoved), $template);
 
-        if (null === $config) {
-            $this->fixer->configure(array());
-        } else {
-            $this->fixer->configure(array('tokens' => $config));
-        }
+    /**
+     * @group legacy
+     * @expectedDeprecation Passing NULL to set default configuration is deprecated and will not be supported in 3.0, use an empty array instead.
+     */
+    public function testLegacyConfigNull()
+    {
+        $this->fixer->configure(null);
 
-        $this->doTest($this->removeLinesFromString($template, $lineNumberRemoved), $template);
+        $this->doTest($this->removeLinesFromString($this->template, array(23, 24)), $this->template);
+    }
+
+    /**
+     * @param int[]         $lineNumberRemoved Line numbers expected to be removed after fixing
+     * @param null|string[] $config
+     *
+     * @group legacy
+     * @dataProvider provideConfigTests
+     * @expectedDeprecation Passing "tokens" at the root of the configuration is deprecated and will not be supported in 3.0, use "tokens" => array(...) option instead.
+     */
+    public function testLegacyWithConfig(array $lineNumberRemoved, array $config)
+    {
+        $this->fixer->configure($config);
+
+        $this->doTest($this->removeLinesFromString($this->template, $lineNumberRemoved), $this->template);
+    }
+
+    /**
+     * @param int[]         $lineNumberRemoved Line numbers expected to be removed after fixing
+     * @param null|string[] $config
+     *
+     * @dataProvider provideConfigTests
+     */
+    public function testWithConfig(array $lineNumberRemoved, array $config)
+    {
+        $this->fixer->configure(array('tokens' => $config));
+
+        $this->doTest($this->removeLinesFromString($this->template, $lineNumberRemoved), $this->template);
     }
 
     public function provideConfigTests()
@@ -428,7 +448,7 @@ EOF
             '[no_extra_consecutive_blank_lines] Invalid configuration: The option "tokens" contains an invalid value.'
         );
 
-        $this->fixer->configure(array('__TEST__'));
+        $this->fixer->configure(array('tokens' => array('__TEST__')));
     }
 
     /**
@@ -439,7 +459,7 @@ EOF
      */
     public function testBetweenUse($expected, $input = null)
     {
-        $this->fixer->configure(array('use'));
+        $this->fixer->configure(array('tokens' => array('use')));
         $this->doTest($expected, $input);
     }
 
@@ -532,7 +552,7 @@ $a = new Qux();
 EOF
         ;
 
-        $this->fixer->configure(array('use'));
+        $this->fixer->configure(array('tokens' => array('use')));
         $this->doTest($expected, $input);
     }
 
@@ -545,7 +565,7 @@ EOF
      */
     public function testRemoveLinesBetweenUseStatements70($expected, $input = null)
     {
-        $this->fixer->configure(array('use'));
+        $this->fixer->configure(array('tokens' => array('use')));
         $this->doTest($expected, $input);
     }
 
@@ -576,7 +596,7 @@ use const some\a\{ConstA, ConstB, ConstC};
      */
     public function testWithoutUses($expected)
     {
-        $this->fixer->configure(array('use'));
+        $this->fixer->configure(array('tokens' => array('use')));
         $this->doTest($expected);
     }
 
@@ -605,7 +625,7 @@ $a = new Qux();',
 
     public function testRemoveBetweenUseTraits()
     {
-        $this->fixer->configure(array('useTrait'));
+        $this->fixer->configure(array('tokens' => array('useTrait')));
         $this->doTest(
             '<?php
             namespace T\A;
@@ -657,16 +677,15 @@ $a = new Qux();',
      */
     public function testOneOrInLineCases($expected, $input = null)
     {
-        $this->fixer->configure(array(
-                'break',
-                'continue',
-                'return',
-                'throw',
-                'curly_brace_block',
-                'square_brace_block',
-                'parenthesis_brace_block',
-            )
-        );
+        $this->fixer->configure(array('tokens' => array(
+            'break',
+            'continue',
+            'return',
+            'throw',
+            'curly_brace_block',
+            'square_brace_block',
+            'parenthesis_brace_block',
+        )));
 
         $this->doTest($expected, $input);
     }
@@ -699,16 +718,15 @@ $a = new Qux();',
      */
     public function testOneOrInLine70Cases($expected, $input = null)
     {
-        $this->fixer->configure(array(
-                'break',
-                'continue',
-                'return',
-                'throw',
-                'curly_brace_block',
-                'square_brace_block',
-                'parenthesis_brace_block',
-            )
-        );
+        $this->fixer->configure(array('tokens' => array(
+            'break',
+            'continue',
+            'return',
+            'throw',
+            'curly_brace_block',
+            'square_brace_block',
+            'parenthesis_brace_block',
+        )));
 
         $this->doTest($expected, $input);
     }
@@ -730,7 +748,7 @@ $a = new Qux();',
      */
     public function testBraces(array $config = null, $expected, $input = null)
     {
-        $this->fixer->configure($config);
+        $this->fixer->configure(array('tokens' => $config));
         $this->doTest($expected, $input);
     }
 
@@ -826,7 +844,7 @@ class Foo
      */
     public function testBraces54(array $config = null, $expected, $input)
     {
-        $this->fixer->configure($config);
+        $this->fixer->configure(array('tokens' => $config));
         $this->doTest($expected, $input);
     }
 
@@ -865,12 +883,12 @@ class Foo
                 "<?php\r\nuse AAA;\r\n\r\n\r\n\r\nuse BBB;\r\n\r\n",
             ),
             array(
-                array('parenthesis_brace_block'),
+                array('tokens' => array('parenthesis_brace_block')),
                 "<?php is_int(\r\n1);",
                 "<?php is_int(\r\n\r\n\r\n\r\n1);",
             ),
             array(
-                array('square_brace_block'),
+                array('tokens' => array('square_brace_block')),
                 "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n   1,\r\n2];\r\necho 1;\r\n\$b = [];\r\n\r\n\r\n//a\r\n",
                 "<?php \$c = \$b[0];\r\n\r\n\r\n\$a = [\r\n\r\n   1,\r\n2];\r\necho 1;\r\n\$b = [];\r\n\r\n\r\n//a\r\n",
             ),

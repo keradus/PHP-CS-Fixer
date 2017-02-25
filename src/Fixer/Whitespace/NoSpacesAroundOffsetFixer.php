@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\Whitespace;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -31,13 +32,17 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
-        $positions = array('inside', 'outside');
+        $configurationDefinition = new FixerConfigurationResolver();
+        $values = array('inside', 'outside');
+
+        $positions = new FixerOption('positions', 'Whether spacing should be fixed inside and/or outside the offset braces.');
+        $positions
+            ->setAllowedValueIsSubsetOf($values)
+            ->setDefault($values)
+        ;
 
         return $configurationDefinition
-            ->setDefault('positions', $positions)
-            ->setAllowedValueIsSubsetOf('positions', $positions)
-            ->setDescription('positions', 'whether spacing should be fixed inside and/or outside the offset braces')
+            ->addOption($positions)
             ->mapRootConfigurationTo('positions')
         ;
     }
@@ -86,8 +91,8 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
             'There MUST NOT be spaces around offset braces.',
             array(
                 new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];"),
-                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('inside')),
-                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('outside')),
+                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('positions' => array('inside'))),
+                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('positions' => array('outside'))),
             )
         );
     }

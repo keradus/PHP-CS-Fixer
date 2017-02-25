@@ -28,7 +28,34 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
             'The option "assertions" contains an invalid value.'
         );
 
-        $this->fixer->configure(array('MyTest'));
+        $this->fixer->configure(array('assertions' => array('MyTest')));
+    }
+
+    /**
+     * @param string      $expected
+     * @param null|string $input
+     *
+     * @group legacy
+     * @dataProvider provideTestFixCases
+     * @expectedDeprecation Passing "assertions" at the root of the configuration is deprecated and will not be supported in 3.0, use "assertions" => array(...) option instead.
+     */
+    public function testLegacyFix($expected, $input = null)
+    {
+        $this->fixer->configure(array(
+            'assertEquals',
+            'assertSame',
+            'assertNotEquals',
+            'assertNotSame',
+        ));
+        $this->doTest($expected, $input);
+
+        foreach (array('assertSame', 'assertEquals', 'assertNotEquals', 'assertNotSame') as $method) {
+            $this->fixer->configure(array($method));
+            $this->doTest(
+                $expected,
+                $input && false !== strpos($input, $method) ? $input : null
+            );
+        }
     }
 
     /**
@@ -39,14 +66,6 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
      */
     public function testFix($expected, $input = null)
     {
-        $this->fixer->configure(array(
-            'assertEquals',
-            'assertSame',
-            'assertNotEquals',
-            'assertNotSame',
-        ));
-        $this->doTest($expected, $input);
-
         $this->fixer->configure(array('assertions' => array(
             'assertEquals',
             'assertSame',
@@ -56,12 +75,6 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
         $this->doTest($expected, $input);
 
         foreach (array('assertSame', 'assertEquals', 'assertNotEquals', 'assertNotSame') as $method) {
-            $this->fixer->configure(array($method));
-            $this->doTest(
-                $expected,
-                $input && false !== strpos($input, $method) ? $input : null
-            );
-
             $this->fixer->configure(array('assertions' => array($method)));
             $this->doTest(
                 $expected,
@@ -114,7 +127,7 @@ final class PhpUnitConstructFixerTest extends AbstractFixerTestCase
             '[php_unit_construct] Invalid configuration: The option "assertions" contains an invalid value.'
         );
 
-        $this->fixer->configure(array('__TEST__'));
+        $this->fixer->configure(array('assertions' => array('__TEST__')));
     }
 
     private function generateCases($expectedTemplate, $inputTemplate)

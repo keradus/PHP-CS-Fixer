@@ -271,6 +271,20 @@ echo 1;',
     }
 
     /**
+     * @group legacy
+     * @expectedDeprecation Passing NULL to set default configuration is deprecated and will not be supported in 3.0, use an empty array instead.
+     */
+    public function testLegacyMisconfiguration()
+    {
+        $this->setExpectedException(
+            'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
+            '[header_comment] Missing required configuration: The required option "header" is missing.'
+        );
+
+        $this->fixer->configure(null);
+    }
+
+    /**
      * @param null|array $configuration
      * @param string     $exceptionMessage
      *
@@ -289,7 +303,6 @@ echo 1;',
     public function provideMisconfiguration()
     {
         return array(
-            array(null, 'Missing required configuration: The required option "header" is missing.'),
             array(array(), 'Missing required configuration: The required option "header" is missing.'),
             array(
                 array('header' => 1),

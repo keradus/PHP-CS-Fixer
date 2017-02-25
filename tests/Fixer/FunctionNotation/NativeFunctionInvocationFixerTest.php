@@ -113,7 +113,7 @@ PHP;
 
         $this->doTest($before);
 
-        $this->fixer->configure(null);
+        $this->fixer->configure(array());
 
         $this->doTest($after, $before);
     }

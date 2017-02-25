@@ -24,7 +24,11 @@ use PhpCsFixer\WhitespacesFixerConfig;
  */
 final class ClassDefinitionFixerTest extends AbstractFixerTestCase
 {
-    public function testConfigureDefaultToNull()
+    /**
+     * @group legacy
+     * @expectedDeprecation Passing NULL to set default configuration is deprecated and will not be supported in 3.0, use an empty array instead.
+     */
+    public function testLegacyConfigureDefaultToNull()
     {
         $defaultConfig = array(
             'singleLine' => false,
@@ -38,21 +42,34 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
 
         $fixer->configure(null);
         $this->assertAttributeSame($defaultConfig, 'configuration', $fixer);
+    }
+
+    public function testConfigureDefaultToNull()
+    {
+        $defaultConfig = array(
+            'singleLine' => false,
+            'singleItemSingleLine' => false,
+            'multiLineExtendsEachSingleLine' => false,
+        );
+
+        $fixer = new ClassDefinitionFixer();
+        $fixer->configure($defaultConfig);
+        $this->assertAttributeSame($defaultConfig, 'configuration', $fixer);
 
         $fixer->configure(array());
         $this->assertAttributeSame($defaultConfig, 'configuration', $fixer);
     }
 
     /**
-     * @param string                   $expected PHP source code
-     * @param string                   $input    PHP source code
-     * @param null|array<string, bool> $config
+     * @param string              $expected PHP source code
+     * @param string              $input    PHP source code
+     * @param array<string, bool> $config
      *
      * @dataProvider provideAnonymousClassesCases
      *
      * @requires PHP 7.0
      */
-    public function testFixingAnonymousClasses($expected, $input, array $config = null)
+    public function testFixingAnonymousClasses($expected, $input, array $config = array())
     {
         $this->fixer->configure($config);
 
@@ -118,9 +135,9 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
 
     public function testInvalidConfigurationKey()
     {
-        $this->setExpectedException(
+        $this->setExpectedExceptionRegExp(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[class_definition] Invalid configuration: The option "a" does not exist.'
+            '/^\[class_definition\] Invalid configuration: The option "a" does not exist\. (Known|Defined) options are: "multiLineExtendsEachSingleLine", "singleItemSingleLine", "singleLine"\.$/'
         );
 
         $fixer = new ClassDefinitionFixer();

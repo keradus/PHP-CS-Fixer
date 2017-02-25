@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\ControlStructure;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -58,10 +59,12 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('control_statements', array(
+        $controlStatements = new FixerOption('control_statements', 'List of control statements to fix.');
+        $controlStatements
+            ->setAllowedTypes('array')
+            ->setDefault(array(
                 'break',
                 'clone',
                 'continue',
@@ -70,8 +73,10 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
                 'switch_case',
                 'yield',
             ))
-            ->setAllowedTypes('control_statements', 'array')
-            ->setDescription('control_statements', 'list of control statements to fix')
+        ;
+
+        return $configurationDefinition
+            ->addOption($controlStatements)
             ->mapRootConfigurationTo('control_statements')
         ;
     }
@@ -171,7 +176,7 @@ return (1 + 2);
 switch ($a) { case($x); }
 yield(2);
 ',
-                    array('break', 'continue')
+                    array('control_statements' => array('break', 'continue'))
                 ),
             )
         );

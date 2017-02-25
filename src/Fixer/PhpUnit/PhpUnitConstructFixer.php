@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -36,17 +37,21 @@ final class PhpUnitConstructFixer extends AbstractFixer implements Configuration
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('assertions', array(
+        $assertions = new FixerOption('assertions', 'List of assertion methods to fix.');
+        $assertions
+            ->setAllowedValueIsSubsetOf(array_keys(self::$assertionFixers))
+            ->setDefault(array(
                 'assertEquals',
                 'assertSame',
                 'assertNotEquals',
                 'assertNotSame',
             ))
-            ->setAllowedValueIsSubsetOf('assertions', array_keys(self::$assertionFixers))
-            ->setDescription('assertions', 'list of assertion methods to fix')
+        ;
+
+        return $configurationDefinition
+            ->addOption($assertions)
             ->mapRootConfigurationTo('assertions')
         ;
     }
@@ -113,7 +118,7 @@ $this->assertSame(true, $a);
 $this->assertNotEquals(null, $c);
 $this->assertNotSame(null, $d);
 ',
-                    array('assertSame', 'assertNotSame')
+                    array('assertions' => array('assertSame', 'assertNotSame'))
                 ),
             ),
             null,

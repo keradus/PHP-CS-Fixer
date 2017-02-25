@@ -133,31 +133,27 @@ final class DescribeCommand extends Command
 
             $configurationDefinition = $fixer->getConfigurationDefinition();
 
-            foreach ($configurationDefinition->getDefinedOptions() as $option) {
-                $line = '* <info>'.$option.'</info>';
+            foreach ($configurationDefinition->getOptions() as $option) {
+                $line = '* <info>'.$option->getName().'</info>';
 
-                $allowed = $configurationDefinition->getAllowedValues($option);
+                $allowed = CommandHelp::getDisplayableAllowedValues($option);
                 if (null !== $allowed) {
                     foreach ($allowed as &$value) {
                         $value = CommandHelp::toString($value);
                     }
                 } else {
-                    $allowed = $configurationDefinition->getAllowedTypes($option);
+                    $allowed = $option->getAllowedTypes();
                 }
 
                 if (null !== $allowed) {
                     $line .= ' (<comment>'.implode('</comment>, <comment>', $allowed).'</comment>)';
                 }
 
-                if (null !== $description = $configurationDefinition->getDescription($option)) {
-                    $line .= ': '.$description;
-                }
-
-                $line .= null !== $description ? '; ' : ': ';
-                if ($configurationDefinition->hasDefault($option)) {
+                $line .= ': '.lcfirst(preg_replace('/\.$/', '', $option->getDescription())).'; ';
+                if ($option->hasDefault()) {
                     $line .= sprintf(
                         'defaults to <comment>%s</comment>',
-                        CommandHelp::toString($configurationDefinition->getDefault($option))
+                        CommandHelp::toString($option->getDefault())
                     );
                 } else {
                     $line .= 'required';

@@ -15,9 +15,10 @@ namespace PhpCsFixer\Fixer\Phpdoc;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\DocBlock\DocBlock;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -48,12 +49,12 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
             '$static' => 'static',
             '@static' => 'static',
         );
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('replacements', $default)
-            ->addAllowedTypes('replacements', 'array')
-            ->setNormalizer('replacements', function (Options $options, $value) use ($toTypes, $default) {
+        $replacements = new FixerOption('replacements', 'Mapping between replaced return types with new ones.');
+        $replacements
+            ->setAllowedTypes('array')
+            ->setNormalizer(function (Options $options, $value) use ($toTypes, $default) {
                 $normalizedValue = array();
                 foreach ($value as $from => $to) {
                     if (is_string($from)) {
@@ -81,7 +82,11 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
 
                 return $normalizedValue;
             })
-            ->setDescription('replacements', 'mapping between replaced return types with new ones')
+            ->setDefault($default)
+        ;
+
+        return $configurationDefinition
+            ->addOption($replacements)
             ->mapRootConfigurationTo('replacements')
         ;
     }

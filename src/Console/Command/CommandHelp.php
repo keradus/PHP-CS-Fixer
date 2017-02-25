@@ -16,6 +16,7 @@ use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\RuleSet;
 
@@ -269,6 +270,29 @@ EOF
         return var_export($value, true);
     }
 
+    /**
+     * Returns the allowed values of the given option that can be converted to a string.
+     *
+     * @param FixerOption $option
+     *
+     * @return array|null
+     */
+    public static function getDisplayableAllowedValues(FixerOption $option)
+    {
+        $allowed = $option->getAllowedValues();
+        if (null !== $allowed) {
+            $allowed = array_filter($allowed, function ($value) {
+                return !is_callable($value);
+            });
+        }
+
+        if (0 === count($allowed)) {
+            $allowed = null;
+        }
+
+        return $allowed;
+    }
+
     private static function getFixersHelp()
     {
         $help = '';
@@ -325,32 +349,28 @@ EOF
 
             if ($fixer instanceof ConfigurationDefinitionFixerInterface) {
                 $configurationDefinition = $fixer->getConfigurationDefinition();
-                if (count($configurationDefinition->getDefinedOptions())) {
+                if (count($configurationDefinition->getOptions())) {
                     $help .= "   |\n   | Configuration options:\n";
 
-                    foreach ($configurationDefinition->getDefinedOptions() as $option) {
-                        $line = '<info>'.$option.'</info>';
+                    foreach ($configurationDefinition->getOptions() as $option) {
+                        $line = '<info>'.$option->getName().'</info>';
 
-                        $allowed = $configurationDefinition->getAllowedValues($option);
+                        $allowed = self::getDisplayableAllowedValues($option);
                         if (null !== $allowed) {
                             foreach ($allowed as &$value) {
                                 $value = self::toString($value);
                             }
                         } else {
-                            $allowed = $configurationDefinition->getAllowedTypes($option);
+                            $allowed = $option->getAllowedTypes();
                         }
 
                         if (null !== $allowed) {
                             $line .= ' (<comment>'.implode('</comment>, <comment>', $allowed).'</comment>)';
                         }
 
-                        if (null !== $description = $configurationDefinition->getDescription($option)) {
-                            $line .= ': '.$description;
-                        }
-
-                        $line .= null !== $description ? '; ' : ': ';
-                        if ($configurationDefinition->hasDefault($option)) {
-                            $line .= 'defaults to <comment>'.self::toString($configurationDefinition->getDefault($option)).'</comment>';
+                        $line .= ': '.str_replace('`', '``', lcfirst(preg_replace('/\.$/', '', $option->getDescription()))).'; ';
+                        if ($option->hasDefault()) {
+                            $line .= 'defaults to <comment>'.self::toString($option->getDefault()).'</comment>';
                         } else {
                             $line .= 'required';
                         }

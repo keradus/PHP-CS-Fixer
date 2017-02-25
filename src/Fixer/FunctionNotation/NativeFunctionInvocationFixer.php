@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\FunctionNotation;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -32,12 +33,12 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('exclude', array())
-            ->setAllowedTypes('exclude', 'array')
-            ->setNormalizer('exclude', function (Options $options, $value) {
+        $exclude = new FixerOption('exclude', 'List of functions to ignore.');
+        $exclude
+            ->setAllowedTypes('array')
+            ->setNormalizer(function (Options $options, $value) {
                 foreach ($value as $functionName) {
                     if (!\is_string($functionName) || \trim($functionName) === '' || \trim($functionName) !== $functionName) {
                         throw new InvalidOptionsException(\sprintf(
@@ -49,7 +50,11 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
 
                 return $value;
             })
-            ->setDescription('exclude', 'list of functions to ignore')
+            ->setDefault(array())
+        ;
+
+        return $configurationDefinition
+            ->addOption($exclude)
         ;
     }
 

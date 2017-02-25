@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\Basic;
 
 use PhpCsFixer\AbstractPsrAutoloadingFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\FileSpecificCodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -32,12 +33,13 @@ final class Psr0Fixer extends AbstractPsrAutoloadingFixer implements Configurati
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $dir = new FixerOption('dir', 'The directory where the project code is placed.');
+        $dir->setAllowedTypes('string');
 
         return $configurationDefinition
-            ->setDefined('dir')
-            ->setAllowedTypes('dir', 'string')
-            ->setDescription('dir', 'the directory where the project code is placed')
+            ->addOption($dir)
         ;
     }
 

@@ -24,9 +24,9 @@ final class ConcatSpaceFixerTest extends AbstractFixerTestCase
 {
     public function testInvalidConfigMissingKey()
     {
-        $this->setExpectedException(
+        $this->setExpectedExceptionRegExp(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[concat_space] Invalid configuration: The option "a" does not exist.'
+            '#^\[concat_space\] Invalid configuration: The option "a" does not exist\. (Known|Defined) options are: "spacing"\.$#'
         );
 
         $this->fixer->configure(array('a' => 1));

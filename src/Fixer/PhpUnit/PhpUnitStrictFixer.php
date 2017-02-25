@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -36,17 +37,21 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('assertions', array(
+        $assertions = new FixerOption('assertions', 'List of assertion methods to fix.');
+        $assertions
+            ->setAllowedValueIsSubsetOf(array_keys(self::$assertionMap))
+            ->setDefault(array(
                 'assertAttributeEquals',
                 'assertAttributeNotEquals',
                 'assertEquals',
                 'assertNotEquals',
             ))
-            ->setAllowedValueIsSubsetOf('assertions', array_keys(self::$assertionMap))
-            ->setDescription('assertions', 'list of assertion methods to fix')
+        ;
+
+        return $configurationDefinition
+            ->addOption($assertions)
             ->mapRootConfigurationTo('assertions')
         ;
     }

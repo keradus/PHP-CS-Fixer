@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\LanguageConstruct;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -46,12 +47,16 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $space = new FixerOption('space', 'Spacing to apply around the equal sign.');
+        $space
+            ->setAllowedValues(array('single', 'none'))
+            ->setDefault('none')
+        ;
 
         return $configurationDefinition
-            ->setDefault('space', 'none')
-            ->setAllowedValues('space', array('single', 'none'))
-            ->setDescription('space', 'spacing to apply around the equal sign')
+            ->addOption($space)
         ;
     }
 

@@ -14,11 +14,12 @@ namespace PhpCsFixer\Fixer\ArrayNotation;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -52,12 +53,12 @@ final class ArraySyntaxFixer extends AbstractFixer implements ConfigurationDefin
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('syntax', 'long')
-            ->setAllowedValues('syntax', array('long', 'short'))
-            ->setNormalizer('syntax', function (Options $options, $value) {
+        $syntax = new FixerOption('syntax', 'Whether to use the `long` or `short` array syntax.');
+        $syntax
+            ->setAllowedValues(array('long', 'short'))
+            ->setNormalizer(function (Options $options, $value) {
                 if (PHP_VERSION_ID < 50400 && 'short' === $value) {
                     throw new InvalidOptionsException(sprintf(
                         'Short array syntax is supported from PHP5.4 (your PHP version is %d).',
@@ -67,7 +68,11 @@ final class ArraySyntaxFixer extends AbstractFixer implements ConfigurationDefin
 
                 return $value;
             })
-            ->setDescription('syntax', 'whether to use the long or short array syntax')
+            ->setDefault('long')
+        ;
+
+        return $configurationDefinition
+            ->addOption($syntax)
         ;
     }
 
