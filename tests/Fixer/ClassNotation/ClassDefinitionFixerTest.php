@@ -118,9 +118,9 @@ final class ClassDefinitionFixerTest extends AbstractFixerTestCase
 
     public function testInvalidConfigurationKey()
     {
-        $this->setExpectedException(
+        $this->setExpectedExceptionRegExp(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[class_definition] Invalid configuration: The option "a" does not exist.'
+            '/^\[class_definition\] Invalid configuration: The option "a" does not exist\. (Known|Defined) options are: "multiLineExtendsEachSingleLine", "singleItemSingleLine", "singleLine"\.$/'
         );
 
         $fixer = new ClassDefinitionFixer();

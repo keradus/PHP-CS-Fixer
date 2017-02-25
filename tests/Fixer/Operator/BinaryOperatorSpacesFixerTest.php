@@ -345,9 +345,9 @@ $b;',
 
     public function testWrongConfigItem()
     {
-        $this->setExpectedException(
+        $this->setExpectedExceptionRegExp(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
-            '[binary_operator_spaces] Invalid configuration: The option "foo" does not exist.'
+            '/^\[binary_operator_spaces\] Invalid configuration: The option "foo" does not exist\. (Known|Defined) options are: "align_double_arrow", "align_equals"\.$/'
         );
 
         $this->fixer->configure(array('foo' => true));

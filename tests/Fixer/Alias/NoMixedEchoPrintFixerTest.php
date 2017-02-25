@@ -290,7 +290,7 @@ final class NoMixedEchoPrintFixerTest extends AbstractFixerTestCase
      */
     public function testWrongConfig($wrongConfig, $expectedMessage)
     {
-        $this->setExpectedException(
+        $this->setExpectedExceptionRegExp(
             'PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException',
             $expectedMessage
         );
@@ -303,19 +303,19 @@ final class NoMixedEchoPrintFixerTest extends AbstractFixerTestCase
         return array(
             array(
                 array('a' => 'b'),
-                '[no_mixed_echo_print] Invalid configuration: The option "a" does not exist.',
+                '#^\[no_mixed_echo_print\] Invalid configuration: The option "a" does not exist\. (Known|Defined) options are: "use"\.$#',
             ),
             array(
                 array('a' => 'b', 'b' => 'c'),
-                '[no_mixed_echo_print] Invalid configuration: The options "a", "b" do not exist.',
+                '#^\[no_mixed_echo_print\] Invalid configuration: The options "a", "b" do not exist\. (Known|Defined) options are: "use"\.$#',
             ),
             array(
                 array(1),
-                '[no_mixed_echo_print] Invalid configuration: The option "0" does not exist.',
+                '#^\[no_mixed_echo_print\] Invalid configuration: The option "0" does not exist\. (Known|Defined) options are: "use"\.$#',
             ),
             array(
                 array('use' => '_invalid_'),
-                '[no_mixed_echo_print] Invalid configuration: The option "use" with value "_invalid_" is invalid. Accepted values are: "print", "echo".',
+                '#^\[no_mixed_echo_print\] Invalid configuration: The option "use" with value "_invalid_" is invalid\. Accepted values are: "print", "echo".$#',
             ),
         );
     }
