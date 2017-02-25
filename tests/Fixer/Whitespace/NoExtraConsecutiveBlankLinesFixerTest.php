@@ -97,11 +97,7 @@ class Test {
 EOF;
         $this->doTest($this->removeLinesFromString($template, $lineNumberRemoved), $template);
 
-        if (null === $config) {
-            $this->fixer->configure(array());
-        } else {
-            $this->fixer->configure(array('tokens' => $config));
-        }
+        $this->fixer->configure(null !== $config ? array('tokens' => $config) : array());
 
         $this->doTest($this->removeLinesFromString($template, $lineNumberRemoved), $template);
     }
