@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver as BaseOptionsResolver;
 /**
  * @internal
  */
-class OptionsResolver extends BaseOptionsResolver
+final class OptionsResolver extends BaseOptionsResolver
 {
     /**
      * @var string|null
