@@ -14,9 +14,6 @@ namespace PhpCsFixer\Fixer;
 
 use PhpCsFixer\OptionsResolver;
 
-/**
- * @deprecated Will be merged into ConfigurableFixerInterface in 3.0
- */
 interface ConfigurationDefinitionFixerInterface extends ConfigurableFixerInterface
 {
     /**
