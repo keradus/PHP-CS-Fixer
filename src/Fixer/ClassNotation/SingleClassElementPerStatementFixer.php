@@ -99,7 +99,7 @@ final class Example
     private static $bar1 = array(1,2,3), $bar2 = [1,2,3];
 }
 ',
-                    array('property')
+                    array('elements' => array('property'))
                 ),
             )
         );

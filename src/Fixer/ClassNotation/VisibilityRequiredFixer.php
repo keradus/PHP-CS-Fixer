@@ -114,7 +114,7 @@ class Sample
 }
 ',
                     new VersionSpecification(70100),
-                    array('const')
+                    array('elements' => array('const'))
                 ),
             )
         );

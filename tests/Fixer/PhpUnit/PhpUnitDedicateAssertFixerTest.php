@@ -55,9 +55,6 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
             'is_string',
         );
 
-        $this->fixer->configure($defaultFunctions);
-        $this->doTest($expected, $input);
-
         $this->fixer->configure(array('functions' => $defaultFunctions));
         $this->doTest($expected, $input);
     }
@@ -215,7 +212,11 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
         );
     }
 
-    public function testConfig()
+    /**
+     * @group legacy
+     * @expectedDeprecation Passing functions at the root of the configuration is deprecated and will not be supported in 3.0, use "functions" => array(...) option instead.
+     */
+    public function testLegacyConfig()
     {
         $this->fixer->configure(array('file_exists'));
         $this->doTest(
@@ -228,7 +229,10 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
                     $this->assertTrue(is_infinite($a));
             '
         );
+    }
 
+    public function testConfig()
+    {
         $this->fixer->configure(array('functions' => array('file_exists')));
         $this->doTest(
             '<?php
@@ -249,6 +253,6 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
             '/^\[php_unit_dedicate_assert\] Invalid configuration: The option "functions" contains an invalid value\.$/'
         );
 
-        $this->fixer->configure(array('_unknown_'));
+        $this->fixer->configure(array('functions' => array('_unknown_')));
     }
 }

@@ -44,6 +44,10 @@ final class FixerDefinitionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Foo', $definition->getDescription());
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation PhpCsFixer\FixerDefinition\FixerDefinition::getConfigurationDescription is deprecated and will be removed in 3.0.
+     */
     public function testGetConfigurationDescription()
     {
         $definition = new FixerDefinition('', array());
@@ -59,6 +63,11 @@ final class FixerDefinitionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Foo', $definition->getConfigurationDescription());
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Argument #5 of FixerDefinition::__construct() is deprecated and will be removed in 3.0.
+     * @expectedDeprecation PhpCsFixer\FixerDefinition\FixerDefinition::getDefaultConfiguration is deprecated and will be removed in 3.0.
+     */
     public function testGetDefaultConfiguration()
     {
         $definition = new FixerDefinition('', array());
@@ -79,7 +88,14 @@ final class FixerDefinitionTest extends \PHPUnit_Framework_TestCase
         $definition = new FixerDefinition('', array(), null, 'Foo');
 
         $this->assertSame('Foo', $definition->getRiskyDescription());
+    }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Arguments #5 and #6 of FixerDefinition::__construct() are deprecated and will be removed in 3.0, use argument #4 instead.
+     */
+    public function testLegacyGetRiskyDescription()
+    {
         $definition = new FixerDefinition('', array(), null, null, null, 'Foo');
 
         $this->assertSame('Foo', $definition->getRiskyDescription());

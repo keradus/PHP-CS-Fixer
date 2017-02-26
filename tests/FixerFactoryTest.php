@@ -417,14 +417,27 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue($tokens->isChanged(), sprintf('[%s] Sample #%d is not changed during fixing.', $fixer->getName(), $sampleCounter));
         }
 
-        $this->assertNull($definition->getConfigurationDescription(), sprintf('[%s] No configuration description expected.', $fixer->getName()));
-        $this->assertNull($definition->getDefaultConfiguration(), sprintf('[%s] No default configuration expected.', $fixer->getName()));
-
         if ($fixer->isRisky()) {
             $this->assertStringIsNotEmpty($definition->getRiskyDescription(), sprintf('[%s] Risky reasoning is required.', $fixer->getName()));
         } else {
             $this->assertNull($definition->getRiskyDescription(), sprintf('[%s] Fixer is not risky so no description of it expected.', $fixer->getName()));
         }
+    }
+
+    /**
+     * @param FixerInterface $fixer
+     *
+     * @group legacy
+     * @dataProvider provideFixerDefinitionsCases
+     * @expectedDeprecation PhpCsFixer\FixerDefinition\FixerDefinition::getConfigurationDescription is deprecated and will be removed in 3.0.
+     * @expectedDeprecation PhpCsFixer\FixerDefinition\FixerDefinition::getDefaultConfiguration is deprecated and will be removed in 3.0.
+     */
+    public function testLegacyFixerDefinitions(FixerInterface $fixer)
+    {
+        $definition = $fixer->getDefinition();
+
+        $this->assertNull($definition->getConfigurationDescription(), sprintf('[%s] No configuration description expected.', $fixer->getName()));
+        $this->assertNull($definition->getDefaultConfiguration(), sprintf('[%s] No default configuration expected.', $fixer->getName()));
     }
 
     public function provideFixerDefinitionsCases()

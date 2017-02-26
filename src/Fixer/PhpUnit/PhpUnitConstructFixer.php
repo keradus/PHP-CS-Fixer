@@ -113,7 +113,7 @@ $this->assertSame(true, $a);
 $this->assertNotEquals(null, $c);
 $this->assertNotSame(null, $d);
 ',
-                    array('assertSame', 'assertNotSame')
+                    array('assertions' => array('assertSame', 'assertNotSame'))
                 ),
             ),
             null,

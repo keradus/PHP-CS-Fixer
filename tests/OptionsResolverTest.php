@@ -88,6 +88,10 @@ final class OptionsResolverTest extends \PHPUnit_Framework_TestCase
         $optionsResolver->mapRootConfigurationTo('foo');
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Passing foo at the root of the configuration is deprecated and will not be supported in 3.0, use "foo" => array(...) option instead.
+     */
     public function testMapRootConfigurationTo()
     {
         $optionsResolver = new OptionsResolver();

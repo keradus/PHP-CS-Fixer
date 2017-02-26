@@ -171,7 +171,7 @@ return (1 + 2);
 switch ($a) { case($x); }
 yield(2);
 ',
-                    array('break', 'continue')
+                    array('control_statements' => array('break', 'continue'))
                 ),
             )
         );

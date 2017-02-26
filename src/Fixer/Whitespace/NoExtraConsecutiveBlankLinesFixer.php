@@ -178,7 +178,7 @@ switch ($foo) {
     case 42:
         break;
 }',
-                    array('break')
+                    array('tokens' => array('break'))
                 ),
                 new CodeSample(
 '<?php
@@ -189,7 +189,7 @@ for ($i = 0; $i < 9000; ++$i) {
 
     }
 }',
-                    array('continue')
+                    array('tokens' => array('continue'))
                 ),
                 new CodeSample(
 '<?php
@@ -199,7 +199,7 @@ for ($i = 0; $i < 9000; ++$i) {
     echo $i;
 
 }',
-                    array('curly_brace_block')
+                    array('tokens' => array('curly_brace_block'))
                 ),
                 new CodeSample(
 '<?php
@@ -208,7 +208,7 @@ $foo = array("foo");
 
 
 $bar = "bar";',
-                    array('extra')
+                    array('tokens' => array('extra'))
                 ),
                 new CodeSample(
 '<?php
@@ -218,7 +218,7 @@ $foo = array(
     "foo"
 
 );',
-                    array('parenthesis_brace_block')
+                    array('tokens' => array('parenthesis_brace_block'))
                 ),
                 new CodeSample(
 '<?php
@@ -228,7 +228,7 @@ function foo($bar)
     return $bar;
 
 }',
-                    array('return')
+                    array('tokens' => array('return'))
                 ),
                 new VersionSpecificCodeSample(
 '<?php
@@ -239,7 +239,7 @@ $foo = [
 
 ];',
                     new VersionSpecification(50400),
-                    array('square_brace_block')
+                    array('tokens' => array('square_brace_block'))
                 ),
                 new CodeSample(
 '<?php
@@ -249,7 +249,7 @@ function foo($bar)
     throw new \Exception("Hello!");
 
 }',
-                    array('throw')
+                    array('tokens' => array('throw'))
                 ),
                 new CodeSample(
 '<?php
@@ -259,7 +259,7 @@ function foo($bar)
     throw new \Exception("Hello!");
 
 }',
-                    array('throw')
+                    array('tokens' => array('throw'))
                 ),
                 new CodeSample(
 '<?php
@@ -273,7 +273,7 @@ use Baz\Bar;
 class Bar
 {
 }',
-                    array('use')
+                    array('tokens' => array('use'))
                 ),
                 new CodeSample(
 '<?php
@@ -284,7 +284,7 @@ class Foo
 
     use Baz;
 }',
-                    array('useTrait')
+                    array('tokens' => array('useTrait'))
                 ),
             )
         );

@@ -147,7 +147,7 @@ $this->assertTrue(is_nan($a));
 $this->assertTrue(is_float( $a), "my message");
 $this->assertTrue(is_nan($a));
 ',
-                    array('is_nan')
+                    array('functions' => array('is_nan'))
                 ),
             ),
             null,

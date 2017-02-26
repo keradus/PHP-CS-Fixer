@@ -86,7 +86,7 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
  * @author someone
  */
 function foo() {}',
-                    array('author')
+                    array('annotations' => array('author'))
                 ),
             )
         );

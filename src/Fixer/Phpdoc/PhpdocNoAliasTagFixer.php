@@ -158,7 +158,7 @@ final class Example
 {
 }
 ',
-                    array('link' => 'website')
+                    array('replacements' => array('link' => 'website'))
                 ),
             )
         );
