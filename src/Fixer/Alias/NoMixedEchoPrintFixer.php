@@ -27,6 +27,11 @@ use PhpCsFixer\Tokenizer\Tokens;
 final class NoMixedEchoPrintFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
 {
     /**
+     * @deprecated will be removed in 3.0
+     */
+    public static $defaultConfig = array('use' => 'echo');
+
+    /**
      * @var string
      */
     private $callBack;
