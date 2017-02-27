@@ -133,7 +133,7 @@ final class ConfigTest extends \PHPUnit_Framework_TestCase
         $config = Config::create()->setFinder($finder);
 
         $iterator = $config->getFinder()->getIterator();
-        $this->asserCount(1, $iterator);
+        $this->assertCount(1, $iterator);
         $iterator->rewind();
         $this->assertSame('somefile.php', $iterator->current()->getFilename());
     }
