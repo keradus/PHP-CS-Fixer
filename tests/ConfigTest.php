@@ -107,7 +107,7 @@ final class ConfigTest extends \PHPUnit_Framework_TestCase
         $config = new Config();
 
         $iterator = $config->getFinder()->in(__DIR__.'/Fixtures/FinderDirectory')->getIterator();
-        $this->assertSame(1, iterator_count($iterator));
+        $this->assertCount(1, $iterator);
         $iterator->rewind();
         $this->assertSame('somefile.php', $iterator->current()->getFilename());
     }
@@ -120,7 +120,7 @@ final class ConfigTest extends \PHPUnit_Framework_TestCase
         $config = Config::create()->setFinder($finder);
 
         $iterator = $config->getFinder()->getIterator();
-        $this->assertSame(1, iterator_count($iterator));
+        $this->assertCount(1, $iterator);
         $iterator->rewind();
         $this->assertSame('somefile.php', $iterator->current()->getFilename());
     }
