@@ -21,7 +21,7 @@ matrix:
         - php: 7.1
           env: TASK_SCA=1
         - php: nightly
-          env: TASK_SCA=1 COMPOSER_FLAGS="--ignore-platform-reqs"
+          env: COMPOSER_FLAGS="--ignore-platform-reqs" TASK_CS=0
         - php: 5.3
           env: SKIP_LINT_TEST_CASES=1 COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
         - php: 5.4
@@ -82,8 +82,7 @@ script:
     - if [ $TASK_TESTS == 1 ] && [ $TASK_TESTS_COVERAGE == 0 ]; then vendor/bin/phpunit --verbose; fi
     - if [ $TASK_TESTS == 1 ] && [ $TASK_TESTS_COVERAGE == 1 ]; then phpdbg -qrr vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml; fi
 
-    - if [ $TASK_SCA == 1 ]; then git checkout . -q; fi
-
+    - if [ $TASK_CS == 1 ]; then git checkout . -q; fi
     - if [ $TASK_CS == 1 ]; then php php-cs-fixer --diff --dry-run -v fix; fi
 
 after_success:
