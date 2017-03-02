@@ -29,25 +29,44 @@ use Symfony\Component\OptionsResolver\Options;
  */
 final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface, WhitespacesAwareFixerInterface
 {
+    const HEADER_PHPDOC = 'PHPDoc';
+    const HEADER_COMMENT = 'comment';
+
+    /** @deprecated will be removed in 3.0 */
+    const HEADER_LOCATION_AFTER_OPEN = 1;
+    /** @deprecated will be removed in 3.0 */
+    const HEADER_LOCATION_AFTER_DECLARE_STRICT = 2;
+
+    /** @deprecated will be removed in 3.0 */
+    const HEADER_LINE_SEPARATION_BOTH = 1;
+    /** @deprecated will be removed in 3.0 */
+    const HEADER_LINE_SEPARATION_TOP = 2;
+    /** @deprecated will be removed in 3.0 */
+    const HEADER_LINE_SEPARATION_BOTTOM = 3;
+    /** @deprecated will be removed in 3.0 */
+    const HEADER_LINE_SEPARATION_NONE = 4;
+
     /**
      * {@inheritdoc}
      */
     public function getConfigurationDefinition()
     {
         $whitespaceConfig = $this->whitespacesConfig;
+        $headerCommentType = self::HEADER_COMMENT;
+
         $configurationDefinition = new OptionsResolver();
 
         return $configurationDefinition
             ->setRequired('header')
             ->setAllowedTypes('header', 'string')
-            ->setNormalizer('header', function (Options $options, $value) use ($whitespaceConfig) {
+            ->setNormalizer('header', function (Options $options, $value) use ($whitespaceConfig, $headerCommentType) {
                 if ('' === trim($value)) {
                     return '';
                 }
 
                 $lineEnding = $whitespaceConfig->getLineEnding();
 
-                $comment = ('comment' === $options['commentType'] ? '/*' : '/**').$lineEnding;
+                $comment = ($headerCommentType === $options['commentType'] ? '/*' : '/**').$lineEnding;
                 $lines = explode("\n", str_replace("\r", '', $value));
                 foreach ($lines as $line) {
                     $comment .= rtrim(' * '.$line).$lineEnding;
@@ -57,8 +76,8 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
             })
             ->setDescription('header', 'proper header content')
 
-            ->setDefault('commentType', 'comment')
-            ->setAllowedValues('commentType', array('PHPDoc', 'comment'))
+            ->setDefault('commentType', self::HEADER_COMMENT)
+            ->setAllowedValues('commentType', array(self::HEADER_PHPDOC, self::HEADER_COMMENT))
             ->setDescription('commentType', 'comment syntax type')
 
             ->setDefault('location', 'after_declare_strict')
@@ -295,6 +314,6 @@ echo 1;
      */
     private function insertHeader(Tokens $tokens, $index)
     {
-        $tokens->insertAt($index, new Token(array('comment' === $this->configuration['commentType'] ? T_COMMENT : T_DOC_COMMENT, $this->configuration['header'])));
+        $tokens->insertAt($index, new Token(array(self::HEADER_COMMENT === $this->configuration['commentType'] ? T_COMMENT : T_DOC_COMMENT, $this->configuration['header'])));
     }
 }
