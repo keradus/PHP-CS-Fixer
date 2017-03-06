@@ -721,6 +721,10 @@ Choose from the list of available rules:
   - ``syntax`` (``'long'``, ``'short'``): whether to use the ``long`` or ``short`` ``list``
     syntax; defaults to ``'long'``
 
+* **logical_operators**
+   | Use ``&&`` and ``||`` logical operators instead of ``and`` and ``or``
+   | *Rule is: configurable, risky.*
+
 * **lowercase_cast** [@Symfony]
 
   Cast should be written in lower case.
