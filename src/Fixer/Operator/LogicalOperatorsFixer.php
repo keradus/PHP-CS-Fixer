@@ -64,7 +64,7 @@ final class LogicalOperatorsFixer extends AbstractFixer implements ConfigurableF
         public function getDefinition()
         {
             return new FixerDefinition(
-                'Use `&&` and `||` logical operators instead of `and` and `or`',
+                'Use `&&` and `||` logical operators instead of `and` and `or`.',
                 array(
                     new CodeSample(
     '<?php
