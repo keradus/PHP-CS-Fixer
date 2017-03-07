@@ -38,7 +38,9 @@ final class LogicalOperatorsFixer extends AbstractFixer
                     ),
                 ),
                 null,
-                null
+                null,
+                null,
+                'Risky, because you must double-check if using and/or with lower precedence was intentional'
             );
         }
 
