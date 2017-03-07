@@ -75,7 +75,7 @@ final class LogicalOperatorsFixer extends AbstractFixer implements ConfigurableF
                     new CodeSample(
     '<?php
 
-    if ($a == "foo"and ($b == "bar" or $c == "baz")) {
+    if ($a == "foo" and ($b == "bar" or $c == "baz")) {
     }',
                         array('use_keywords' => true)
                     ),
