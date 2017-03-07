@@ -24,13 +24,11 @@ final class LogicalOperatorsFixerTest extends AbstractFixerTestCase
     /**
      * @dataProvider provideFixCases
      *
-     * @param string              $expected
-     * @param string              $input
-     * @param array<string, bool> $configuration
+     * @param string $expected
+     * @param string $input
      */
-    public function testFix($expected, $input, $configuration)
+    public function testFix($expected, $input)
     {
-        $this->fixer->configure($configuration);
         $this->doTest($expected, $input);
     }
 
@@ -40,52 +38,22 @@ final class LogicalOperatorsFixerTest extends AbstractFixerTestCase
             array(
                 '<?php if ($a == "foo" && $b == "bar") {}',
                 '<?php if ($a == "foo" and $b == "bar") {}',
-                array('use_keywords' => false),
             ),
             array(
                 '<?php if ($a == "foo" || $b == "bar") {}',
                 '<?php if ($a == "foo" or $b == "bar") {}',
-                array('use_keywords' => false),
             ),
             array(
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" and ($b == "bar" or $c == "baz")) {}',
-                array('use_keywords' => false),
             ),
             array(
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" and ($b == "bar" || $c == "baz")) {}',
-                array('use_keywords' => false),
             ),
             array(
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" && ($b == "bar" or $c == "baz")) {}',
-                array('use_keywords' => false),
-            ),
-            array(
-                '<?php if ($a == "foo" and $b == "bar") {}',
-                '<?php if ($a == "foo" && $b == "bar") {}',
-                array('use_keywords' => true),
-            ),
-            array(
-                '<?php if ($a == "foo" or $b == "bar") {}',
-                '<?php if ($a == "foo" || $b == "bar") {}',
-                array('use_keywords' => true),
-            ),
-            array(
-                '<?php if ($a == "foo" and ($b == "bar" or $c == "baz")) {}',
-                '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
-                array('use_keywords' => true),
-            ),
-            array(
-                '<?php if ($a == "foo" and ($b == "bar" or $c == "baz")) {}',
-                '<?php if ($a == "foo" && ($b == "bar" or $c == "baz")) {}',
-                array('use_keywords' => true),
-            ),
-            array(
-                '<?php if ($a == "foo" and ($b == "bar" or $c == "baz")) {}',
-                '<?php if ($a == "foo" and ($b == "bar" || $c == "baz")) {}',
-                array('use_keywords' => true),
             ),
         );
     }
