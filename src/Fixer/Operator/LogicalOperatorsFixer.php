@@ -33,7 +33,7 @@ final class LogicalOperatorsFixer extends AbstractFixer
                     new CodeSample(
     '<?php
 
-    if ($a == "foo" && ($b == "bar" || $c == "baz")) {
+    if ($a == "foo" and ($b == "bar" or $c == "baz")) {
     }'
                     ),
                 ),
