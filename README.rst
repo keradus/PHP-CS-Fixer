@@ -722,7 +722,7 @@ Choose from the list of available rules:
     syntax; defaults to ``'long'``
 
 * **logical_operators**
-   | Use ``&&`` and ``||`` logical operators instead of ``and`` and ``or``
+   | Use ``&&`` and ``||`` logical operators instead of ``and`` and ``or``.
    | *Rule is: configurable, risky.*
 
 * **lowercase_cast** [@Symfony]
