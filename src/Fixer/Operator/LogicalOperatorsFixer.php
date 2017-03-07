@@ -22,27 +22,27 @@ use PhpCsFixer\Tokenizer\Tokens;
  */
 final class LogicalOperatorsFixer extends AbstractFixer
 {
-        /**
-         * {@inheritdoc}
-         */
-        public function getDefinition()
-        {
-            return new FixerDefinition(
-                'Use `&&` and `||` logical operators instead of `and` and `or`.',
-                array(
-                    new CodeSample(
-    '<?php
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefinition()
+    {
+        return new FixerDefinition(
+            'Use `&&` and `||` logical operators instead of `and` and `or`.',
+            array(
+                new CodeSample(
+'<?php
 
-    if ($a == "foo" and ($b == "bar" or $c == "baz")) {
-    }'
-                    ),
+if ($a == "foo" and ($b == "bar" or $c == "baz")) {
+}'
                 ),
-                null,
-                null,
-                null,
-                'Risky, because you must double-check if using and/or with lower precedence was intentional'
-            );
-        }
+            ),
+            null,
+            null,
+            null,
+            'Risky, because you must double-check if using and/or with lower precedence was intentional'
+        );
+    }
 
     /**
      * {@inheritdoc}
