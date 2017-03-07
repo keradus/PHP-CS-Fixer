@@ -67,7 +67,7 @@ final class ArraySyntaxFixer extends AbstractFixer implements ConfigurationDefin
 
                 return $value;
             })
-            ->setDescription('syntax', 'whether to use the long or short array syntax')
+            ->setDescription('syntax', 'whether to use the `long` or `short` array syntax')
         ;
     }
 

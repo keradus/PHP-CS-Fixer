@@ -345,7 +345,7 @@ EOF
                         }
 
                         if (null !== $description = $configurationDefinition->getDescription($option)) {
-                            $line .= ': '.$description;
+                            $line .= ': '.str_replace('`', '``', $description);
                         }
 
                         $line .= null !== $description ? '; ' : ': ';

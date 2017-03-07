@@ -50,7 +50,7 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
 
                 return $value;
             })
-            ->setDescription('elements', 'the structural elements to fix (PHP >= 7.1 required for "const")')
+            ->setDescription('elements', 'the structural elements to fix (PHP >= 7.1 required for `const`)')
             ->mapRootConfigurationTo('elements')
         ;
     }

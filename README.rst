@@ -203,8 +203,8 @@ Choose from the list of available rules:
 
   Configuration options:
 
-  - ``syntax`` (``'long'``, ``'short'``): whether to use the long or short array syntax;
-    defaults to ``'long'``
+  - ``syntax`` (``'long'``, ``'short'``): whether to use the ``long`` or ``short`` array
+    syntax; defaults to ``'long'``
 
 * **binary_operator_spaces** [@Symfony]
 
@@ -332,8 +332,8 @@ Choose from the list of available rules:
 
   Configuration options:
 
-  - ``annotations`` (``array``): list of annotations to remove, e.g. ["@author"];
-    defaults to ``[]``
+  - ``annotations`` (``array``): list of annotations to remove, e.g.
+    ``["@author"]``; defaults to ``[]``
 
 * **hash_to_slash_comment** [@Symfony]
 
@@ -688,7 +688,7 @@ Choose from the list of available rules:
 
   Configuration options:
 
-  - ``only_untyped`` (``bool``): whether to add missing @param annotations for
+  - ``only_untyped`` (``bool``): whether to add missing ``@param`` annotations for
     untyped parameters only; defaults to ``true``
 
 * **phpdoc_align** [@Symfony]
@@ -959,7 +959,7 @@ Choose from the list of available rules:
   Configuration options:
 
   - ``elements`` (``array``): the structural elements to fix (PHP >= 7.1 required
-    for "const"); defaults to ``['property', 'method']``
+    for ``const``); defaults to ``['property', 'method']``
 
 * **whitespace_after_comma_in_array** [@Symfony]
 
