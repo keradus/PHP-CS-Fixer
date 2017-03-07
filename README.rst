@@ -723,7 +723,7 @@ Choose from the list of available rules:
 
 * **logical_operators**
    | Use ``&&`` and ``||`` logical operators instead of ``and`` and ``or``.
-   | *Rule is: configurable, risky.*
+   | *Rule is: risky.*
 
 * **lowercase_cast** [@Symfony]
 
