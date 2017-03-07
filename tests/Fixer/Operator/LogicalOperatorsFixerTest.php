@@ -55,6 +55,18 @@ final class LogicalOperatorsFixerTest extends AbstractFixerTestCase
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" && ($b == "bar" or $c == "baz")) {}',
             ),
+            array(
+                '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
+                '<?php if ($a == "foo" AND ($b == "bar" OR $c == "baz")) {}',
+            ),
+            array(
+                '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
+                '<?php if ($a == "foo" and ($b == "bar" OR $c == "baz")) {}',
+            ),
+            array(
+                '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
+                '<?php if ($a == "foo" AND ($b == "bar" or $c == "baz")) {}',
+            ),
         );
     }
 }
