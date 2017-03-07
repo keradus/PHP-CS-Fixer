@@ -22,7 +22,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
  */
-class LogicalOperatorsFixer extends AbstractFixer implements ConfigurableFixerInterface
+final class LogicalOperatorsFixer extends AbstractFixer implements ConfigurableFixerInterface
 {
     /**
      * @var array<string, bool>
