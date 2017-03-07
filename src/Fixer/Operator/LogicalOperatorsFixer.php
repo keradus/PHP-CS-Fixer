@@ -49,7 +49,7 @@ if ($a == "foo" and ($b == "bar" or $c == "baz")) {
      */
     public function isCandidate(Tokens $tokens)
     {
-        return $tokens->isTokenKindFound(T_LOGICAL_AND) || $tokens->isTokenKindFound(T_LOGICAL_OR);
+        return $tokens->isAnyTokenKindsFound(array(T_LOGICAL_AND, T_LOGICAL_OR));
     }
 
     /**
