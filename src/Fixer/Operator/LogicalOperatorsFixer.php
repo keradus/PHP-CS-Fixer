@@ -66,10 +66,6 @@ if ($a == "foo" and ($b == "bar" or $c == "baz")) {
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
         foreach ($tokens as $index => $token) {
-            if (!$token->isGivenKind(T_LOGICAL_AND) && !$token->isGivenKind(T_LOGICAL_OR)) {
-                continue;
-            }
-
             if ($token->isGivenKind(T_LOGICAL_AND)) {
                 $tokens->overrideAt($index, array(T_BOOLEAN_AND, '&&'));
             } elseif ($token->isGivenKind(T_LOGICAL_OR)) {
