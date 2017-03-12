@@ -30,7 +30,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 abstract class AbstractFixer implements FixerInterface, DefinedFixerInterface
 {
     /**
-     * @var array
+     * @var array<string, mixed>|null
      */
     protected $configuration;
 
