@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\Alias;
 
 use PhpCsFixer\AbstractFunctionReferenceFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -57,17 +58,12 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
     public function getConfigurationDefinition()
     {
         $argumentCounts = self::$argumentCounts;
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('replacements', array(
-                'getrandmax' => 'mt_getrandmax',
-                'mt_rand' => 'mt_rand',
-                'rand' => 'mt_rand',
-                'srand' => 'mt_srand',
-            ))
-            ->setAllowedTypes('replacements', 'array')
-            ->setNormalizer('replacements', function (Options $options, $value) use ($argumentCounts) {
+        $replacements = new FixerOption('replacements', 'Mapping between replaced functions with the new ones.');
+        $replacements
+            ->setAllowedTypes('array')
+            ->setNormalizer(function (Options $options, $value) use ($argumentCounts) {
                 foreach ($value as $functionName => $replacement) {
                     if (!array_key_exists($functionName, $argumentCounts)) {
                         throw new InvalidOptionsException(sprintf(
@@ -87,7 +83,16 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
 
                 return $value;
             })
-            ->setDescription('replacements', 'mapping between replaced functions with the new ones')
+            ->setDefault(array(
+                'getrandmax' => 'mt_getrandmax',
+                'mt_rand' => 'mt_rand',
+                'rand' => 'mt_rand',
+                'srand' => 'mt_srand',
+            ))
+        ;
+
+        return $configurationDefinition
+            ->addOption($replacements)
             ->mapRootConfigurationTo('replacements')
         ;
     }

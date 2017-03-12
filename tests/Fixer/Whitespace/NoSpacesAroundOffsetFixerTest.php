@@ -275,7 +275,7 @@ $var = $arr[0]{     0
      *
      * @group legacy
      * @dataProvider provideConfigurationCases
-     * @expectedDeprecation Passing positions at the root of the configuration is deprecated and will not be supported in 3.0, use "positions" => array(...) option instead.
+     * @expectedDeprecation Passing "positions" at the root of the configuration is deprecated and will not be supported in 3.0, use "positions" => array(...) option instead.
      */
     public function testLegacyFixWithConfiguration(array $configuration, $expected, $input)
     {

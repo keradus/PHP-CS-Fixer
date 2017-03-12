@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -54,7 +55,7 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
      */
     public function getConfigurationDefinition()
     {
-        $functions = array(
+        $values = array(
             'array_key_exists',
             'empty',
             'file_exists',
@@ -77,12 +78,16 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
             'is_scalar',
             'is_string',
         );
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $functions = new FixerOption('functions', 'List of assertions to fix.');
+        $functions
+            ->setDefault($values)
+            ->setAllowedValueIsSubsetOf($values)
+        ;
 
         return $configurationDefinition
-            ->setDefault('functions', $functions)
-            ->setAllowedValueIsSubsetOf('functions', $functions)
-            ->setDescription('functions', 'list of assertions to fix')
+            ->addOption($functions)
             ->mapRootConfigurationTo('functions')
         ;
     }

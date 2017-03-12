@@ -15,9 +15,10 @@ namespace PhpCsFixer\Fixer\ClassNotation;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -37,14 +38,18 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        $elements = array('const', 'property');
+        $values = array('const', 'property');
+
+        $elements = new FixerOption('elements', 'List of strings which element should be modified.');
+        $elements
+            ->setDefault($values)
+            ->setAllowedValueIsSubsetOf($values)
+        ;
 
         return $configurationDefinition
-            ->setDefault('elements', $elements)
-            ->setAllowedValueIsSubsetOf('elements', $elements)
-            ->setDescription('elements', 'list of strings which element should be modified')
+            ->addOption($elements)
             ->mapRootConfigurationTo('elements')
         ;
     }

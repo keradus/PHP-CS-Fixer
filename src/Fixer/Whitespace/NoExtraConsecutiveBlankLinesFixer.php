@@ -15,11 +15,12 @@ namespace PhpCsFixer\Fixer\Whitespace;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -116,12 +117,16 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $tokens = new FixerOption('tokens', 'List of tokens to fix.');
+        $tokens
+            ->setAllowedValueIsSubsetOf($this->availableTokens)
+            ->setDefault(array('extra'))
+        ;
 
         return $configurationDefinition
-            ->setDefault('tokens', array('extra'))
-            ->setAllowedValueIsSubsetOf('tokens', $this->availableTokens)
-            ->setDescription('tokens', 'list of tokens to fix')
+            ->addOption($tokens)
             ->mapRootConfigurationTo('tokens')
         ;
     }

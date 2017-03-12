@@ -104,7 +104,7 @@ EOF;
      *
      * @group legacy
      * @dataProvider provideConfigTests
-     * @expectedDeprecation Passing tokens at the root of the configuration is deprecated and will not be supported in 3.0, use "tokens" => array(...) option instead.
+     * @expectedDeprecation Passing "tokens" at the root of the configuration is deprecated and will not be supported in 3.0, use "tokens" => array(...) option instead.
      */
     public function testLegacyWithConfig(array $lineNumberRemoved, array $config)
     {

@@ -30,7 +30,12 @@ final class NoUnneededControlParenthesesFixerTest extends AbstractFixerTestCase
         parent::setUpBeforeClass();
 
         $fixer = new NoUnneededControlParenthesesFixer();
-        self::$defaultStatements = $fixer->getConfigurationDefinition()->getDefault('control_statements');
+        foreach ($fixer->getConfigurationDefinition()->getOptions() as $option) {
+            if ('control_statements' === $option->getName()) {
+                self::$defaultStatements = $option->getDefault();
+                break;
+            }
+        }
     }
 
     /**
@@ -52,7 +57,7 @@ final class NoUnneededControlParenthesesFixerTest extends AbstractFixerTestCase
      *
      * @group legacy
      * @dataProvider provideFixCases
-     * @expectedDeprecation Passing control_statements at the root of the configuration is deprecated and will not be supported in 3.0, use "control_statements" => array(...) option instead.
+     * @expectedDeprecation Passing "control_statements" at the root of the configuration is deprecated and will not be supported in 3.0, use "control_statements" => array(...) option instead.
      */
     public function testLegacyFix($expected, $input = null, $fixStatement = null)
     {
@@ -79,7 +84,7 @@ final class NoUnneededControlParenthesesFixerTest extends AbstractFixerTestCase
      *
      * @group legacy
      * @dataProvider provideFixCases55
-     * @expectedDeprecation Passing control_statements at the root of the configuration is deprecated and will not be supported in 3.0, use "control_statements" => array(...) option instead.
+     * @expectedDeprecation Passing "control_statements" at the root of the configuration is deprecated and will not be supported in 3.0, use "control_statements" => array(...) option instead.
      * @requires PHP 5.5
      */
     public function testLegacyFix55($expected, $input = null, $fixStatement = null)
@@ -107,7 +112,7 @@ final class NoUnneededControlParenthesesFixerTest extends AbstractFixerTestCase
      *
      * @group legacy
      * @dataProvider provideFixCases70
-     * @expectedDeprecation Passing control_statements at the root of the configuration is deprecated and will not be supported in 3.0, use "control_statements" => array(...) option instead.
+     * @expectedDeprecation Passing "control_statements" at the root of the configuration is deprecated and will not be supported in 3.0, use "control_statements" => array(...) option instead.
      * @requires PHP 7.0
      */
     public function testLegacyFix70($expected, $input = null, $fixStatement = null)

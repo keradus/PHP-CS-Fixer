@@ -214,7 +214,7 @@ final class PhpUnitDedicateAssertFixerTest extends AbstractFixerTestCase
 
     /**
      * @group legacy
-     * @expectedDeprecation Passing functions at the root of the configuration is deprecated and will not be supported in 3.0, use "functions" => array(...) option instead.
+     * @expectedDeprecation Passing "functions" at the root of the configuration is deprecated and will not be supported in 3.0, use "functions" => array(...) option instead.
      */
     public function testLegacyConfig()
     {

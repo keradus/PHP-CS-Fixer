@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\Operator;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -47,12 +48,16 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurationDefin
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $spacing = new FixerOption('spacing', 'Spacing to apply around concatenation operator.');
+        $spacing
+            ->setAllowedValues(array('one', 'none'))
+            ->setDefault('none')
+        ;
 
         return $configurationDefinition
-            ->setDefault('spacing', 'none')
-            ->setAllowedValues('spacing', array('one', 'none'))
-            ->setDescription('spacing', 'spacing to apply around concatenation operator')
+            ->addOption($spacing)
         ;
     }
 

@@ -15,9 +15,10 @@ namespace PhpCsFixer\Fixer\Phpdoc;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\DocBlock\DocBlock;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Tokens;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -36,17 +37,12 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer implements Configuration
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('replacements', array(
-                'property-read' => 'property',
-                'property-write' => 'property',
-                'type' => 'var',
-                'link' => 'see',
-            ))
-            ->setAllowedTypes('replacements', 'array')
-            ->setNormalizer('replacements', function (Options $options, $value) {
+        $replacements = new FixerOption('replacements', 'Mapping between replaced annotations with new ones.');
+        $replacements
+            ->setAllowedTypes('array')
+            ->setNormalizer(function (Options $options, $value) {
                 $normalizedValue = array();
 
                 foreach ($value as $from => $to) {
@@ -85,7 +81,16 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer implements Configuration
 
                 return $normalizedValue;
             })
-            ->setDescription('replacements', 'mapping between replaced annotations with new ones')
+            ->setDefault(array(
+                'property-read' => 'property',
+                'property-write' => 'property',
+                'type' => 'var',
+                'link' => 'see',
+            ))
+        ;
+
+        return $configurationDefinition
+            ->addOption($replacements)
             ->mapRootConfigurationTo('replacements')
         ;
     }

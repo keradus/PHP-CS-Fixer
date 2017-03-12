@@ -16,9 +16,10 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\ConfigurationException\RequiredFixerConfigurationException;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use Symfony\Component\OptionsResolver\Options;
@@ -54,12 +55,12 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
         $whitespaceConfig = $this->whitespacesConfig;
         $headerCommentType = self::HEADER_COMMENT;
 
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setRequired('header')
-            ->setAllowedTypes('header', 'string')
-            ->setNormalizer('header', function (Options $options, $value) use ($whitespaceConfig, $headerCommentType) {
+        $header = new FixerOption('header', 'Proper header content.');
+        $header
+            ->setAllowedTypes('string')
+            ->setNormalizer(function (Options $options, $value) use ($whitespaceConfig, $headerCommentType) {
                 if ('' === trim($value)) {
                     return '';
                 }
@@ -74,19 +75,31 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
 
                 return $comment.' */';
             })
-            ->setDescription('header', 'proper header content')
+        ;
 
-            ->setDefault('commentType', self::HEADER_COMMENT)
-            ->setAllowedValues('commentType', array(self::HEADER_PHPDOC, self::HEADER_COMMENT))
-            ->setDescription('commentType', 'comment syntax type')
+        $commentType = new FixerOption('commentType', 'Comment syntax type.');
+        $commentType
+            ->setAllowedValues(array(self::HEADER_PHPDOC, self::HEADER_COMMENT))
+            ->setDefault(self::HEADER_COMMENT)
+        ;
 
-            ->setDefault('location', 'after_declare_strict')
-            ->setAllowedValues('location', array('after_open', 'after_declare_strict'))
-            ->setDescription('location', 'the location of the inserted header')
+        $location = new FixerOption('location', 'The location of the inserted header.');
+        $location
+            ->setAllowedValues(array('after_open', 'after_declare_strict'))
+            ->setDefault('after_declare_strict')
+        ;
 
-            ->setDefault('separate', 'both')
-            ->setAllowedValues('separate', array('both', 'top', 'bottom', 'none'))
-            ->setDescription('separate', 'whether the header should be separated from the file content with a new line')
+        $separate = new FixerOption('separate', 'Whether the header should be separated from the file content with a new line.');
+        $separate
+            ->setAllowedValues(array('both', 'top', 'bottom', 'none'))
+            ->setDefault('both')
+        ;
+
+        return $configurationDefinition
+            ->addOption($header)
+            ->addOption($commentType)
+            ->addOption($location)
+            ->addOption($separate)
         ;
     }
 

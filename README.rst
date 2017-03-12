@@ -374,7 +374,7 @@ Choose from the list of available rules:
 
   Configuration options:
 
-  - ``use_yoda_style`` (``bool``): whether Yoda style confitions should be used;
+  - ``use_yoda_style`` (``bool``): whether Yoda style conditions should be used;
     defaults to ``true``
 
 * **line_ending** [@PSR2, @Symfony]

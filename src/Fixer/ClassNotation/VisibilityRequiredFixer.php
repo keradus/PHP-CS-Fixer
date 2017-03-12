@@ -14,11 +14,12 @@ namespace PhpCsFixer\Fixer\ClassNotation;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -38,19 +39,23 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('elements', array('property', 'method'))
-            ->setAllowedValueIsSubsetOf('elements', array('property', 'method', 'const'))
-            ->addNormalizer('elements', function (Options $options, $value) {
-                if (in_array('const', $value, true) && PHP_VERSION_ID < 70100) {
+        $elements = new FixerOption('elements', 'The structural elements to fix (PHP >= 7.1 required for `const`).');
+        $elements
+            ->setAllowedValueIsSubsetOf(array('property', 'method', 'const'))
+            ->setNormalizer(function (Options $options, $value) {
+                if (PHP_VERSION_ID < 70100 && in_array('const', $value, true)) {
                     throw new InvalidOptionsException('"const" option can only be enabled with PHP 7.1+.');
                 }
 
                 return $value;
             })
-            ->setDescription('elements', 'the structural elements to fix (PHP >= 7.1 required for `const`)')
+            ->setDefault(array('property', 'method'))
+        ;
+
+        return $configurationDefinition
+            ->addOption($elements)
             ->mapRootConfigurationTo('elements')
         ;
     }

@@ -15,11 +15,12 @@ namespace PhpCsFixer\Fixer\ClassNotation;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -36,20 +37,30 @@ final class ClassDefinitionFixer extends AbstractFixer implements ConfigurationD
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $singleLine = new FixerOption('singleLine', 'Whether definitions should be single line.');
+        $singleLine
+            ->setAllowedTypes('bool')
+            ->setDefault(false)
+        ;
+
+        $singleItemSingleLine = new FixerOption('singleItemSingleLine', 'Whether definitions should be single line when including a single item.');
+        $singleItemSingleLine
+            ->setAllowedTypes('bool')
+            ->setDefault(false)
+        ;
+
+        $multiLineExtendsEachSingleLine = new FixerOption('multiLineExtendsEachSingleLine', 'Whether definitions should be multiline.');
+        $multiLineExtendsEachSingleLine
+            ->setAllowedTypes('bool')
+            ->setDefault(false)
+        ;
 
         return $configurationDefinition
-            ->setDefault('singleLine', false)
-            ->setAllowedTypes('singleLine', 'bool')
-            ->setDescription('singleLine', 'whether definitions should be single line')
-
-            ->setDefault('singleItemSingleLine', false)
-            ->setAllowedTypes('singleItemSingleLine', 'bool')
-            ->setDescription('singleItemSingleLine', 'whether definitions should be single line when including a single item')
-
-            ->setDefault('multiLineExtendsEachSingleLine', false)
-            ->setAllowedTypes('multiLineExtendsEachSingleLine', 'bool')
-            ->setDescription('multiLineExtendsEachSingleLine', 'whether definitions should be multiline')
+            ->addOption($singleLine)
+            ->addOption($singleItemSingleLine)
+            ->addOption($multiLineExtendsEachSingleLine)
         ;
     }
 

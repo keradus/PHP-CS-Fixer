@@ -28,7 +28,7 @@ final class PhpUnitStrictFixerTest extends AbstractFixerTestCase
      *
      * @group legacy
      * @dataProvider provideTestFixCases
-     * @expectedDeprecation Passing assertions at the root of the configuration is deprecated and will not be supported in 3.0, use "assertions" => array(...) option instead.
+     * @expectedDeprecation Passing "assertions" at the root of the configuration is deprecated and will not be supported in 3.0, use "assertions" => array(...) option instead.
      */
     public function testLegacyFix($expected, $input = null)
     {

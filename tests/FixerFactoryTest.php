@@ -456,12 +456,10 @@ final class FixerFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $configurationDefinition = $fixer->getConfigurationDefinition();
 
-        $this->assertInstanceOf('PhpCsFixer\OptionsResolver', $configurationDefinition);
+        $this->assertInstanceOf('PhpCsFixer\FixerConfiguration\FixerConfigurationResolver', $configurationDefinition);
 
-        foreach ($configurationDefinition->getDefinedOptions() as $option) {
-            $description = $configurationDefinition->getDescription($option);
-
-            $this->assertNotNull($description);
+        foreach ($configurationDefinition->getOptions() as $option) {
+            $this->assertNotEmpty($option->getDescription());
         }
     }
 

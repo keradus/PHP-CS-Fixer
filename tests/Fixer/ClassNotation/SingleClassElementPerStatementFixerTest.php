@@ -593,7 +593,7 @@ EOT
      *
      * @group legacy
      * @dataProvider provideConfigurationCases
-     * @expectedDeprecation Passing elements at the root of the configuration is deprecated and will not be supported in 3.0, use "elements" => array(...) option instead.
+     * @expectedDeprecation Passing "elements" at the root of the configuration is deprecated and will not be supported in 3.0, use "elements" => array(...) option instead.
      */
     public function testLegacyFixWithConfiguration(array $configuration, $expected)
     {

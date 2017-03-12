@@ -15,9 +15,10 @@ namespace PhpCsFixer\Fixer\Operator;
 use PhpCsFixer\AbstractAlignFixerHelper;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -38,16 +39,23 @@ final class BinaryOperatorSpacesFixer extends AbstractFixer implements Configura
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $alignEquals = new FixerOption('align_equals', 'Whether to apply, remove or ignore equals alignment.');
+        $alignEquals
+            ->setDefault(false)
+            ->setAllowedValues(array(true, false, null))
+        ;
+
+        $alignDoubleArrows = new FixerOption('align_double_arrow', 'Whether to apply, remove or ignore double arrows alignment.');
+        $alignDoubleArrows
+            ->setDefault(false)
+            ->setAllowedValues(array(true, false, null))
+        ;
 
         return $configurationDefinition
-            ->setDefault('align_equals', false)
-            ->setAllowedValues('align_equals', array(true, false, null))
-            ->setDescription('align_equals', 'whether to apply, remove or ignore equals alignment')
-
-            ->setDefault('align_double_arrow', false)
-            ->setAllowedValues('align_double_arrow', array(true, false, null))
-            ->setDescription('align_double_arrow', 'whether to apply, remove or ignore double arrows alignment')
+            ->addOption($alignEquals)
+            ->addOption($alignDoubleArrows)
         ;
     }
 

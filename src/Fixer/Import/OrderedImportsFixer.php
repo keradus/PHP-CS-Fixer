@@ -14,11 +14,12 @@ namespace PhpCsFixer\Fixer\Import;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -64,16 +65,18 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
     public function getConfigurationDefinition()
     {
         $supportedSortTypes = $this->supportedSortTypes;
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('sortAlgorithm', self::SORT_ALPHA)
-            ->setAllowedValues('sortAlgorithm', $this->supportedSortAlgorithms)
-            ->setDescription('sortAlgorithm', 'whether the statements should be sorted alphabetically or by length')
+        $sortAlgorithm = new FixerOption('sortAlgorithm', 'whether the statements should be sorted alphabetically or by length');
+        $sortAlgorithm
+            ->setAllowedValues($this->supportedSortAlgorithms)
+            ->setDefault(self::SORT_ALPHA)
+        ;
 
-            ->setDefault('importsOrder', null)
-            ->setAllowedTypes('importsOrder', array('array', 'null'))
-            ->setNormalizer('importsOrder', function (Options $options, $value) use ($supportedSortTypes) {
+        $importsOrder = new FixerOption('importsOrder', 'Defines the order of import types.');
+        $importsOrder
+            ->setAllowedTypes(array('array', 'null'))
+            ->setNormalizer(function (Options $options, $value) use ($supportedSortTypes) {
                 if (null !== $value) {
                     $missing = array_diff($supportedSortTypes, $value);
                     if (count($missing)) {
@@ -96,7 +99,12 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
 
                 return $value;
             })
-            ->setDescription('importsOrder', 'defines the order of import types')
+            ->setDefault(null)
+        ;
+
+        return $configurationDefinition
+            ->addOption($sortAlgorithm)
+            ->addOption($importsOrder)
         ;
     }
 

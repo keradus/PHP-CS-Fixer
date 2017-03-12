@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\ClassNotation;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -119,10 +120,12 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
 
-        return $configurationDefinition
-            ->setDefault('order', array(
+        $order = new FixerOption('order', 'List of strings defining order of elements.');
+        $order
+            ->setAllowedValueIsSubsetOf(array_keys(array_merge(self::$typeHierarchy, self::$specialTypes)))
+            ->setDefault(array(
                 'use_trait',
                 'constant_public',
                 'constant_protected',
@@ -138,8 +141,10 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
                 'method_protected',
                 'method_private',
             ))
-            ->setAllowedValueIsSubsetOf('order', array_keys(array_merge(self::$typeHierarchy, self::$specialTypes)))
-            ->setDescription('order', 'list of strings defining order of elements')
+        ;
+
+        return $configurationDefinition
+            ->addOption($order)
             ->mapRootConfigurationTo('order')
         ;
     }

@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\Alias;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -62,12 +63,16 @@ final class NoMixedEchoPrintFixer extends AbstractFixer implements Configuration
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $use = new FixerOption('use', 'The desired language construct.');
+        $use
+            ->setAllowedValues(array('print', 'echo'))
+            ->setDefault('echo')
+        ;
 
         return $configurationDefinition
-            ->setDefault('use', 'echo')
-            ->setAllowedValues('use', array('print', 'echo'))
-            ->setDescription('use', 'the desired language construct')
+            ->addOption($use)
         ;
     }
 

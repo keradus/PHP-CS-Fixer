@@ -14,9 +14,10 @@ namespace PhpCsFixer\Fixer\LanguageConstruct;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\OptionsResolver;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -31,12 +32,16 @@ final class IsNullFixer extends AbstractFixer implements ConfigurationDefinition
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new OptionsResolver();
+        $configurationDefinition = new FixerConfigurationResolver();
+
+        $yoda = new FixerOption('use_yoda_style', 'Whether Yoda style conditions should be used.');
+        $yoda
+            ->setAllowedTypes('bool')
+            ->setDefault(true)
+        ;
 
         return $configurationDefinition
-            ->setDefault('use_yoda_style', true)
-            ->setAllowedTypes('use_yoda_style', 'bool')
-            ->setDescription('use_yoda_style', 'whether Yoda style confitions should be used')
+            ->addOption($yoda)
         ;
     }
 

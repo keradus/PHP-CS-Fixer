@@ -470,7 +470,7 @@ EOF;
      * @group legacy
      * @requires PHP 7.1
      * @dataProvider provideClassConstTest
-     * @expectedDeprecation Passing elements at the root of the configuration is deprecated and will not be supported in 3.0, use "elements" => array(...) option instead.
+     * @expectedDeprecation Passing "elements" at the root of the configuration is deprecated and will not be supported in 3.0, use "elements" => array(...) option instead.
      */
     public function testLegacyFixClassConst($expected, $input)
     {
