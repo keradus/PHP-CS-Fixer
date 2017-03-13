@@ -270,6 +270,13 @@ EOF
         return var_export($value, true);
     }
 
+    /**
+     * Returns the allowed values of the given option that can be converted to a string.
+     *
+     * @param FixerOption $option
+     *
+     * @return array|null
+     */
     public static function getDisplayableAllowedValues(FixerOption $option)
     {
         $allowed = $option->getAllowedValues();
