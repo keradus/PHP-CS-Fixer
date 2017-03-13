@@ -272,7 +272,8 @@ EOF
 
     public static function getDisplayableAllowedValues(FixerOption $option)
     {
-        if (null !== $allowed = $option->getAllowedValues()) {
+        $allowed = $option->getAllowedValues();
+        if (null !== $allowed) {
             $allowed = array_filter($allowed, function ($value) {
                 return !is_callable($value);
             });
