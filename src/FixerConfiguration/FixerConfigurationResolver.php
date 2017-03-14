@@ -89,15 +89,18 @@ final class FixerConfigurationResolver implements FixerConfigurationResolverInte
                 $resolver->setRequired($name);
             }
 
-            if (null !== $allowedValues = $option->getAllowedValues()) {
+            $allowedValues = $option->getAllowedValues();
+            if (null !== $allowedValues) {
                 $resolver->setAllowedValues($name, $allowedValues);
             }
 
-            if (null !== $allowedTypes = $option->getAllowedTypes()) {
+            $allowedTypes = $option->getAllowedTypes();
+            if (null !== $allowedTypes) {
                 $resolver->setAllowedTypes($name, $allowedTypes);
             }
 
-            if (null !== $normalizer = $option->getNormalizer()) {
+            $normalizer = $option->getNormalizer();
+            if (null !== $normalizer) {
                 $resolver->setNormalizer($name, $normalizer);
             }
         }

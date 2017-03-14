@@ -489,4 +489,35 @@ declare(strict_types=1)?>',
             ),
         );
     }
+
+    public function testConfigurationUpdatedWithWhitespsacesConfig()
+    {
+        $this->fixer->configure(array('header' => 'Foo'));
+        
+        $this->doTest(
+            "<?php\n\n/*\n * Foo\n */\n\necho 1;",
+            "<?php\necho 1;"
+        );
+
+        $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig('    ', "\r\n"));
+
+        $this->doTest(
+            "<?php\r\n\r\n/*\r\n * Foo\r\n */\r\n\r\necho 1;",
+            "<?php\r\necho 1;"
+        );
+
+        $this->fixer->configure(array('header' => 'Bar'));
+
+        $this->doTest(
+            "<?php\r\n\r\n/*\r\n * Bar\r\n */\r\n\r\necho 1;",
+            "<?php\r\necho 1;"
+        );
+
+        $this->fixer->setWhitespacesConfig(new WhitespacesFixerConfig('    ', "\n"));
+
+        $this->doTest(
+            "<?php\n\n/*\n * Bar\n */\n\necho 1;",
+            "<?php\necho 1;"
+        );
+    }
 }

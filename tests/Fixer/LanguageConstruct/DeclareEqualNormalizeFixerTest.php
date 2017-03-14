@@ -85,8 +85,8 @@ final class DeclareEqualNormalizeFixerTest extends AbstractFixerTestCase
     }
 
     /**
-     * @param array $config
-     * @param mixed $expectedMessage
+     * @param array  $config
+     * @param string $expectedMessage
      *
      * @dataProvider provideInvalidConfig
      */

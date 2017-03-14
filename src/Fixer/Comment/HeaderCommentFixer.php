@@ -22,6 +22,7 @@ use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
+use PhpCsFixer\WhitespacesFixerConfig;
 use Symfony\Component\OptionsResolver\Options;
 
 /**
@@ -101,6 +102,20 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
             ->addOption($location)
             ->addOption($separate)
         ;
+    }
+
+    public function setWhitespacesConfig(WhitespacesFixerConfig $config)
+    {
+        if (null !== $this->whitespacesConfig && null !== $this->configuration) {
+            $currentLineEnding = $this->whitespacesConfig->getLineEnding();
+            $newLineEnding = $config->getLineEnding();
+
+            if ($newLineEnding !== $currentLineEnding) {
+                $this->configuration['header'] = str_replace($currentLineEnding, $newLineEnding, $this->configuration['header']);
+            }
+        }
+
+        parent::setWhitespacesConfig($config);
     }
 
     /**

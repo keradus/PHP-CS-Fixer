@@ -26,25 +26,14 @@ final class FixerOptionValidatorGenerator
      */
     public function allowedValueIsSubsetOf(array $allowedArrayValues)
     {
-        return $this->unbind(function ($values) use ($allowedArrayValues) {
-            return empty(array_diff($values, $allowedArrayValues));
-        });
-    }
+        return function ($values) use ($allowedArrayValues) {
+            foreach ($values as $value) {
+                if (!in_array($value, $allowedArrayValues, true)) {
+                    return false;
+                }
+            }
 
-    /**
-     * Unbinds the given closure to avoid memory leaks. See {@see https://bugs.php.net/bug.php?id=69639 Bug #69639} for
-     * details.
-     *
-     * @param \Closure $closure
-     *
-     * @return \Closure
-     */
-    private function unbind(\Closure $closure)
-    {
-        if (PHP_VERSION_ID < 50400) {
-            return $closure;
-        }
-
-        return $closure->bindTo(null);
+            return true;
+        };
     }
 }
