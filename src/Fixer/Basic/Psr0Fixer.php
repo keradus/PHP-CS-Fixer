@@ -36,7 +36,7 @@ final class Psr0Fixer extends AbstractPsrAutoloadingFixer implements Configurati
         $configurationDefinition = new FixerConfigurationResolver();
 
         $dir = new FixerOption('dir', 'The directory where the project code is placed.');
-        $dir->setAllowedTypes('string');
+        $dir->setAllowedTypes(array('string'));
 
         return $configurationDefinition
             ->addOption($dir)

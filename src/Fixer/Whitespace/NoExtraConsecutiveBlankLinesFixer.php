@@ -124,9 +124,9 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
         $tokens = new FixerOption('tokens', 'List of tokens to fix.');
         $tokens
             ->setAllowedTypes(array('array'))
-            ->setAllowedValues(
-                $generator->allowedValueIsSubsetOf($this->availableTokens)
-            )
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf($this->availableTokens),
+            ))
             ->setDefault(array('extra'))
         ;
 

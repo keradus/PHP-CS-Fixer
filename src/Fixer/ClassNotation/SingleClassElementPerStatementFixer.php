@@ -48,9 +48,9 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
         $elements
             ->setDefault($values)
             ->setAllowedTypes(array('array'))
-            ->setAllowedValues(
-                $generator->allowedValueIsSubsetOf($values)
-            )
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf($values),
+            ))
         ;
 
         return $configurationDefinition

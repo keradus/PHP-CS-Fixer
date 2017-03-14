@@ -38,7 +38,7 @@ final class PhpdocAddMissingParamAnnotationFixer extends AbstractFunctionReferen
         $onlyUntyped = new FixerOption('only_untyped', 'Whether to add missing `@param` annotations for untyped parameters only.');
         $onlyUntyped
             ->setDefault(true)
-            ->setAllowedTypes('bool')
+            ->setAllowedTypes(array('bool'))
         ;
 
         return $configurationDefinition

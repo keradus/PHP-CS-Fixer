@@ -46,9 +46,9 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
         $elements = new FixerOption('elements', 'The structural elements to fix (PHP >= 7.1 required for `const`).');
         $elements
             ->setAllowedTypes(array('array'))
-            ->setAllowedValues(
-                $generator->allowedValueIsSubsetOf(array('property', 'method', 'const'))
-            )
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array('property', 'method', 'const')),
+            ))
             ->setNormalizer(function (Options $options, $value) {
                 if (PHP_VERSION_ID < 70100 && in_array('const', $value, true)) {
                     throw new InvalidOptionsException('"const" option can only be enabled with PHP 7.1+.');

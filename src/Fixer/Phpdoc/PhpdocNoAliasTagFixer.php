@@ -41,7 +41,7 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer implements Configuration
 
         $replacements = new FixerOption('replacements', 'Mapping between replaced annotations with new ones.');
         $replacements
-            ->setAllowedTypes('array')
+            ->setAllowedTypes(array('array'))
             ->setNormalizer(function (Options $options, $value) {
                 $normalizedValue = array();
 

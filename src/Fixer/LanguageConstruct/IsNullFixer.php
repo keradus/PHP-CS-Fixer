@@ -36,7 +36,7 @@ final class IsNullFixer extends AbstractFixer implements ConfigurationDefinition
 
         $yoda = new FixerOption('use_yoda_style', 'Whether Yoda style conditions should be used.');
         $yoda
-            ->setAllowedTypes('bool')
+            ->setAllowedTypes(array('bool'))
             ->setDefault(true)
         ;
 

@@ -36,8 +36,8 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
 
         $exclude = new FixerOption('exclude', 'List of functions to ignore.');
         $exclude
-            ->setAllowedTypes('array')
-            ->setAllowedValues(function ($value) {
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(function ($value) {
                 foreach ($value as $functionName) {
                     if (!\is_string($functionName) || \trim($functionName) === '' || \trim($functionName) !== $functionName) {
                         throw new InvalidOptionsException(\sprintf(
@@ -48,7 +48,7 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
                 }
 
                 return true;
-            })
+            }))
             ->setDefault(array())
         ;
 

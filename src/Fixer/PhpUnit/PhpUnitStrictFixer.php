@@ -44,9 +44,9 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
         $assertions = new FixerOption('assertions', 'List of assertion methods to fix.');
         $assertions
             ->setAllowedTypes(array('array'))
-            ->setAllowedValues(
-                $generator->allowedValueIsSubsetOf(array_keys(self::$assertionMap))
-            )
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array_keys(self::$assertionMap)),
+            ))
             ->setDefault(array(
                 'assertAttributeEquals',
                 'assertAttributeNotEquals',

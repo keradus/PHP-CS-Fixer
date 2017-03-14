@@ -35,12 +35,12 @@ final class FixerOption implements FixerOptionInterface
     private $useDefault = false;
 
     /**
-     * @var array|null
+     * @var null|string[]
      */
     private $allowedTypes;
 
     /**
-     * @var array|null
+     * @var null|array
      */
     private $allowedValues;
 
@@ -109,16 +109,12 @@ final class FixerOption implements FixerOptionInterface
     }
 
     /**
-     * @param string[]|string|null $allowedTypes
+     * @param string[] $allowedTypes
      *
      * @return $this
      */
-    public function setAllowedTypes($allowedTypes)
+    public function setAllowedTypes(array $allowedTypes)
     {
-        if (null !== $allowedTypes && !is_array($allowedTypes)) {
-            $allowedTypes = array($allowedTypes);
-        }
-
         $this->allowedTypes = $allowedTypes;
 
         return $this;
@@ -133,16 +129,12 @@ final class FixerOption implements FixerOptionInterface
     }
 
     /**
-     * @param string[]|string|null $allowedValues
+     * @param array $allowedValues
      *
      * @return $this
      */
-    public function setAllowedValues($allowedValues)
+    public function setAllowedValues(array $allowedValues)
     {
-        if (!is_array($allowedValues)) {
-            $allowedValues = array($allowedValues);
-        }
-
         $this->allowedValues = $allowedValues;
 
         return $this;

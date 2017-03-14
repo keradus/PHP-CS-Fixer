@@ -63,7 +63,7 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
 
         $controlStatements = new FixerOption('control_statements', 'List of control statements to fix.');
         $controlStatements
-            ->setAllowedTypes('array')
+            ->setAllowedTypes(array('array'))
             ->setDefault(array(
                 'break',
                 'clone',

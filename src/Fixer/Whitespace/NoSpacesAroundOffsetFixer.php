@@ -40,9 +40,9 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
         $positions = new FixerOption('positions', 'Whether spacing should be fixed inside and/or outside the offset braces.');
         $positions
             ->setAllowedTypes(array('array'))
-            ->setAllowedValues(
-                $generator->allowedValueIsSubsetOf($values)
-            )
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf($values),
+            ))
             ->setDefault($values)
         ;
 

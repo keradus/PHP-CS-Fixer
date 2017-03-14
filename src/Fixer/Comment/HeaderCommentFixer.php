@@ -59,7 +59,7 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
 
         $header = new FixerOption('header', 'Proper header content.');
         $header
-            ->setAllowedTypes('string')
+            ->setAllowedTypes(array('string'))
             ->setNormalizer(function (Options $options, $value) use ($whitespaceConfig, $headerCommentType) {
                 if ('' === trim($value)) {
                     return '';

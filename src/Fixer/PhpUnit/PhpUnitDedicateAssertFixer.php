@@ -85,9 +85,9 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
         $functions = new FixerOption('functions', 'List of assertions to fix.');
         $functions
             ->setAllowedTypes(array('array'))
-            ->setAllowedValues(
-                $generator->allowedValueIsSubsetOf($values)
-            )
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf($values),
+            ))
             ->setDefault($values)
         ;
 

@@ -44,9 +44,9 @@ final class PhpUnitConstructFixer extends AbstractFixer implements Configuration
         $assertions = new FixerOption('assertions', 'List of assertion methods to fix.');
         $assertions
             ->setAllowedTypes(array('array'))
-            ->setAllowedValues(
-                $generator->allowedValueIsSubsetOf(array_keys(self::$assertionFixers))
-            )
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array_keys(self::$assertionFixers)),
+            ))
             ->setDefault(array(
                 'assertEquals',
                 'assertSame',

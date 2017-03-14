@@ -98,7 +98,7 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $configuration = new FixerConfigurationResolver();
         $configuration->addOption($option = new FixerOption('foo', 'Bar.'));
-        $option->setAllowedTypes('int');
+        $option->setAllowedTypes(array('int'));
 
         $this->assertSame(
             array('foo' => 1),
@@ -116,7 +116,7 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
     {
         $configuration = new FixerConfigurationResolver();
         $configuration->addOption($option = new FixerOption('foo', 'Bar.'));
-        $option->setAllowedValues(true, false);
+        $option->setAllowedValues(array(true, false));
 
         $this->assertSame(
             array('foo' => true),

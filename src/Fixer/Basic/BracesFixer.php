@@ -40,7 +40,7 @@ final class BracesFixer extends AbstractFixer implements ConfigurationDefinition
 
         $allowSingleLineClosure = new FixerOption('allow_single_line_closure', 'Whether single line lambda notation should be allowed.');
         $allowSingleLineClosure
-            ->setAllowedTypes('bool')
+            ->setAllowedTypes(array('bool'))
             ->setDefault(false)
         ;
 

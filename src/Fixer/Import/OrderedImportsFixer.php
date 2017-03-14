@@ -75,7 +75,7 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
         $importsOrder = new FixerOption('importsOrder', 'Defines the order of import types.');
         $importsOrder
             ->setAllowedTypes(array('array', 'null'))
-            ->setAllowedValues(function ($value) use ($supportedSortTypes) {
+            ->setAllowedValues(array(function ($value) use ($supportedSortTypes) {
                 if (null !== $value) {
                     $missing = array_diff($supportedSortTypes, $value);
                     if (count($missing)) {
@@ -97,7 +97,7 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
                 }
 
                 return true;
-            })
+            }))
             ->setDefault(null)
         ;
 

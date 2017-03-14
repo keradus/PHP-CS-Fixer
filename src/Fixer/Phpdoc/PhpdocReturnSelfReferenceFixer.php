@@ -53,7 +53,7 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
 
         $replacements = new FixerOption('replacements', 'Mapping between replaced return types with new ones.');
         $replacements
-            ->setAllowedTypes('array')
+            ->setAllowedTypes(array('array'))
             ->setNormalizer(function (Options $options, $value) use ($toTypes, $default) {
                 $normalizedValue = array();
                 foreach ($value as $from => $to) {

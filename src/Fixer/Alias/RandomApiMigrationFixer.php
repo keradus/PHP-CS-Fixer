@@ -61,8 +61,8 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
 
         $replacements = new FixerOption('replacements', 'Mapping between replaced functions with the new ones.');
         $replacements
-            ->setAllowedTypes('array')
-            ->setAllowedValues(function ($value) use ($argumentCounts) {
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(function ($value) use ($argumentCounts) {
                 foreach ($value as $functionName => $replacement) {
                     if (!array_key_exists($functionName, $argumentCounts)) {
                         throw new InvalidOptionsException(sprintf(
@@ -81,7 +81,7 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
                 }
 
                 return true;
-            })
+            }))
             ->setDefault(array(
                 'getrandmax' => 'mt_getrandmax',
                 'mt_rand' => 'mt_rand',

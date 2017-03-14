@@ -127,9 +127,9 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
         $order = new FixerOption('order', 'List of strings defining order of elements.');
         $order
             ->setAllowedTypes(array('array'))
-            ->setAllowedValues(
-                $generator->allowedValueIsSubsetOf(array_keys(array_merge(self::$typeHierarchy, self::$specialTypes)))
-            )
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array_keys(array_merge(self::$typeHierarchy, self::$specialTypes))),
+            ))
             ->setDefault(array(
                 'use_trait',
                 'constant_public',
