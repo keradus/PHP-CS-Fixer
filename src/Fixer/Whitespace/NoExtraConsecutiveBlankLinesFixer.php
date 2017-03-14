@@ -17,6 +17,7 @@ use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
@@ -118,10 +119,14 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new FixerConfigurationResolver();
+        $generator = new FixerOptionValidatorGenerator();
 
         $tokens = new FixerOption('tokens', 'List of tokens to fix.');
         $tokens
-            ->setAllowedValueIsSubsetOf($this->availableTokens)
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(
+                $generator->allowedValueIsSubsetOf($this->availableTokens)
+            )
             ->setDefault(array('extra'))
         ;
 

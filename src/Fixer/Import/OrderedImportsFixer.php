@@ -25,7 +25,6 @@ use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Sebastiaan Stok <s.stok@rollerscapes.net>
@@ -76,7 +75,7 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
         $importsOrder = new FixerOption('importsOrder', 'Defines the order of import types.');
         $importsOrder
             ->setAllowedTypes(array('array', 'null'))
-            ->setNormalizer(function (Options $options, $value) use ($supportedSortTypes) {
+            ->setAllowedValues(function ($value) use ($supportedSortTypes) {
                 if (null !== $value) {
                     $missing = array_diff($supportedSortTypes, $value);
                     if (count($missing)) {
@@ -97,7 +96,7 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
                     }
                 }
 
-                return $value;
+                return true;
             })
             ->setDefault(null)
         ;

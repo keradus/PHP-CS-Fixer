@@ -16,6 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
@@ -79,11 +80,15 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
             'is_string',
         );
         $configurationDefinition = new FixerConfigurationResolver();
+        $generator = new FixerOptionValidatorGenerator();
 
         $functions = new FixerOption('functions', 'List of assertions to fix.');
         $functions
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(
+                $generator->allowedValueIsSubsetOf($values)
+            )
             ->setDefault($values)
-            ->setAllowedValueIsSubsetOf($values)
         ;
 
         return $configurationDefinition
