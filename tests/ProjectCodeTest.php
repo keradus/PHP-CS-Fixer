@@ -87,7 +87,6 @@ final class ProjectCodeTest extends \PHPUnit_Framework_TestCase
             'PhpCsFixer\FixerConfiguration\FixerOption' => array(
                 'removeDefault',
                 'setAllowedTypes',
-                'setAllowedValueIsSubsetOf',
                 'setAllowedValues',
                 'setDefault',
                 'setNormalizer',

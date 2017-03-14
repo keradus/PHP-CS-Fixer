@@ -17,6 +17,7 @@ use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\CT;
@@ -39,13 +40,17 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
     public function getConfigurationDefinition()
     {
         $configurationDefinition = new FixerConfigurationResolver();
+        $generator = new FixerOptionValidatorGenerator();
 
         $values = array('const', 'property');
 
         $elements = new FixerOption('elements', 'List of strings which element should be modified.');
         $elements
             ->setDefault($values)
-            ->setAllowedValueIsSubsetOf($values)
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(
+                $generator->allowedValueIsSubsetOf($values)
+            )
         ;
 
         return $configurationDefinition

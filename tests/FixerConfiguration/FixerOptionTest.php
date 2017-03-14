@@ -101,12 +101,6 @@ final class FixerOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(array($function), $option->getAllowedValues());
     }
 
-    public function testSetAllowedValueIsSubsetOf()
-    {
-        $option = new FixerOption('foo', 'Bar.');
-        $this->assertSame($option, $option->setAllowedValueIsSubsetOf(array('baz', 'qux')));
-    }
-
     public function testAddNormalizer()
     {
         $option = new FixerOption('foo', 'Bar.');
