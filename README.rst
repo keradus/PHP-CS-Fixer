@@ -321,7 +321,11 @@ Choose from the list of available rules:
 * **function_declaration** [@PSR2, @Symfony]
 
   Spaces should be properly placed in a function declaration.
-  *Configurable rule.*
+
+  Configuration options:
+
+  - ``closure_function_spacing`` (``'none'``, ``'one'``): spacing to use before open
+    parenthesis for closures; defaults to ``'one'``
 
 * **function_typehint_space** [@Symfony]
 
