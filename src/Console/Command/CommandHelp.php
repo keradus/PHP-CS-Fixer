@@ -288,7 +288,15 @@ EOF
                 return !is_callable($value);
             });
 
-            sort($allowed);
+            $toString = function ($value) {
+                return call_user_func('PhpCsFixer\Console\Command\CommandHelp::toString', $value);
+            };
+            usort(
+                $allowed,
+                function ($valueA, $valueB) use (&$toString) {
+                    return strcasecmp($toString($valueA), $toString($valueB));
+                }
+            );
 
             if (0 === count($allowed)) {
                 $allowed = null;
