@@ -14,7 +14,7 @@ namespace PhpCsFixer\Fixer\Alias;
 
 use PhpCsFixer\AbstractFunctionReferenceFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
 use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -89,12 +89,9 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
             ))
         ;
 
-        $configurationDefinition = new FixerConfigurationResolver(array(
+        return new FixerConfigurationResolverRootless('replacements', array(
             $replacements,
         ));
-        $configurationDefinition->mapRootConfigurationTo('replacements');
-
-        return $configurationDefinition;
     }
 
     /**

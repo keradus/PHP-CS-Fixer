@@ -14,7 +14,7 @@ namespace PhpCsFixer\Fixer\ControlStructure;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
 use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -73,12 +73,9 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
             ))
         ;
 
-        $configurationDefinition = new FixerConfigurationResolver(array(
+        return new FixerConfigurationResolverRootless('control_statements', array(
             $controlStatements,
         ));
-        $configurationDefinition->mapRootConfigurationTo('control_statements');
-
-        return $configurationDefinition;
     }
 
     /**

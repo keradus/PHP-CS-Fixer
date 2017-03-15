@@ -50,17 +50,6 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($options, $configuration->getOptions());
     }
 
-    public function testMapRootConfigurationTo()
-    {
-        $configuration = new FixerConfigurationResolver(array(
-            new FixerOption('foo', 'Bar.'),
-        ));
-        $this->assertSame($configuration, $configuration->mapRootConfigurationTo('foo'));
-
-        $this->setExpectedException('LogicException', 'The "bar" option is not defined.');
-        $configuration->mapRootConfigurationTo('bar');
-    }
-
     public function testResolve()
     {
         $configuration = new FixerConfigurationResolver(array(
@@ -173,18 +162,5 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertSame($exception, $catched);
-    }
-
-    /**
-     * @group legacy
-     * @expectedDeprecation Passing "foo" at the root of the configuration is deprecated and will not be supported in 3.0, use "foo" => array(...) option instead.
-     */
-    public function testResolveWithMappedRoot()
-    {
-        $configuration = new FixerConfigurationResolver(array(
-            new FixerOption('foo', 'Bar.'),
-        ));
-        $configuration->mapRootConfigurationTo('foo');
-        $configuration->resolve(array('baz', 'qux'));
     }
 }

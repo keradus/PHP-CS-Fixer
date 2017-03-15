@@ -14,7 +14,7 @@ namespace PhpCsFixer\Fixer\ClassNotation;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
 use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
@@ -147,12 +147,9 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
             ))
         ;
 
-        $configurationDefinition = new FixerConfigurationResolver(array(
+        return new FixerConfigurationResolverRootless('order', array(
             $order,
         ));
-        $configurationDefinition->mapRootConfigurationTo('order');
-
-        return $configurationDefinition;
     }
 
     /**

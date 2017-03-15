@@ -14,7 +14,7 @@ namespace PhpCsFixer\Fixer\PhpUnit;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
 use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
@@ -90,12 +90,9 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
             ->setDefault($values)
         ;
 
-        $configurationDefinition = new FixerConfigurationResolver(array(
+        return new FixerConfigurationResolverRootless('functions', array(
             $functions,
         ));
-        $configurationDefinition->mapRootConfigurationTo('functions');
-
-        return $configurationDefinition;
     }
 
     /**

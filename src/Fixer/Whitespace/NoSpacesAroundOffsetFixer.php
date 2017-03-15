@@ -14,7 +14,7 @@ namespace PhpCsFixer\Fixer\Whitespace;
 
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
 use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
@@ -45,12 +45,9 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
             ->setDefault($values)
         ;
 
-        $configurationDefinition = new FixerConfigurationResolver(array(
+        return new FixerConfigurationResolverRootless('positions', array(
             $positions,
         ));
-        $configurationDefinition->mapRootConfigurationTo('positions');
-
-        return $configurationDefinition;
     }
 
     /**

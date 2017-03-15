@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\Whitespace;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
 use PhpCsFixer\FixerConfiguration\FixerOption;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
@@ -129,12 +129,9 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
             ->setDefault(array('extra'))
         ;
 
-        $configurationDefinition = new FixerConfigurationResolver(array(
+        return new FixerConfigurationResolverRootless('tokens', array(
             $tokens,
         ));
-        $configurationDefinition->mapRootConfigurationTo('tokens');
-
-        return $configurationDefinition;
     }
 
     /**

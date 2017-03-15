@@ -28,11 +28,6 @@ final class FixerConfigurationResolver implements FixerConfigurationResolverInte
     private $registeredNames = array();
 
     /**
-     * @var string|null
-     */
-    private $root;
-
-    /**
      * @param iterable<FixerOptionInterface> $options
      */
     public function __construct($options)
@@ -52,26 +47,6 @@ final class FixerConfigurationResolver implements FixerConfigurationResolverInte
     public function getOptions()
     {
         return $this->options;
-    }
-
-    /**
-     * @param string $optionName
-     *
-     * @throws \LogicException when the option is already defined
-     *
-     * @return $this
-     *
-     * @deprecated will be removed in 3.0
-     */
-    public function mapRootConfigurationTo($optionName)
-    {
-        if (!in_array($optionName, $this->registeredNames, true)) {
-            throw new \LogicException(sprintf('The "%s" option is not defined.', $optionName));
-        }
-
-        $this->root = $optionName;
-
-        return $this;
     }
 
     /**
@@ -104,15 +79,6 @@ final class FixerConfigurationResolver implements FixerConfigurationResolverInte
             if (null !== $normalizer) {
                 $resolver->setNormalizer($name, $normalizer);
             }
-        }
-
-        if (null !== $this->root && !array_key_exists($this->root, $options) && count($options)) {
-            @trigger_error(sprintf(
-                'Passing "%1$s" at the root of the configuration is deprecated and will not be supported in 3.0, use "%1$s" => array(...) option instead.',
-                $this->root
-            ), E_USER_DEPRECATED);
-
-            $options = array($this->root => $options);
         }
 
         return $resolver->resolve($options);
