@@ -12,10 +12,9 @@
 
 namespace PhpCsFixer\Fixer\LanguageConstruct;
 
-use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\AbstractConfigurableFixer;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\CT;
@@ -25,24 +24,8 @@ use PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author Vladimir Reznichenko <kalessil@gmail.com>
  */
-final class IsNullFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
+final class IsNullFixer extends AbstractConfigurableFixer
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigurationDefinition()
-    {
-        $yoda = new FixerOption('use_yoda_style', 'Whether Yoda style conditions should be used.');
-        $yoda
-            ->setAllowedTypes(array('bool'))
-            ->setDefault(true)
-        ;
-
-        return new FixerConfigurationResolver(array(
-            $yoda,
-        ));
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -179,5 +162,20 @@ final class IsNullFixer extends AbstractFixer implements ConfigurationDefinition
     public function isRisky()
     {
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $yoda = new FixerOptionBuilder('use_yoda_style', 'Whether Yoda style conditions should be used.');
+        $yoda = $yoda
+            ->setAllowedTypes(array('bool'))
+            ->setDefault(true)
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolver(array($yoda));
     }
 }

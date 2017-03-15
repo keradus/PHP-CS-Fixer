@@ -12,11 +12,10 @@
 
 namespace PhpCsFixer\Fixer\Phpdoc;
 
-use PhpCsFixer\AbstractFixer;
+use PhpCsFixer\AbstractConfigurableFixer;
 use PhpCsFixer\DocBlock\DocBlock;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -27,67 +26,13 @@ use Symfony\Component\OptionsResolver\Options;
 /**
  * @author SpacePossum
  */
-final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
+final class PhpdocReturnSelfReferenceFixer extends AbstractConfigurableFixer
 {
     private static $toTypes = array(
         '$this',
         'static',
         'self',
     );
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigurationDefinition()
-    {
-        $toTypes = self::$toTypes;
-        $default = array(
-            'this' => '$this',
-            '@this' => '$this',
-            '$self' => 'self',
-            '@self' => 'self',
-            '$static' => 'static',
-            '@static' => 'static',
-        );
-
-        $replacements = new FixerOption('replacements', 'Mapping between replaced return types with new ones.');
-        $replacements
-            ->setAllowedTypes(array('array'))
-            ->setNormalizer(function (Options $options, $value) use ($toTypes, $default) {
-                $normalizedValue = array();
-                foreach ($value as $from => $to) {
-                    if (is_string($from)) {
-                        $from = strtolower($from);
-                    }
-
-                    if (!isset($default[$from])) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Unknown key "%s", expected any of "%s".',
-                            is_object($from) ? get_class($from) : gettype($from).(is_resource($from) ? '' : '#'.$from),
-                            implode('", "', array_keys($default))
-                        ));
-                    }
-
-                    if (!in_array($to, $toTypes, true)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Unknown value "%s", expected any of "%s".',
-                            is_object($to) ? get_class($to) : gettype($to).(is_resource($to) ? '' : '#'.$to),
-                            implode('", "', $toTypes)
-                        ));
-                    }
-
-                    $normalizedValue[$from] = $to;
-                }
-
-                return $normalizedValue;
-            })
-            ->setDefault($default)
-        ;
-
-        return new FixerConfigurationResolverRootless('replacements', array(
-            $replacements,
-        ));
-    }
 
     /**
      * {@inheritdoc}
@@ -131,6 +76,59 @@ class Sample
     public function isCandidate(Tokens $tokens)
     {
         return count($tokens) > 10 && $tokens->isTokenKindFound(T_DOC_COMMENT) && $tokens->isAnyTokenKindsFound(array(T_CLASS, T_INTERFACE));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $toTypes = self::$toTypes;
+        $default = array(
+            'this' => '$this',
+            '@this' => '$this',
+            '$self' => 'self',
+            '@self' => 'self',
+            '$static' => 'static',
+            '@static' => 'static',
+        );
+
+        $replacements = new FixerOptionBuilder('replacements', 'Mapping between replaced return types with new ones.');
+        $replacements = $replacements
+            ->setAllowedTypes(array('array'))
+            ->setNormalizer(function (Options $options, $value) use ($toTypes, $default) {
+                $normalizedValue = array();
+                foreach ($value as $from => $to) {
+                    if (is_string($from)) {
+                        $from = strtolower($from);
+                    }
+
+                    if (!isset($default[$from])) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Unknown key "%s", expected any of "%s".',
+                            is_object($from) ? get_class($from) : gettype($from).(is_resource($from) ? '' : '#'.$from),
+                            implode('", "', array_keys($default))
+                        ));
+                    }
+
+                    if (!in_array($to, $toTypes, true)) {
+                        throw new InvalidOptionsException(sprintf(
+                            'Unknown value "%s", expected any of "%s".',
+                            is_object($to) ? get_class($to) : gettype($to).(is_resource($to) ? '' : '#'.$to),
+                            implode('", "', $toTypes)
+                        ));
+                    }
+
+                    $normalizedValue[$from] = $to;
+                }
+
+                return $normalizedValue;
+            })
+            ->setDefault($default)
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('replacements', array($replacements));
     }
 
     /**

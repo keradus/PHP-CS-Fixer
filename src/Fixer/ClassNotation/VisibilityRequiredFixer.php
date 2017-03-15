@@ -12,10 +12,9 @@
 
 namespace PhpCsFixer\Fixer\ClassNotation;
 
-use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\AbstractConfigurableFixer;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -33,36 +32,8 @@ use Symfony\Component\OptionsResolver\Options;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class VisibilityRequiredFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
+final class VisibilityRequiredFixer extends AbstractConfigurableFixer
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigurationDefinition()
-    {
-        $generator = new FixerOptionValidatorGenerator();
-
-        $elements = new FixerOption('elements', 'The structural elements to fix (PHP >= 7.1 required for `const`).');
-        $elements
-            ->setAllowedTypes(array('array'))
-            ->setAllowedValues(array(
-                $generator->allowedValueIsSubsetOf(array('property', 'method', 'const')),
-            ))
-            ->setNormalizer(function (Options $options, $value) {
-                if (PHP_VERSION_ID < 70100 && in_array('const', $value, true)) {
-                    throw new InvalidOptionsException('"const" option can only be enabled with PHP 7.1+.');
-                }
-
-                return $value;
-            })
-            ->setDefault(array('property', 'method'))
-        ;
-
-        return new FixerConfigurationResolverRootless('elements', array(
-            $elements,
-        ));
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -134,6 +105,33 @@ class Sample
     public function isCandidate(Tokens $tokens)
     {
         return $tokens->isAnyTokenKindsFound(Token::getClassyTokenKinds());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $generator = new FixerOptionValidatorGenerator();
+
+        $elements = new FixerOptionBuilder('elements', 'The structural elements to fix (PHP >= 7.1 required for `const`).');
+        $elements = $elements
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array('property', 'method', 'const')),
+            ))
+            ->setNormalizer(function (Options $options, $value) {
+                if (PHP_VERSION_ID < 70100 && in_array('const', $value, true)) {
+                    throw new InvalidOptionsException('"const" option can only be enabled with PHP 7.1+.');
+                }
+
+                return $value;
+            })
+            ->setDefault(array('property', 'method'))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('elements', array($elements));
     }
 
     /**

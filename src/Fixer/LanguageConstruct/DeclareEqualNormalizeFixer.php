@@ -12,10 +12,9 @@
 
 namespace PhpCsFixer\Fixer\LanguageConstruct;
 
-use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\AbstractConfigurableFixer;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
@@ -25,7 +24,7 @@ use PhpCsFixer\Tokenizer\Tokens;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class DeclareEqualNormalizeFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
+final class DeclareEqualNormalizeFixer extends AbstractConfigurableFixer
 {
     /**
      * @var string
@@ -40,22 +39,6 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
         parent::configure($configuration);
 
         $this->callback = 'none' === $this->configuration['space'] ? 'removeWhitespaceAroundToken' : 'ensureWhitespaceAroundToken';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigurationDefinition()
-    {
-        $space = new FixerOption('space', 'Spacing to apply around the equal sign.');
-        $space
-            ->setAllowedValues(array('single', 'none'))
-            ->setDefault('none')
-        ;
-
-        return new FixerConfigurationResolver(array(
-            $space,
-        ));
     }
 
     /**
@@ -92,6 +75,21 @@ final class DeclareEqualNormalizeFixer extends AbstractFixer implements Configur
     public function isCandidate(Tokens $tokens)
     {
         return $tokens->isTokenKindFound(T_DECLARE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $space = new FixerOptionBuilder('space', 'Spacing to apply around the equal sign.');
+        $space = $space
+            ->setAllowedValues(array('single', 'none'))
+            ->setDefault('none')
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolver(array($space));
     }
 
     /**

@@ -12,11 +12,10 @@
 
 namespace PhpCsFixer\Fixer\Whitespace;
 
-use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\AbstractConfigurableFixer;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -26,12 +25,13 @@ use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  * @author SpacePossum
  */
-final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface, WhitespacesAwareFixerInterface
+final class NoExtraConsecutiveBlankLinesFixer extends AbstractConfigurableFixer implements WhitespacesAwareFixerInterface
 {
     /**
      * @var string[]
@@ -44,6 +44,7 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
         'throw',
         'use',
         'useTrait',
+        'use_trait',
         'curly_brace_block',
         'parenthesis_brace_block',
         'square_brace_block',
@@ -98,7 +99,7 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
                 case 'use':
                     $this->tokenKindCallbackMap[T_USE] = 'removeBetweenUse';
                     break;
-                case 'useTrait':
+                case 'use_trait':
                     $this->tokenKindCallbackMap[CT::T_USE_TRAIT] = 'removeBetweenUse';
                     break;
                 case 'curly_brace_block':
@@ -111,27 +112,6 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
                     $this->tokenKindCallbackMap[CT::T_ARRAY_SQUARE_BRACE_OPEN] = 'fixStructureOpenCloseIfMultiLine'; // typeless '[' tokens should not be fixed (too rare)
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigurationDefinition()
-    {
-        $generator = new FixerOptionValidatorGenerator();
-
-        $tokens = new FixerOption('tokens', 'List of tokens to fix.');
-        $tokens
-            ->setAllowedTypes(array('array'))
-            ->setAllowedValues(array(
-                $generator->allowedValueIsSubsetOf($this->availableTokens),
-            ))
-            ->setDefault(array('extra'))
-        ;
-
-        return new FixerConfigurationResolverRootless('tokens', array(
-            $tokens,
-        ));
     }
 
     /**
@@ -151,19 +131,6 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
      */
     public function getDefinition()
     {
-        $values = array(
-            'break',
-            'continue',
-            'curly_brace_block',
-            'extra',
-            'parenthesis_brace_block',
-            'return',
-            'square_brace_block',
-            'throw',
-            'use',
-            'useTrait',
-        );
-
         return new FixerDefinition(
             'Removes extra blank lines and/or blank lines following configuration.',
             array(
@@ -292,7 +259,7 @@ class Foo
 
     use Baz;
 }',
-                    array('tokens' => array('useTrait'))
+                    array('tokens' => array('use_trait'))
                 ),
             )
         );
@@ -313,6 +280,38 @@ class Foo
     public function isCandidate(Tokens $tokens)
     {
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $generator = new FixerOptionValidatorGenerator();
+
+        $tokens = new FixerOptionBuilder('tokens', 'List of tokens to fix.');
+        $tokens = $tokens
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf($this->availableTokens),
+            ))
+            ->setNormalizer(function (Options $options, $tokens) {
+                foreach ($tokens as &$token) {
+                    if ('useTrait' === $token) {
+                        @trigger_error('Token "useTrait" is deprecated and will be removed in 3.0, use "use_trait" instead.', E_USER_DEPRECATED);
+                        $token = 'use_trait';
+
+                        break;
+                    }
+                }
+
+                return $tokens;
+            })
+            ->setDefault(array('extra'))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('tokens', array($tokens));
     }
 
     private function fixByToken(Token $token, $index)

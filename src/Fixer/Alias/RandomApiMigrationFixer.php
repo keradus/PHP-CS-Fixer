@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\Alias;
 use PhpCsFixer\AbstractFunctionReferenceFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -56,42 +56,45 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
      */
     public function getConfigurationDefinition()
     {
-        $argumentCounts = self::$argumentCounts;
+        if (null === $this->configurationDefinition) {
+            $argumentCounts = self::$argumentCounts;
 
-        $replacements = new FixerOption('replacements', 'Mapping between replaced functions with the new ones.');
-        $replacements
-            ->setAllowedTypes(array('array'))
-            ->setAllowedValues(array(function ($value) use ($argumentCounts) {
-                foreach ($value as $functionName => $replacement) {
-                    if (!array_key_exists($functionName, $argumentCounts)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Function "%s" is not handled by the fixer.',
-                            $functionName
-                        ));
+            $replacements = new FixerOptionBuilder('replacements', 'Mapping between replaced functions with the new ones.');
+            $replacements = $replacements
+                ->setAllowedTypes(array('array'))
+                ->setAllowedValues(array(function ($value) use ($argumentCounts) {
+                    foreach ($value as $functionName => $replacement) {
+                        if (!array_key_exists($functionName, $argumentCounts)) {
+                            throw new InvalidOptionsException(sprintf(
+                                'Function "%s" is not handled by the fixer.',
+                                $functionName
+                            ));
+                        }
+
+                        if (!is_string($replacement)) {
+                            throw new InvalidOptionsException(sprintf(
+                                'Replacement for function "%s" must be a string, "%s" given.',
+                                $functionName,
+                                is_object($replacement) ? get_class($replacement) : gettype($replacement)
+                            ));
+                        }
                     }
 
-                    if (!is_string($replacement)) {
-                        throw new InvalidOptionsException(sprintf(
-                            'Replacement for function "%s" must be a string, "%s" given.',
-                            $functionName,
-                            is_object($replacement) ? get_class($replacement) : gettype($replacement)
-                        ));
-                    }
-                }
+                    return true;
+                }))
+                ->setDefault(array(
+                    'getrandmax' => 'mt_getrandmax',
+                    'mt_rand' => 'mt_rand',
+                    'rand' => 'mt_rand',
+                    'srand' => 'mt_srand',
+                ))
+                ->getOption()
+            ;
 
-                return true;
-            }))
-            ->setDefault(array(
-                'getrandmax' => 'mt_getrandmax',
-                'mt_rand' => 'mt_rand',
-                'rand' => 'mt_rand',
-                'srand' => 'mt_srand',
-            ))
-        ;
+            $this->configurationDefinition = new FixerConfigurationResolverRootless('replacements', array($replacements));
+        }
 
-        return new FixerConfigurationResolverRootless('replacements', array(
-            $replacements,
-        ));
+        return $this->configurationDefinition;
     }
 
     /**

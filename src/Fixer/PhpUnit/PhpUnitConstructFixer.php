@@ -12,10 +12,9 @@
 
 namespace PhpCsFixer\Fixer\PhpUnit;
 
-use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
+use PhpCsFixer\AbstractConfigurableFixer;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -24,7 +23,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class PhpUnitConstructFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface
+final class PhpUnitConstructFixer extends AbstractConfigurableFixer
 {
     private static $assertionFixers = array(
         'assertSame' => 'fixAssertPositive',
@@ -32,32 +31,6 @@ final class PhpUnitConstructFixer extends AbstractFixer implements Configuration
         'assertNotEquals' => 'fixAssertNegative',
         'assertNotSame' => 'fixAssertNegative',
     );
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigurationDefinition()
-    {
-        $generator = new FixerOptionValidatorGenerator();
-
-        $assertions = new FixerOption('assertions', 'List of assertion methods to fix.');
-        $assertions
-            ->setAllowedTypes(array('array'))
-            ->setAllowedValues(array(
-                $generator->allowedValueIsSubsetOf(array_keys(self::$assertionFixers)),
-            ))
-            ->setDefault(array(
-                'assertEquals',
-                'assertSame',
-                'assertNotEquals',
-                'assertNotSame',
-            ))
-        ;
-
-        return new FixerConfigurationResolverRootless('assertions', array(
-            $assertions,
-        ));
-    }
 
     /**
      * {@inheritdoc}
@@ -136,6 +109,31 @@ $this->assertNotSame(null, $d);
     {
         // should be run after the PhpUnitStrictFixer and before PhpUnitDedicateAssertFixer.
         return -10;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createConfigurationDefinition()
+    {
+        $generator = new FixerOptionValidatorGenerator();
+
+        $assertions = new FixerOptionBuilder('assertions', 'List of assertion methods to fix.');
+        $assertions = $assertions
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(
+                $generator->allowedValueIsSubsetOf(array_keys(self::$assertionFixers)),
+            ))
+            ->setDefault(array(
+                'assertEquals',
+                'assertSame',
+                'assertNotEquals',
+                'assertNotSame',
+            ))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('assertions', array($assertions));
     }
 
     /**
