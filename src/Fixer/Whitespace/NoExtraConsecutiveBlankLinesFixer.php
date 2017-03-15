@@ -26,6 +26,7 @@ use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -44,6 +45,7 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
         'throw',
         'use',
         'useTrait',
+        'use_trait',
         'curly_brace_block',
         'parenthesis_brace_block',
         'square_brace_block',
@@ -98,7 +100,7 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
                 case 'use':
                     $this->tokenKindCallbackMap[T_USE] = 'removeBetweenUse';
                     break;
-                case 'useTrait':
+                case 'use_trait':
                     $this->tokenKindCallbackMap[CT::T_USE_TRAIT] = 'removeBetweenUse';
                     break;
                 case 'curly_brace_block':
@@ -126,6 +128,18 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
             ->setAllowedValues(array(
                 $generator->allowedValueIsSubsetOf($this->availableTokens),
             ))
+            ->setNormalizer(function (Options $options, $tokens) {
+                foreach ($tokens as &$token) {
+                    if ('useTrait' === $token) {
+                        @trigger_error('Token "useTrait" is deprecated and will be removed in 3.0, use "use_trait" instead.', E_USER_DEPRECATED);
+                        $token = 'use_trait';
+
+                        break;
+                    }
+                }
+
+                return $tokens;
+            })
             ->setDefault(array('extra'))
         ;
 
@@ -151,19 +165,6 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
      */
     public function getDefinition()
     {
-        $values = array(
-            'break',
-            'continue',
-            'curly_brace_block',
-            'extra',
-            'parenthesis_brace_block',
-            'return',
-            'square_brace_block',
-            'throw',
-            'use',
-            'useTrait',
-        );
-
         return new FixerDefinition(
             'Removes extra blank lines and/or blank lines following configuration.',
             array(
@@ -292,7 +293,7 @@ class Foo
 
     use Baz;
 }',
-                    array('tokens' => array('useTrait'))
+                    array('tokens' => array('use_trait'))
                 ),
             )
         );
