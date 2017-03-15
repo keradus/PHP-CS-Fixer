@@ -56,17 +56,15 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
         $whitespaceConfig = $this->whitespacesConfig;
         $headerCommentType = self::HEADER_COMMENT;
 
-        $that = $this;
-
         $header = new FixerOption('header', 'Proper header content.');
         $header
             ->setAllowedTypes(array('string'))
-            ->setNormalizer(function (Options $options, $value) use ($that, $headerCommentType) {
+            ->setNormalizer(function (Options $options, $value) use ($whitespaceConfig, $headerCommentType) {
                 if ('' === trim($value)) {
                     return '';
                 }
 
-                $lineEnding = $that->whitespacesConfig->getLineEnding();
+                $lineEnding = $whitespaceConfig->getLineEnding();
 
                 $comment = ($headerCommentType === $options['commentType'] ? '/*' : '/**').$lineEnding;
                 $lines = explode("\n", str_replace("\r", '', $value));

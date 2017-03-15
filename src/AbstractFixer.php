@@ -110,7 +110,7 @@ abstract class AbstractFixer implements FixerInterface, DefinedFixerInterface
             $configuration = array();
         }
 
-        if (null === $this->configurationDefinition) {
+        if (null === $this->configurationDefinition || $this instanceof WhitespacesAwareFixerInterface) {
             $this->configurationDefinition = $this->getConfigurationDefinition();
         }
 
