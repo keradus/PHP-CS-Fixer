@@ -19,6 +19,7 @@ use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
@@ -38,6 +39,11 @@ abstract class AbstractFixer implements FixerInterface, DefinedFixerInterface
      * @var WhitespacesFixerConfig
      */
     protected $whitespacesConfig;
+
+    /**
+     * @var FixerConfigurationResolver|null
+     */
+    private $configurationDefinition;
 
     public function __construct()
     {
@@ -104,8 +110,12 @@ abstract class AbstractFixer implements FixerInterface, DefinedFixerInterface
             $configuration = array();
         }
 
+        if (null === $this->configurationDefinition) {
+            $this->configurationDefinition = $this->getConfigurationDefinition();
+        }
+
         try {
-            $this->configuration = $this->getConfigurationDefinition()->resolve($configuration);
+            $this->configuration = $this->configurationDefinition->resolve($configuration);
         } catch (MissingOptionsException $exception) {
             throw new RequiredFixerConfigurationException(
                 $this->getName(),

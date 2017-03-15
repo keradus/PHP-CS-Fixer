@@ -135,6 +135,12 @@ final class FixerOption implements FixerOptionInterface
      */
     public function setAllowedValues(array $allowedValues)
     {
+        foreach ($allowedValues as &$allowedValue) {
+            if ($allowedValue instanceof \Closure) {
+                $allowedValue = $this->unbind($allowedValue);
+            }
+        }
+
         $this->allowedValues = $allowedValues;
 
         return $this;
@@ -155,7 +161,7 @@ final class FixerOption implements FixerOptionInterface
      */
     public function setNormalizer(\Closure $normalizer)
     {
-        $this->normalizer = $normalizer;
+        $this->normalizer = $this->unbind($normalizer);
 
         return $this;
     }
@@ -166,5 +172,33 @@ final class FixerOption implements FixerOptionInterface
     public function getNormalizer()
     {
         return $this->normalizer;
+    }
+
+    /**
+     * Unbinds the given closure to avoid memory leaks.
+     *
+     * The closures provided to this class were probably defined in a fixer
+     * class and thus bound to it by default. The configuration will then be
+     * stored in {@see AbstractFixer::$configurationDefinition}, leading to the
+     * following cyclic reference:
+     *
+     *     fixer -> configuration definition -> options -> closures -> fixer
+     *
+     * This cyclic reference prevent the garbage collector to free memory as
+     * all elements are still referenced.
+     *
+     * See {@see https://bugs.php.net/bug.php?id=69639 Bug #69639} for details.
+     *
+     * @param \Closure $closure
+     *
+     * @return \Closure
+     */
+    private function unbind(\Closure $closure)
+    {
+        if (PHP_VERSION_ID < 50400) {
+            return $closure;
+        }
+
+        return $closure->bindTo(null);
     }
 }
