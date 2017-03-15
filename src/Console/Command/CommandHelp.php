@@ -404,6 +404,8 @@ EOF
     }
 
     /**
+     * Wraps a string to the given number of characters, ignoring style tags.
+     *
      * @param string $string
      * @param int    $width
      *
