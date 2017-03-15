@@ -212,9 +212,9 @@ Choose from the list of available rules:
 
   Configuration options:
 
-  - ``align_double_arrow`` (``NULL``, ``false``, ``true``): whether to apply, remove or
+  - ``align_double_arrow`` (``null``, ``false``, ``true``): whether to apply, remove or
     ignore double arrows alignment; defaults to ``false``
-  - ``align_equals`` (``NULL``, ``false``, ``true``): whether to apply, remove or ignore
+  - ``align_equals`` (``null``, ``false``, ``true``): whether to apply, remove or ignore
     equals alignment; defaults to ``false``
 
 * **blank_line_after_namespace** [@PSR2, @Symfony]
@@ -638,7 +638,7 @@ Choose from the list of available rules:
   Configuration options:
 
   - ``importsOrder`` (``array``, ``null``): defines the order of import types; defaults
-    to ``NULL``
+    to ``null``
   - ``sortAlgorithm`` (``'alpha'``, ``'length'``): whether the statements should be
     sorted alphabetically or by length; defaults to ``'alpha'``
 

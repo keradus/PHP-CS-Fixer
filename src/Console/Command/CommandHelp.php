@@ -260,14 +260,16 @@ EOF
                 array('', ' ', '[$1]', '[', ']', ''),
             );
 
-            return preg_replace(
+            $str = preg_replace(
                 $replaces[0],
                 $replaces[1],
                 var_export($value, true)
             );
+        } else {
+            $str = var_export($value, true);
         }
 
-        return var_export($value, true);
+        return preg_replace('/\bNULL\b/', 'null', $str);
     }
 
     /**
