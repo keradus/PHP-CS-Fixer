@@ -17,7 +17,7 @@ use PhpCsFixer\ConfigurationException\RequiredFixerConfigurationException;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
@@ -56,7 +56,7 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
         $whitespaceConfig = $this->whitespacesConfig;
         $headerCommentType = self::HEADER_COMMENT;
 
-        $header = new FixerOption('header', 'Proper header content.');
+        $header = new FixerOptionBuilder('header', 'Proper header content.');
         $header
             ->setAllowedTypes(array('string'))
             ->setNormalizer(function (Options $options, $value) use ($whitespaceConfig, $headerCommentType) {
@@ -76,29 +76,29 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
             })
         ;
 
-        $commentType = new FixerOption('commentType', 'Comment syntax type.');
+        $commentType = new FixerOptionBuilder('commentType', 'Comment syntax type.');
         $commentType
             ->setAllowedValues(array(self::HEADER_PHPDOC, self::HEADER_COMMENT))
             ->setDefault(self::HEADER_COMMENT)
         ;
 
-        $location = new FixerOption('location', 'The location of the inserted header.');
+        $location = new FixerOptionBuilder('location', 'The location of the inserted header.');
         $location
             ->setAllowedValues(array('after_open', 'after_declare_strict'))
             ->setDefault('after_declare_strict')
         ;
 
-        $separate = new FixerOption('separate', 'Whether the header should be separated from the file content with a new line.');
+        $separate = new FixerOptionBuilder('separate', 'Whether the header should be separated from the file content with a new line.');
         $separate
             ->setAllowedValues(array('both', 'top', 'bottom', 'none'))
             ->setDefault('both')
         ;
 
         return new FixerConfigurationResolver(array(
-            $commentType,
-            $header,
-            $location,
-            $separate,
+            $commentType->getOption(),
+            $header->getOption(),
+            $location->getOption(),
+            $separate->getOption(),
         ));
     }
 

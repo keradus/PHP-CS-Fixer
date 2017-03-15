@@ -16,7 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -43,18 +43,17 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
 
         $values = array('const', 'property');
 
-        $elements = new FixerOption('elements', 'List of strings which element should be modified.');
-        $elements
+        $elements = new FixerOptionBuilder('elements', 'List of strings which element should be modified.');
+        $elements = $elements
             ->setDefault($values)
             ->setAllowedTypes(array('array'))
             ->setAllowedValues(array(
                 $generator->allowedValueIsSubsetOf($values),
             ))
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('elements', array(
-            $elements,
-        ));
+        return new FixerConfigurationResolverRootless('elements', array($elements));
     }
 
     /**

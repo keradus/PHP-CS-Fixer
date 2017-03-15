@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\PhpUnit;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -40,8 +40,8 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
     {
         $generator = new FixerOptionValidatorGenerator();
 
-        $assertions = new FixerOption('assertions', 'List of assertion methods to fix.');
-        $assertions
+        $assertions = new FixerOptionBuilder('assertions', 'List of assertion methods to fix.');
+        $assertions = $assertions
             ->setAllowedTypes(array('array'))
             ->setAllowedValues(array(
                 $generator->allowedValueIsSubsetOf(array_keys(self::$assertionMap)),
@@ -52,11 +52,10 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
                 'assertEquals',
                 'assertNotEquals',
             ))
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('assertions', array(
-            $assertions,
-        ));
+        return new FixerConfigurationResolverRootless('assertions', array($assertions));
     }
 
     /**

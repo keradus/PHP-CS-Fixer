@@ -16,7 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
@@ -37,28 +37,28 @@ final class ClassDefinitionFixer extends AbstractFixer implements ConfigurationD
      */
     public function getConfigurationDefinition()
     {
-        $multiLineExtendsEachSingleLine = new FixerOption('multiLineExtendsEachSingleLine', 'Whether definitions should be multiline.');
+        $multiLineExtendsEachSingleLine = new FixerOptionBuilder('multiLineExtendsEachSingleLine', 'Whether definitions should be multiline.');
         $multiLineExtendsEachSingleLine
             ->setAllowedTypes(array('bool'))
             ->setDefault(false)
         ;
 
-        $singleItemSingleLine = new FixerOption('singleItemSingleLine', 'Whether definitions should be single line when including a single item.');
+        $singleItemSingleLine = new FixerOptionBuilder('singleItemSingleLine', 'Whether definitions should be single line when including a single item.');
         $singleItemSingleLine
             ->setAllowedTypes(array('bool'))
             ->setDefault(false)
         ;
 
-        $singleLine = new FixerOption('singleLine', 'Whether definitions should be single line.');
+        $singleLine = new FixerOptionBuilder('singleLine', 'Whether definitions should be single line.');
         $singleLine
             ->setAllowedTypes(array('bool'))
             ->setDefault(false)
         ;
 
         return new FixerConfigurationResolver(array(
-            $multiLineExtendsEachSingleLine,
-            $singleItemSingleLine,
-            $singleLine,
+            $multiLineExtendsEachSingleLine->getOption(),
+            $singleItemSingleLine->getOption(),
+            $singleLine->getOption(),
         ));
     }
 

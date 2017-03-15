@@ -16,7 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\DocBlock\DocBlock;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -32,15 +32,14 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
      */
     public function getConfigurationDefinition()
     {
-        $annotations = new FixerOption('annotations', 'List of annotations to remove, e.g. `["@author"]`.');
-        $annotations
+        $annotations = new FixerOptionBuilder('annotations', 'List of annotations to remove, e.g. `["@author"]`.');
+        $annotations = $annotations
             ->setAllowedTypes(array('array'))
             ->setDefault(array())
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('annotations', array(
-            $annotations,
-        ));
+        return new FixerConfigurationResolverRootless('annotations', array($annotations));
     }
 
     /**

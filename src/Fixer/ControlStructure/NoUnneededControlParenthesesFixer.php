@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\ControlStructure;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -59,8 +59,8 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
      */
     public function getConfigurationDefinition()
     {
-        $controlStatements = new FixerOption('statements', 'List of control statements to fix.');
-        $controlStatements
+        $statements = new FixerOptionBuilder('statements', 'List of control statements to fix.');
+        $statements = $statements
             ->setAllowedTypes(array('array'))
             ->setDefault(array(
                 'break',
@@ -71,11 +71,10 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
                 'switch_case',
                 'yield',
             ))
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('statements', array(
-            $controlStatements,
-        ));
+        return new FixerConfigurationResolverRootless('statements', array($statements));
     }
 
     /**

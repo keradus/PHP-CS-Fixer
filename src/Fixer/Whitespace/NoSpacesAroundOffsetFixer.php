@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\Whitespace;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -36,18 +36,17 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
         $generator = new FixerOptionValidatorGenerator();
         $values = array('inside', 'outside');
 
-        $positions = new FixerOption('positions', 'Whether spacing should be fixed inside and/or outside the offset braces.');
-        $positions
+        $positions = new FixerOptionBuilder('positions', 'Whether spacing should be fixed inside and/or outside the offset braces.');
+        $positions = $positions
             ->setAllowedTypes(array('array'))
             ->setAllowedValues(array(
                 $generator->allowedValueIsSubsetOf($values),
             ))
             ->setDefault($values)
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('positions', array(
-            $positions,
-        ));
+        return new FixerConfigurationResolverRootless('positions', array($positions));
     }
 
     /**

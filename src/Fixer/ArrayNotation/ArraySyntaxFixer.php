@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\ArrayNotation;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
@@ -53,8 +53,8 @@ final class ArraySyntaxFixer extends AbstractFixer implements ConfigurationDefin
      */
     public function getConfigurationDefinition()
     {
-        $syntax = new FixerOption('syntax', 'Whether to use the `long` or `short` array syntax.');
-        $syntax
+        $syntax = new FixerOptionBuilder('syntax', 'Whether to use the `long` or `short` array syntax.');
+        $syntax = $syntax
             ->setAllowedValues(array('long', 'short'))
             ->setNormalizer(function (Options $options, $value) {
                 if (PHP_VERSION_ID < 50400 && 'short' === $value) {
@@ -67,11 +67,10 @@ final class ArraySyntaxFixer extends AbstractFixer implements ConfigurationDefin
                 return $value;
             })
             ->setDefault('long')
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolver(array(
-            $syntax,
-        ));
+        return new FixerConfigurationResolver(array($syntax));
     }
 
     /**

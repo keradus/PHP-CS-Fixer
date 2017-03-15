@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\FunctionNotation;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\CT;
@@ -48,13 +48,14 @@ final class FunctionDeclarationFixer extends AbstractFixer implements Configurat
      */
     public function getConfigurationDefinition()
     {
-        $spacing = new FixerOption('closure_function_spacing', 'Spacing to use before open parenthesis for closures.');
-        $spacing->setDefault(self::SPACING_ONE);
-        $spacing->setAllowedValues($this->supportedSpacings);
+        $spacing = new FixerOptionBuilder('closure_function_spacing', 'Spacing to use before open parenthesis for closures.');
+        $spacing = $spacing
+            ->setDefault(self::SPACING_ONE)
+            ->setAllowedValues($this->supportedSpacings)
+            ->getOption()
+        ;
 
-        return new FixerConfigurationResolver(array(
-            $spacing,
-        ));
+        return new FixerConfigurationResolver(array($spacing));
     }
 
     /**

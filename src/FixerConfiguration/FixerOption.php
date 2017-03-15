@@ -32,7 +32,7 @@ final class FixerOption implements FixerOptionInterface
     /**
      * @var bool
      */
-    private $useDefault = false;
+    private $isRequired = true;
 
     /**
      * @var null|string[]
@@ -50,13 +50,40 @@ final class FixerOption implements FixerOptionInterface
     private $normalizer;
 
     /**
-     * @param string $name
-     * @param string $description
+     * @param string        $name
+     * @param string        $description
+     * @param bool          $isRequired
+     * @param mixed         $default
+     * @param string[]|null $allowedTypes
+     * @param array|null    $allowedValues
+     * @param \Closure|null $normalizer
      */
-    public function __construct($name, $description)
-    {
+    public function __construct(
+        $name,
+        $description,
+        $isRequired = true,
+        $default = null,
+        array $allowedTypes = null,
+        array $allowedValues = null,
+        \Closure $normalizer = null
+    ) {
+        if (null !== $allowedValues) {
+            foreach ($allowedValues as &$allowedValue) {
+                if ($allowedValue instanceof \Closure) {
+                    $allowedValue = $this->unbind($allowedValue);
+                }
+            }
+        }
+
         $this->name = $name;
         $this->description = $description;
+        $this->isRequired = $isRequired;
+        $this->default = $default;
+        $this->allowedTypes = $allowedTypes;
+        $this->allowedValues = $allowedValues;
+        if (null !== $normalizer) {
+            $this->normalizer = $this->unbind($normalizer);
+        }
     }
 
     /**
@@ -76,24 +103,11 @@ final class FixerOption implements FixerOptionInterface
     }
 
     /**
-     * @param mixed $default
-     *
-     * @return $this
-     */
-    public function setDefault($default)
-    {
-        $this->default = $default;
-        $this->useDefault = true;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function hasDefault()
     {
-        return $this->useDefault;
+        return !$this->isRequired;
     }
 
     /**
@@ -109,18 +123,6 @@ final class FixerOption implements FixerOptionInterface
     }
 
     /**
-     * @param string[] $allowedTypes
-     *
-     * @return $this
-     */
-    public function setAllowedTypes(array $allowedTypes)
-    {
-        $this->allowedTypes = $allowedTypes;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getAllowedTypes()
@@ -129,41 +131,11 @@ final class FixerOption implements FixerOptionInterface
     }
 
     /**
-     * @param array $allowedValues
-     *
-     * @return $this
-     */
-    public function setAllowedValues(array $allowedValues)
-    {
-        foreach ($allowedValues as &$allowedValue) {
-            if ($allowedValue instanceof \Closure) {
-                $allowedValue = $this->unbind($allowedValue);
-            }
-        }
-
-        $this->allowedValues = $allowedValues;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getAllowedValues()
     {
         return $this->allowedValues;
-    }
-
-    /**
-     * @param \Closure $normalizer
-     *
-     * @return $this
-     */
-    public function setNormalizer(\Closure $normalizer)
-    {
-        $this->normalizer = $this->unbind($normalizer);
-
-        return $this;
     }
 
     /**

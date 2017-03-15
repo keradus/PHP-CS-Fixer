@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\FunctionNotation;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
@@ -32,8 +32,8 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
      */
     public function getConfigurationDefinition()
     {
-        $exclude = new FixerOption('exclude', 'List of functions to ignore.');
-        $exclude
+        $exclude = new FixerOptionBuilder('exclude', 'List of functions to ignore.');
+        $exclude = $exclude
             ->setAllowedTypes(array('array'))
             ->setAllowedValues(array(function ($value) {
                 foreach ($value as $functionName) {
@@ -48,11 +48,10 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
                 return true;
             }))
             ->setDefault(array())
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolver(array(
-            $exclude,
-        ));
+        return new FixerConfigurationResolver(array($exclude));
     }
 
     /**

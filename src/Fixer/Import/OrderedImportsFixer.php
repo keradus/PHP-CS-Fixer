@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\Import;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
@@ -65,13 +65,13 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
     {
         $supportedSortTypes = $this->supportedSortTypes;
 
-        $sortAlgorithm = new FixerOption('sortAlgorithm', 'whether the statements should be sorted alphabetically or by length');
+        $sortAlgorithm = new FixerOptionBuilder('sortAlgorithm', 'whether the statements should be sorted alphabetically or by length');
         $sortAlgorithm
             ->setAllowedValues($this->supportedSortAlgorithms)
             ->setDefault(self::SORT_ALPHA)
         ;
 
-        $importsOrder = new FixerOption('importsOrder', 'Defines the order of import types.');
+        $importsOrder = new FixerOptionBuilder('importsOrder', 'Defines the order of import types.');
         $importsOrder
             ->setAllowedTypes(array('array', 'null'))
             ->setAllowedValues(array(function ($value) use ($supportedSortTypes) {
@@ -101,8 +101,8 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
         ;
 
         return new FixerConfigurationResolver(array(
-            $sortAlgorithm,
-            $importsOrder,
+            $sortAlgorithm->getOption(),
+            $importsOrder->getOption(),
         ));
     }
 

@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\ClassNotation;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -123,8 +123,8 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
     {
         $generator = new FixerOptionValidatorGenerator();
 
-        $order = new FixerOption('order', 'List of strings defining order of elements.');
-        $order
+        $order = new FixerOptionBuilder('order', 'List of strings defining order of elements.');
+        $order = $order
             ->setAllowedTypes(array('array'))
             ->setAllowedValues(array(
                 $generator->allowedValueIsSubsetOf(array_keys(array_merge(self::$typeHierarchy, self::$specialTypes))),
@@ -145,11 +145,10 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
                 'method_protected',
                 'method_private',
             ))
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('order', array(
-            $order,
-        ));
+        return new FixerConfigurationResolverRootless('order', array($order));
     }
 
     /**

@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\ClassNotation;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -42,8 +42,8 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
     {
         $generator = new FixerOptionValidatorGenerator();
 
-        $elements = new FixerOption('elements', 'The structural elements to fix (PHP >= 7.1 required for `const`).');
-        $elements
+        $elements = new FixerOptionBuilder('elements', 'The structural elements to fix (PHP >= 7.1 required for `const`).');
+        $elements = $elements
             ->setAllowedTypes(array('array'))
             ->setAllowedValues(array(
                 $generator->allowedValueIsSubsetOf(array('property', 'method', 'const')),
@@ -56,11 +56,10 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
                 return $value;
             })
             ->setDefault(array('property', 'method'))
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('elements', array(
-            $elements,
-        ));
+        return new FixerConfigurationResolverRootless('elements', array($elements));
     }
 
     /**

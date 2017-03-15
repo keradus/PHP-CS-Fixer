@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\FunctionNotation;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
@@ -32,15 +32,14 @@ final class ReturnTypeDeclarationFixer extends AbstractFixer implements Configur
      */
     public function getConfigurationDefinition()
     {
-        $spaceBefore = new FixerOption('space_before', 'Spacing to apply before colon.');
-        $spaceBefore
+        $spaceBefore = new FixerOptionBuilder('space_before', 'Spacing to apply before colon.');
+        $spaceBefore = $spaceBefore
             ->setAllowedValues(array('one', 'none'))
             ->setDefault('none')
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolver(array(
-            $spaceBefore,
-        ));
+        return new FixerConfigurationResolver(array($spaceBefore));
     }
 
     /**

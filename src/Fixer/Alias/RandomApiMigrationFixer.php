@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\Alias;
 use PhpCsFixer\AbstractFunctionReferenceFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -58,8 +58,8 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
     {
         $argumentCounts = self::$argumentCounts;
 
-        $replacements = new FixerOption('replacements', 'Mapping between replaced functions with the new ones.');
-        $replacements
+        $replacements = new FixerOptionBuilder('replacements', 'Mapping between replaced functions with the new ones.');
+        $replacements = $replacements
             ->setAllowedTypes(array('array'))
             ->setAllowedValues(array(function ($value) use ($argumentCounts) {
                 foreach ($value as $functionName => $replacement) {
@@ -87,11 +87,10 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
                 'rand' => 'mt_rand',
                 'srand' => 'mt_srand',
             ))
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('replacements', array(
-            $replacements,
-        ));
+        return new FixerConfigurationResolverRootless('replacements', array($replacements));
     }
 
     /**

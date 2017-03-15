@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\PhpUnit;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
-use PhpCsFixer\FixerConfiguration\FixerOption;
+use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
@@ -81,18 +81,17 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
         );
         $generator = new FixerOptionValidatorGenerator();
 
-        $functions = new FixerOption('functions', 'List of assertions to fix.');
-        $functions
+        $functions = new FixerOptionBuilder('functions', 'List of assertions to fix.');
+        $functions = $functions
             ->setAllowedTypes(array('array'))
             ->setAllowedValues(array(
                 $generator->allowedValueIsSubsetOf($values),
             ))
             ->setDefault($values)
+            ->getOption()
         ;
 
-        return new FixerConfigurationResolverRootless('functions', array(
-            $functions,
-        ));
+        return new FixerConfigurationResolverRootless('functions', array($functions));
     }
 
     /**
