@@ -121,7 +121,6 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
         $generator = new FixerOptionValidatorGenerator();
 
         $order = new FixerOption('order', 'List of strings defining order of elements.');
@@ -148,10 +147,12 @@ final class OrderedClassElementsFixer extends AbstractFixer implements Configura
             ))
         ;
 
-        return $configurationDefinition
-            ->addOption($order)
-            ->mapRootConfigurationTo('order')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $order,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('order');
+
+        return $configurationDefinition;
     }
 
     /**

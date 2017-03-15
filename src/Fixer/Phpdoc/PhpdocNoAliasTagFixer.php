@@ -37,8 +37,6 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer implements Configuration
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
-
         $replacements = new FixerOption('replacements', 'Mapping between replaced annotations with new ones.');
         $replacements
             ->setAllowedTypes(array('array'))
@@ -89,10 +87,12 @@ final class PhpdocNoAliasTagFixer extends AbstractFixer implements Configuration
             ))
         ;
 
-        return $configurationDefinition
-            ->addOption($replacements)
-            ->mapRootConfigurationTo('replacements')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $replacements,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('replacements');
+
+        return $configurationDefinition;
     }
 
     /**

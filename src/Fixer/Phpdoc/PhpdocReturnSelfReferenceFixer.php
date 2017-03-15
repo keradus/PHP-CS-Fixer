@@ -49,7 +49,6 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
             '$static' => 'static',
             '@static' => 'static',
         );
-        $configurationDefinition = new FixerConfigurationResolver();
 
         $replacements = new FixerOption('replacements', 'Mapping between replaced return types with new ones.');
         $replacements
@@ -85,10 +84,12 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
             ->setDefault($default)
         ;
 
-        return $configurationDefinition
-            ->addOption($replacements)
-            ->mapRootConfigurationTo('replacements')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $replacements,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('replacements');
+
+        return $configurationDefinition;
     }
 
     /**

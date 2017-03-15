@@ -18,9 +18,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 final class FixerConfigurationResolver implements FixerConfigurationResolverInterface
 {
     /**
-     * @var array<string, FixerOptionInterface>
+     * @var FixerOptionInterface[]
      */
     private $options = array();
+
+    /**
+     * @var string[]
+     */
+    private $registeredNames = array();
 
     /**
      * @var string|null
@@ -28,21 +33,17 @@ final class FixerConfigurationResolver implements FixerConfigurationResolverInte
     private $root;
 
     /**
-     * @param FixerOptionInterface $option
-     *
-     * @throws \LogicException when the option is already defined
-     *
-     * @return $this
+     * @param iterable<FixerOptionInterface> $options
      */
-    public function addOption(FixerOptionInterface $option)
+    public function __construct($options)
     {
-        if (array_key_exists($name = $option->getName(), $this->options)) {
-            throw new \LogicException(sprintf('The "%s" option is already defined.', $name));
+        foreach ($options as $option) {
+            $this->addOption($option);
         }
 
-        $this->options[$name] = $option;
-
-        return $this;
+        if (empty($this->registeredNames)) {
+            throw new \LogicException('Options cannot be empty.');
+        }
     }
 
     /**
@@ -50,7 +51,7 @@ final class FixerConfigurationResolver implements FixerConfigurationResolverInte
      */
     public function getOptions()
     {
-        return array_values($this->options);
+        return $this->options;
     }
 
     /**
@@ -64,7 +65,7 @@ final class FixerConfigurationResolver implements FixerConfigurationResolverInte
      */
     public function mapRootConfigurationTo($optionName)
     {
-        if (!array_key_exists($optionName, $this->options)) {
+        if (!in_array($optionName, $this->registeredNames, true)) {
             throw new \LogicException(sprintf('The "%s" option is not defined.', $optionName));
         }
 
@@ -115,5 +116,26 @@ final class FixerConfigurationResolver implements FixerConfigurationResolverInte
         }
 
         return $resolver->resolve($options);
+    }
+
+    /**
+     * @param FixerOptionInterface $option
+     *
+     * @throws \LogicException when the option is already defined
+     *
+     * @return $this
+     */
+    private function addOption(FixerOptionInterface $option)
+    {
+        $name = $option->getName();
+
+        if (in_array($name, $this->registeredNames, true)) {
+            throw new \LogicException(sprintf('The "%s" option is defined multiple times.', $name));
+        }
+
+        $this->options[] = $option;
+        $this->registeredNames[] = $name;
+
+        return $this;
     }
 }

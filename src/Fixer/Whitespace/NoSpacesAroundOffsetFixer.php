@@ -33,7 +33,6 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
         $generator = new FixerOptionValidatorGenerator();
         $values = array('inside', 'outside');
 
@@ -46,10 +45,12 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
             ->setDefault($values)
         ;
 
-        return $configurationDefinition
-            ->addOption($positions)
-            ->mapRootConfigurationTo('positions')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $positions,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('positions');
+
+        return $configurationDefinition;
     }
 
     /**

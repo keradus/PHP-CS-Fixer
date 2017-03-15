@@ -57,7 +57,6 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
     public function getConfigurationDefinition()
     {
         $argumentCounts = self::$argumentCounts;
-        $configurationDefinition = new FixerConfigurationResolver();
 
         $replacements = new FixerOption('replacements', 'Mapping between replaced functions with the new ones.');
         $replacements
@@ -90,10 +89,12 @@ final class RandomApiMigrationFixer extends AbstractFunctionReferenceFixer imple
             ))
         ;
 
-        return $configurationDefinition
-            ->addOption($replacements)
-            ->mapRootConfigurationTo('replacements')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $replacements,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('replacements');
+
+        return $configurationDefinition;
     }
 
     /**

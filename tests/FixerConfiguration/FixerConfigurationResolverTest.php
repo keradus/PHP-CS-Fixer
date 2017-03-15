@@ -22,41 +22,39 @@ use Symfony\Component\OptionsResolver\Options;
  */
 final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 {
-    public function testAddOption()
+    public function testWithoutOptions()
     {
-        $configuration = new FixerConfigurationResolver();
-        $this->assertSame(
-            $configuration,
-            $configuration->addOption(new FixerOption('foo', 'Bar.'))
-        );
+        $this->setExpectedException('LogicException', 'Options cannot be empty.');
 
-        $this->setExpectedException('LogicException', 'The "foo" option is already defined.');
-        $this->assertSame(
-            $configuration,
-            $configuration->addOption(new FixerOption('foo', 'Bar.'))
-        );
+        $configuration = new FixerConfigurationResolver(array());
+    }
+
+    public function testWithDuplicatesOptions()
+    {
+        $this->setExpectedException('LogicException', 'The "foo" option is defined multiple times.');
+
+        $configuration = new FixerConfigurationResolver(array(
+            new FixerOption('foo', 'Bar-1.'),
+            new FixerOption('foo', 'Bar-2.'),
+        ));
     }
 
     public function testGetOptions()
     {
-        $configuration = new FixerConfigurationResolver();
+        $options = array(
+            new FixerOption('foo', 'Bar.'),
+            new FixerOption('baz', 'Qux.'),
+        );
+        $configuration = new FixerConfigurationResolver($options);
 
-        $options = array();
-        $this->assertSame($options, $configuration->getOptions());
-
-        $options[] = new FixerOption('foo', 'Bar.');
-        $configuration->addOption(end($options));
-        $this->assertSame($options, $configuration->getOptions());
-
-        $options[] = new FixerOption('baz', 'Qux.');
-        $configuration->addOption(end($options));
         $this->assertSame($options, $configuration->getOptions());
     }
 
     public function testMapRootConfigurationTo()
     {
-        $configuration = new FixerConfigurationResolver();
-        $configuration->addOption(new FixerOption('foo', 'Bar.'));
+        $configuration = new FixerConfigurationResolver(array(
+            new FixerOption('foo', 'Bar.'),
+        ));
         $this->assertSame($configuration, $configuration->mapRootConfigurationTo('foo'));
 
         $this->setExpectedException('LogicException', 'The "bar" option is not defined.');
@@ -65,8 +63,9 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolve()
     {
-        $configuration = new FixerConfigurationResolver();
-        $configuration->addOption(new FixerOption('foo', 'Bar.'));
+        $configuration = new FixerConfigurationResolver(array(
+            new FixerOption('foo', 'Bar.'),
+        ));
         $this->assertSame(
             array('foo' => 'bar'),
             $configuration->resolve(array('foo' => 'bar'))
@@ -75,8 +74,9 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveWithMissingRequiredOption()
     {
-        $configuration = new FixerConfigurationResolver();
-        $configuration->addOption(new FixerOption('foo', 'Bar.'));
+        $configuration = new FixerConfigurationResolver(array(
+            new FixerOption('foo', 'Bar.'),
+        ));
 
         $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\MissingOptionsException');
         $configuration->resolve(array());
@@ -84,9 +84,11 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveWithDefault()
     {
-        $configuration = new FixerConfigurationResolver();
-        $configuration->addOption($option = new FixerOption('foo', 'Bar.'));
+        $option = new FixerOption('foo', 'Bar.');
         $option->setDefault('baz');
+        $configuration = new FixerConfigurationResolver(array(
+            $option,
+        ));
 
         $this->assertSame(
             array('foo' => 'baz'),
@@ -96,9 +98,11 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveWithAllowedTypes()
     {
-        $configuration = new FixerConfigurationResolver();
-        $configuration->addOption($option = new FixerOption('foo', 'Bar.'));
+        $option = new FixerOption('foo', 'Bar.');
         $option->setAllowedTypes(array('int'));
+        $configuration = new FixerConfigurationResolver(array(
+            $option,
+        ));
 
         $this->assertSame(
             array('foo' => 1),
@@ -114,9 +118,11 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveWithAllowedValues()
     {
-        $configuration = new FixerConfigurationResolver();
-        $configuration->addOption($option = new FixerOption('foo', 'Bar.'));
+        $option = new FixerOption('foo', 'Bar.');
         $option->setAllowedValues(array(true, false));
+        $configuration = new FixerConfigurationResolver(array(
+            $option,
+        ));
 
         $this->assertSame(
             array('foo' => true),
@@ -132,19 +138,24 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveWithUndefinedOption()
     {
-        $configuration = new FixerConfigurationResolver();
+        $configuration = new FixerConfigurationResolver(array(
+            new FixerOption('bar', 'Bar.'),
+        ));
 
         $this->setExpectedException('Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException');
-        $configuration->resolve(array('foo' => 'bar'));
+        $configuration->resolve(array('foo' => 'foooo'));
     }
 
     public function testResolveWithNormalizers()
     {
-        $configuration = new FixerConfigurationResolver();
-        $configuration->addOption($option = new FixerOption('foo', 'Bar.'));
+        $option = new FixerOption('foo', 'Bar.');
         $option->setNormalizer(function (Options $options, $value) {
             return (int) $value;
         });
+        $configuration = new FixerConfigurationResolver(array(
+            $option,
+        ));
+
         $this->assertSame(
             array('foo' => 1),
             $configuration->resolve(array('foo' => '1'))
@@ -170,8 +181,9 @@ final class FixerConfigurationResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveWithMappedRoot()
     {
-        $configuration = new FixerConfigurationResolver();
-        $configuration->addOption($option = new FixerOption('foo', 'Bar.'));
+        $configuration = new FixerConfigurationResolver(array(
+            new FixerOption('foo', 'Bar.'),
+        ));
         $configuration->mapRootConfigurationTo('foo');
         $configuration->resolve(array('baz', 'qux'));
     }

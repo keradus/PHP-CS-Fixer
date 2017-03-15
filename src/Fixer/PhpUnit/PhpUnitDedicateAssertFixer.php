@@ -79,7 +79,6 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
             'is_scalar',
             'is_string',
         );
-        $configurationDefinition = new FixerConfigurationResolver();
         $generator = new FixerOptionValidatorGenerator();
 
         $functions = new FixerOption('functions', 'List of assertions to fix.');
@@ -91,10 +90,12 @@ final class PhpUnitDedicateAssertFixer extends AbstractFixer implements Configur
             ->setDefault($values)
         ;
 
-        return $configurationDefinition
-            ->addOption($functions)
-            ->mapRootConfigurationTo('functions')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $functions,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('functions');
+
+        return $configurationDefinition;
     }
 
     /**

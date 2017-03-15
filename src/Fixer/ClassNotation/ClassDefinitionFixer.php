@@ -37,10 +37,8 @@ final class ClassDefinitionFixer extends AbstractFixer implements ConfigurationD
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
-
-        $singleLine = new FixerOption('singleLine', 'Whether definitions should be single line.');
-        $singleLine
+        $multiLineExtendsEachSingleLine = new FixerOption('multiLineExtendsEachSingleLine', 'Whether definitions should be multiline.');
+        $multiLineExtendsEachSingleLine
             ->setAllowedTypes(array('bool'))
             ->setDefault(false)
         ;
@@ -51,17 +49,17 @@ final class ClassDefinitionFixer extends AbstractFixer implements ConfigurationD
             ->setDefault(false)
         ;
 
-        $multiLineExtendsEachSingleLine = new FixerOption('multiLineExtendsEachSingleLine', 'Whether definitions should be multiline.');
-        $multiLineExtendsEachSingleLine
+        $singleLine = new FixerOption('singleLine', 'Whether definitions should be single line.');
+        $singleLine
             ->setAllowedTypes(array('bool'))
             ->setDefault(false)
         ;
 
-        return $configurationDefinition
-            ->addOption($singleLine)
-            ->addOption($singleItemSingleLine)
-            ->addOption($multiLineExtendsEachSingleLine)
-        ;
+        return new FixerConfigurationResolver(array(
+            $multiLineExtendsEachSingleLine,
+            $singleItemSingleLine,
+            $singleLine,
+        ));
     }
 
     /**

@@ -32,8 +32,6 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
-
         $exclude = new FixerOption('exclude', 'List of functions to ignore.');
         $exclude
             ->setAllowedTypes(array('array'))
@@ -52,9 +50,9 @@ final class NativeFunctionInvocationFixer extends AbstractFixer implements Confi
             ->setDefault(array())
         ;
 
-        return $configurationDefinition
-            ->addOption($exclude)
-        ;
+        return new FixerConfigurationResolver(array(
+            $exclude,
+        ));
     }
 
     /**

@@ -493,7 +493,7 @@ declare(strict_types=1)?>',
     public function testConfigurationUpdatedWithWhitespsacesConfig()
     {
         $this->fixer->configure(array('header' => 'Foo'));
-        
+
         $this->doTest(
             "<?php\n\n/*\n * Foo\n */\n\necho 1;",
             "<?php\necho 1;"

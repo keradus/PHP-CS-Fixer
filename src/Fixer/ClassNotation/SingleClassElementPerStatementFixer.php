@@ -39,7 +39,6 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
         $generator = new FixerOptionValidatorGenerator();
 
         $values = array('const', 'property');
@@ -53,10 +52,12 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
             ))
         ;
 
-        return $configurationDefinition
-            ->addOption($elements)
-            ->mapRootConfigurationTo('elements')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $elements,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('elements');
+
+        return $configurationDefinition;
     }
 
     /**

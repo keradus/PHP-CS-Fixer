@@ -59,8 +59,6 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
-
         $controlStatements = new FixerOption('control_statements', 'List of control statements to fix.');
         $controlStatements
             ->setAllowedTypes(array('array'))
@@ -75,10 +73,12 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
             ))
         ;
 
-        return $configurationDefinition
-            ->addOption($controlStatements)
-            ->mapRootConfigurationTo('control_statements')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $controlStatements,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('control_statements');
+
+        return $configurationDefinition;
     }
 
     /**

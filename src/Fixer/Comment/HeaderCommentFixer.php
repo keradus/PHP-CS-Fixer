@@ -56,8 +56,6 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
         $whitespaceConfig = $this->whitespacesConfig;
         $headerCommentType = self::HEADER_COMMENT;
 
-        $configurationDefinition = new FixerConfigurationResolver();
-
         $header = new FixerOption('header', 'Proper header content.');
         $header
             ->setAllowedTypes(array('string'))
@@ -96,12 +94,12 @@ final class HeaderCommentFixer extends AbstractFixer implements ConfigurationDef
             ->setDefault('both')
         ;
 
-        return $configurationDefinition
-            ->addOption($header)
-            ->addOption($commentType)
-            ->addOption($location)
-            ->addOption($separate)
-        ;
+        return new FixerConfigurationResolver(array(
+            $commentType,
+            $header,
+            $location,
+            $separate,
+        ));
     }
 
     public function setWhitespacesConfig(WhitespacesFixerConfig $config)

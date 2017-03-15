@@ -38,7 +38,6 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
         $generator = new FixerOptionValidatorGenerator();
 
         $assertions = new FixerOption('assertions', 'List of assertion methods to fix.');
@@ -55,10 +54,12 @@ final class PhpUnitStrictFixer extends AbstractFixer implements ConfigurationDef
             ))
         ;
 
-        return $configurationDefinition
-            ->addOption($assertions)
-            ->mapRootConfigurationTo('assertions')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $assertions,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('assertions');
+
+        return $configurationDefinition;
     }
 
     /**

@@ -118,7 +118,6 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
         $generator = new FixerOptionValidatorGenerator();
 
         $tokens = new FixerOption('tokens', 'List of tokens to fix.');
@@ -130,10 +129,12 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
             ->setDefault(array('extra'))
         ;
 
-        return $configurationDefinition
-            ->addOption($tokens)
-            ->mapRootConfigurationTo('tokens')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $tokens,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('tokens');
+
+        return $configurationDefinition;
     }
 
     /**

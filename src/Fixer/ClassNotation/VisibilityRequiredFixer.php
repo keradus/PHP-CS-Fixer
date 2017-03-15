@@ -40,7 +40,6 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
      */
     public function getConfigurationDefinition()
     {
-        $configurationDefinition = new FixerConfigurationResolver();
         $generator = new FixerOptionValidatorGenerator();
 
         $elements = new FixerOption('elements', 'The structural elements to fix (PHP >= 7.1 required for `const`).');
@@ -59,10 +58,12 @@ final class VisibilityRequiredFixer extends AbstractFixer implements Configurati
             ->setDefault(array('property', 'method'))
         ;
 
-        return $configurationDefinition
-            ->addOption($elements)
-            ->mapRootConfigurationTo('elements')
-        ;
+        $configurationDefinition = new FixerConfigurationResolver(array(
+            $elements,
+        ));
+        $configurationDefinition->mapRootConfigurationTo('elements');
+
+        return $configurationDefinition;
     }
 
     /**

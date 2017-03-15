@@ -64,7 +64,6 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
     public function getConfigurationDefinition()
     {
         $supportedSortTypes = $this->supportedSortTypes;
-        $configurationDefinition = new FixerConfigurationResolver();
 
         $sortAlgorithm = new FixerOption('sortAlgorithm', 'whether the statements should be sorted alphabetically or by length');
         $sortAlgorithm
@@ -101,10 +100,10 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
             ->setDefault(null)
         ;
 
-        return $configurationDefinition
-            ->addOption($sortAlgorithm)
-            ->addOption($importsOrder)
-        ;
+        return new FixerConfigurationResolver(array(
+            $sortAlgorithm,
+            $importsOrder,
+        ));
     }
 
     /**
