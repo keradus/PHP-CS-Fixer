@@ -59,7 +59,7 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
      */
     public function getConfigurationDefinition()
     {
-        $controlStatements = new FixerOption('control_statements', 'List of control statements to fix.');
+        $controlStatements = new FixerOption('statements', 'List of control statements to fix.');
         $controlStatements
             ->setAllowedTypes(array('array'))
             ->setDefault(array(
@@ -73,7 +73,7 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
             ))
         ;
 
-        return new FixerConfigurationResolverRootless('control_statements', array(
+        return new FixerConfigurationResolverRootless('statements', array(
             $controlStatements,
         ));
     }
@@ -99,7 +99,7 @@ final class NoUnneededControlParenthesesFixer extends AbstractFixer implements C
     public function fix(\SplFileInfo $file, Tokens $tokens)
     {
         // Checks if specific statements are set and uses them in this case.
-        $loops = array_intersect_key(self::$loops, array_flip($this->configuration['control_statements']));
+        $loops = array_intersect_key(self::$loops, array_flip($this->configuration['statements']));
 
         foreach ($tokens as $index => $token) {
             if (!$token->equals('(')) {
@@ -173,7 +173,7 @@ return (1 + 2);
 switch ($a) { case($x); }
 yield(2);
 ',
-                    array('control_statements' => array('break', 'continue'))
+                    array('statements' => array('break', 'continue'))
                 ),
             )
         );

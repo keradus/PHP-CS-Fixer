@@ -570,9 +570,9 @@ Choose from the list of available rules:
 
   Configuration options:
 
-  - ``control_statements`` (``array``): list of control statements to fix; defaults
-    to ``['break', 'clone', 'continue', 'echo_print', 'return',
-    'switch_case', 'yield']``
+  - ``statements`` (``array``): list of control statements to fix; defaults to
+    ``['break', 'clone', 'continue', 'echo_print', 'return', 'switch_case',
+    'yield']``
 
 * **no_unreachable_default_argument_value**
 
