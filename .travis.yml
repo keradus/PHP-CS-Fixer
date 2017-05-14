@@ -20,7 +20,7 @@ jobs:
         stage: Static Code Analysis
         php: nightly
         install:
-            - composer global update $DEFAULT_COMPOSER_FLAGS phpmd/phpmd:^2.4.3 mi-schi/phpmd-extension:^4.2
+            - composer global require $DEFAULT_COMPOSER_FLAGS phpmd/phpmd:^2.4.3 mi-schi/phpmd-extension:^4.2
         script:
             - composer global show --path
             - echo $HOME
