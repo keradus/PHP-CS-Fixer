@@ -19,7 +19,8 @@ env:
 
 jobs:
   include:
-    - stage: SCA
+    -
+        stage: SCA
         php: nightly
         install:
             - composer global update $DEFAULT_COMPOSER_FLAGS phpmd/phpmd:^2.4.3 mi-schi/phpmd-extension:^4.2
@@ -28,7 +29,8 @@ jobs:
             - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then COMMIT_RANGE=$TRAVIS_COMMIT_RANGE; else COMMIT_RANGE="HEAD~..HEAD"; fi;
             - export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`
             - if [ -n "$COMMIT_SCA_FILES" ]; then vendor/bin/phpmd `echo $COMMIT_SCA_FILES | sed 's/ /,/g'` text phpmd.xml --exclude src/Resources,tests/Fixtures; fi
-    - stage: test
+    -
+        stage: test
         php: 7.0
         script:
             - if [ $TASK_FUTURE == 1 ]; then php php-cs-fixer fix --rules @PHP70Migration:risky,@PHP71Migration,native_function_invocation -q || travis_terminate 1; fi
