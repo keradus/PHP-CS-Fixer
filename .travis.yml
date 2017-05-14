@@ -5,6 +5,10 @@ sudo: false
 git:
     depth: 1
 
+cache:
+    directories:
+        - $HOME/.composer
+
 env:
     global:
         - DEFAULT_COMPOSER_FLAGS="--no-interaction --no-progress --optimize-autoloader"
@@ -31,9 +35,13 @@ matrix:
           dist: trusty
           group: edge
 
-cache:
-    directories:
-        - $HOME/.composer
+jobs:
+  include:
+    - stage: early check
+      php: nightly
+      install: skip
+      script: ./check_trailing_spaces.sh
+    - stage: test
 
 before_install:
     # check phpdbg
@@ -66,7 +74,6 @@ before_script:
     - if [ $TASK_SCA == 1 ]; then export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`; fi
 
 script:
-    - if [ $TASK_SCA == 1 ]; then ./check_trailing_spaces.sh; fi
     - if [ $TASK_SCA == 1 ] && [ -n "$COMMIT_SCA_FILES" ]; then vendor/bin/phpmd `echo $COMMIT_SCA_FILES | sed 's/ /,/g'` text phpmd.xml --exclude src/Resources,tests/Fixtures; fi;
 
     - if [ $TASK_FUTURE == 1 ]; then php php-cs-fixer fix --rules @PHP70Migration:risky,@PHP71Migration,native_function_invocation -q; fi
