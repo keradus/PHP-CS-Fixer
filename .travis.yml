@@ -17,17 +17,17 @@ env:
         - TASK_CS=1
         - TASK_SCA=0
 
-php:
-  - 7.0
-
 jobs:
   include:
     - stage: SCA
+      php: nightly
+      install: skip
       script:
         - echo "JOB LINT"
         - export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`
         - ./check_trailing_spaces.sh
     - stage: test
+      php: 7.0
       script:
         - echo "JOB UTEST"
 
