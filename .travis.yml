@@ -17,11 +17,13 @@ env:
 jobs:
   include:
     -
-        stage: SCA
+        stage: Static Code Analysis
         php: nightly
         install:
             - composer global update $DEFAULT_COMPOSER_FLAGS phpmd/phpmd:^2.4.3 mi-schi/phpmd-extension:^4.2
         script:
+            - composer global show --path
+            - echo $HOME
             - ./check_trailing_spaces.sh || travis_terminate 1
             - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then COMMIT_RANGE=$TRAVIS_COMMIT_RANGE; else COMMIT_RANGE="HEAD~..HEAD"; fi;
             - export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`
