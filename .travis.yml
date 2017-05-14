@@ -22,15 +22,46 @@ php:
 
 jobs:
   include:
-    - stage: lint
+    - stage: SCA
       script:
         - echo "JOB LINT"
+        - export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`
+        - ./check_trailing_spaces.sh
     - stage: test
       script:
         - echo "JOB UTEST"
-    - stage: e2e
-      script:
-        - echo "JOB E2E"
+
+before_install:
+    # check phpdbg
+    - phpdbg --version 2> /dev/null || { echo 'No phpdbg'; export TASK_TESTS_COVERAGE=0; }
+
+    # turn off XDebug
+    - phpenv config-rm xdebug.ini || return 0
+
+    # validate tasks configuration
+    - if [ $TASK_TESTS == 0 ] && [ $TASK_TESTS_COVERAGE == 1 ]; then travis_terminate 1; fi
+
+    # for building a tag release we don't need to run SCA tools, collect code coverage or self-fix CS
+    - if [ $TRAVIS_TAG ]; then export TASK_SCA=0; fi
+    - if [ $TRAVIS_TAG ]; then export TASK_TESTS_COVERAGE=0; fi
+    - if [ $TRAVIS_TAG ]; then export TASK_CS=0; fi
+
+    # Composer: boost installation
+    - composer global show -ND 2>&1 | grep "hirak/prestissimo" || travis_retry composer global require $DEFAULT_COMPOSER_FLAGS hirak/prestissimo
+
+    # display tasks configuration for a job
+    - set | grep ^TASK | sort
+
+install:
+    - travis_retry composer update $DEFAULT_COMPOSER_FLAGS $COMPOSER_FLAGS
+    - composer info -D | sort
+
+before_script:
+    - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then COMMIT_RANGE=$TRAVIS_COMMIT_RANGE; else COMMIT_RANGE="HEAD~..HEAD"; fi;
+    - if [ $TASK_SCA == 1 ]; then export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`; fi
+
+after_success:
+    - if [ $TASK_TESTS_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
 
 before_deploy:
     # install box2
