@@ -20,16 +20,23 @@ env:
 jobs:
   include:
     - stage: SCA
-      php: nightly
-      install: skip
-      script:
-        - echo "JOB LINT"
-        - export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`
-        - ./check_trailing_spaces.sh
+        php: nightly
+        install:
+            - composer global update $DEFAULT_COMPOSER_FLAGS phpmd/phpmd:^2.4.3 mi-schi/phpmd-extension:^4.2
+        script:
+            - ./check_trailing_spaces.sh || travis_terminate 1
+            - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then COMMIT_RANGE=$TRAVIS_COMMIT_RANGE; else COMMIT_RANGE="HEAD~..HEAD"; fi;
+            - export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`
+            - if [ -n "$COMMIT_SCA_FILES" ]; then vendor/bin/phpmd `echo $COMMIT_SCA_FILES | sed 's/ /,/g'` text phpmd.xml --exclude src/Resources,tests/Fixtures; fi
     - stage: test
-      php: 7.0
-      script:
-        - echo "JOB UTEST"
+        php: 7.0
+        script:
+            - if [ $TASK_SCA == 1 ]; then php php-cs-fixer fix --rules @PHP70Migration:risky,@PHP71Migration,native_function_invocation -q; fi
+            - if [ $TASK_TESTS_COVERAGE == 0 ]; then vendor/bin/phpunit --verbose; fi
+            - if [ $TASK_TESTS_COVERAGE == 1 ]; then phpdbg -qrr vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml; fi
+            - if [ $TASK_SCA == 1 ]; then git checkout . -q; fi
+            - php php-cs-fixer --diff --dry-run -v fix
+            - if [ $TASK_TESTS_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
 
 before_install:
     # check phpdbg
@@ -55,13 +62,6 @@ before_install:
 install:
     - travis_retry composer update $DEFAULT_COMPOSER_FLAGS $COMPOSER_FLAGS
     - composer info -D | sort
-
-before_script:
-    - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then COMMIT_RANGE=$TRAVIS_COMMIT_RANGE; else COMMIT_RANGE="HEAD~..HEAD"; fi;
-    - if [ $TASK_SCA == 1 ]; then export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`; fi
-
-after_success:
-    - if [ $TASK_TESTS_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
 
 before_deploy:
     # install box2
