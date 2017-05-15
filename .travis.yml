@@ -45,7 +45,7 @@ jobs:
             - if [ $COLLECT_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
 
     -
-        stage: Tests
+        stage: Test
         php: nightly
         env: COMPOSER_FLAGS="--ignore-platform-reqs" SYMFONY_DEPRECATIONS_HELPER=weak PHP_CS_FIXER_IGNORE_ENV=1
         script:
@@ -55,7 +55,7 @@ jobs:
             - php php-cs-fixer --diff --dry-run -v fix
 
     -
-        stage: Tests
+        stage: Test
         php: 5.6
         env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
         script:
@@ -63,14 +63,14 @@ jobs:
             - php php-cs-fixer --diff --dry-run -v fix
 
     -
-        stage: Tests
+        stage: Test
         php: 7.0
         script:
             - vendor/bin/phpunit --verbose || travis_terminate 1
             - php php-cs-fixer --diff --dry-run -v fix
 
     -
-        stage: Tests
+        stage: Test
         php: hhvm
         env: SKIP_LINT_TEST_CASES=1
         sudo: required
