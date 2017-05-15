@@ -12,7 +12,7 @@ cache:
 env:
     global:
         - DEFAULT_COMPOSER_FLAGS="--no-interaction --no-progress --optimize-autoloader"
-        - TASK_TESTS_COVERAGE=0
+        - COLLECT_COVERAGE=0
 
 jobs:
   include:
@@ -29,23 +29,23 @@ jobs:
             # TODO - if [ -n "$COMMIT_SCA_FILES" ]; then $HOME/.composer/vendor/bin/phpmd `echo $COMMIT_SCA_FILES | sed 's/ /,/g'` text phpmd.xml --exclude src/Resources,tests/Fixtures; fi
 
     -
-        stage: test
+        stage: Tests
         php: 7.1
-        env: TASK_TESTS_COVERAGE=1
+        env: COLLECT_COVERAGE=1
         before_script:
             # check phpdbg
-            - phpdbg --version 2> /dev/null || { echo 'No phpdbg'; export TASK_TESTS_COVERAGE=0; }
+            - phpdbg --version 2> /dev/null || { echo 'No phpdbg'; export COLLECT_COVERAGE=0; }
 
             # for building a tag release we don't need to collect code coverage
-            - if [ $TRAVIS_TAG ]; then export TASK_TESTS_COVERAGE=0; fi
+            - if [ $TRAVIS_TAG ]; then export COLLECT_COVERAGE=0; fi
         script:
-            - if [ $TASK_TESTS_COVERAGE == 0 ]; then vendor/bin/phpunit --verbose || travis_terminate 1; fi
-            - if [ $TASK_TESTS_COVERAGE == 1 ]; then phpdbg -qrr vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml || travis_terminate 1; fi
+            - if [ $COLLECT_COVERAGE == 0 ]; then vendor/bin/phpunit --verbose || travis_terminate 1; fi
+            - if [ $COLLECT_COVERAGE == 1 ]; then phpdbg -qrr vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml || travis_terminate 1; fi
             - php php-cs-fixer --diff --dry-run -v fix || travis_terminate 1
-            - if [ $TASK_TESTS_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
+            - if [ $COLLECT_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
 
     -
-        stage: Tests
+        stage: Testss
         php: nightly
         env: COMPOSER_FLAGS="--ignore-platform-reqs" SYMFONY_DEPRECATIONS_HELPER=weak PHP_CS_FIXER_IGNORE_ENV=1
         script:
@@ -55,7 +55,7 @@ jobs:
             - php php-cs-fixer --diff --dry-run -v fix
 
     -
-        stage: Tests
+        stage: Testss
         php: 5.6
         env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
         script:
@@ -63,14 +63,14 @@ jobs:
             - php php-cs-fixer --diff --dry-run -v fix
 
     -
-        stage: Tests
+        stage: Testss
         php: 7.0
         script:
             - vendor/bin/phpunit --verbose || travis_terminate 1
             - php php-cs-fixer --diff --dry-run -v fix
 
     -
-        stage: Tests
+        stage: Testss
         php: hhvm
         env: SKIP_LINT_TEST_CASES=1
         sudo: required
