@@ -28,16 +28,53 @@ jobs:
             - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then COMMIT_RANGE=$TRAVIS_COMMIT_RANGE; else COMMIT_RANGE="HEAD~..HEAD"; fi;
             - export COMMIT_SCA_FILES=`git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE`
             # - if [ -n "$COMMIT_SCA_FILES" ]; then $HOME/.composer/vendor/bin/phpmd `echo $COMMIT_SCA_FILES | sed 's/ /,/g'` text phpmd.xml --exclude src/Resources,tests/Fixtures; fi
+
+    -
+        stage: test
+        php: 7.1
+        env: TASK_TESTS_COVERAGE=1
+        script:
+            - if [ $TASK_TESTS_COVERAGE == 0 ]; then vendor/bin/phpunit --verbose || travis_terminate 1; fi
+            - if [ $TASK_TESTS_COVERAGE == 1 ]; then phpdbg -qrr vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml || travis_terminate 1; fi
+            - php php-cs-fixer --diff --dry-run -v fix || travis_terminate 1
+            - if [ $TASK_TESTS_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
+
+    -
+        stage: test
+        php: nightly
+        env: COMPOSER_FLAGS="--ignore-platform-reqs" SYMFONY_DEPRECATIONS_HELPER=weak PHP_CS_FIXER_IGNORE_ENV=1
+        script:
+            - then php php-cs-fixer fix --rules @PHP70Migration:risky,@PHP71Migration,native_function_invocation -q || travis_terminate 1
+            - vendor/bin/phpunit --verbose || travis_terminate 1
+            - then git checkout . -q
+            - php php-cs-fixer --diff --dry-run -v fix
+
+    -
+        stage: test
+        php: 5.6
+        env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
+        script:
+            - vendor/bin/phpunit --verbose || travis_terminate 1
+            - php php-cs-fixer --diff --dry-run -v fix
+
     -
         stage: test
         php: 7.0
         script:
-            - if [ $TASK_FUTURE == 1 ]; then php php-cs-fixer fix --rules @PHP70Migration:risky,@PHP71Migration,native_function_invocation -q || travis_terminate 1; fi
-            - if [ $TASK_TESTS_COVERAGE == 0 ]; then vendor/bin/phpunit --verbose || travis_terminate 1; fi
-            - if [ $TASK_TESTS_COVERAGE == 1 ]; then phpdbg -qrr vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml || travis_terminate 1; fi
-            - if [ $TASK_FUTURE == 1 ]; then git checkout . -q; fi
-            - php php-cs-fixer --diff --dry-run -v fix || travis_terminate 1
-            - if [ $TASK_TESTS_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
+            - vendor/bin/phpunit --verbose || travis_terminate 1
+            - php php-cs-fixer --diff --dry-run -v fix
+
+    -
+        stage: test
+        php: hhvm
+        env: SKIP_LINT_TEST_CASES=1
+        sudo: required
+        dist: trusty
+        group: edge
+        script:
+            - vendor/bin/phpunit --verbose || travis_terminate 1
+            - php php-cs-fixer --diff --dry-run -v fix
+
 
 before_install:
     # check phpdbg
@@ -46,7 +83,7 @@ before_install:
     # turn off XDebug
     - phpenv config-rm xdebug.ini || return 0
 
-    # for building a tag release we don't need to run SCA tools, collect code coverage or self-fix CS
+    # for building a tag release we don't need to collect code coverage
     - if [ $TRAVIS_TAG ]; then export TASK_TESTS_COVERAGE=0; fi
 
     # Composer: boost installation
@@ -56,7 +93,6 @@ before_install:
     - set | grep ^TASK | sort
 
 install:
-    - echo "STEP INSTALL"
     - travis_retry composer update $DEFAULT_COMPOSER_FLAGS $COMPOSER_FLAGS
     - composer info -D | sort
 
