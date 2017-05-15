@@ -49,9 +49,9 @@ jobs:
         php: nightly
         env: COMPOSER_FLAGS="--ignore-platform-reqs" SYMFONY_DEPRECATIONS_HELPER=weak PHP_CS_FIXER_IGNORE_ENV=1
         script:
-            - then php php-cs-fixer fix --rules @PHP70Migration:risky,@PHP71Migration,native_function_invocation -q || travis_terminate 1
+            - php php-cs-fixer fix --rules @PHP70Migration:risky,@PHP71Migration,native_function_invocation -q || travis_terminate 1
             - vendor/bin/phpunit --verbose || travis_terminate 1
-            - then git checkout . -q
+            - git checkout . -q
             - php php-cs-fixer --diff --dry-run -v fix
 
     -
