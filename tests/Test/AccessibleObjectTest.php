@@ -14,7 +14,6 @@ namespace PhpCsFixer\Tests\Test;
 
 use PhpCsFixer\Test\AccessibleObject;
 use PhpCsFixer\Tests\Fixtures\Test\AccessibleObjectTest\DummyClass;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>

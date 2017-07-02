@@ -14,7 +14,7 @@ namespace PhpCsFixer\Tests\ConfigurationException;
 
 use PhpCsFixer\ConfigurationException\RequiredFixerConfigurationException;
 use PhpCsFixer\Console\Command\FixCommand;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Andreas Möller <am@localheinz.com>

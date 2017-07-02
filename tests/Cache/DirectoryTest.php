@@ -13,7 +13,7 @@
 namespace PhpCsFixer\Tests\Cache;
 
 use PhpCsFixer\Cache\Directory;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Andreas Möller <am@localheinz.com>

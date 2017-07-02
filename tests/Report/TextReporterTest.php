@@ -14,7 +14,7 @@ namespace PhpCsFixer\Tests\Report;
 
 use PhpCsFixer\Report\ReportSummary;
 use PhpCsFixer\Report\TextReporter;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Boris Gorbylev <ekho@ekho.name>

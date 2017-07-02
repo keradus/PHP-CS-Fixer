@@ -12,7 +12,7 @@
 
 namespace PhpCsFixer\Tests\Differ;
 
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Andreas Möller <am@localheinz.com>

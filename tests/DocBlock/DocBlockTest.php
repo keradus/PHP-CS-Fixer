@@ -13,7 +13,7 @@
 namespace PhpCsFixer\Tests\DocBlock;
 
 use PhpCsFixer\DocBlock\DocBlock;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Graham Campbell <graham@alt-three.com>

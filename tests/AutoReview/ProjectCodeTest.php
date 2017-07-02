@@ -13,7 +13,7 @@
 namespace PhpCsFixer\Tests\AutoReview;
 
 use PhpCsFixer\DocBlock\DocBlock;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -252,6 +252,23 @@ final class ProjectCodeTest extends TestCase
         $this->assertNotEmpty(
             $doc->getAnnotationsOfType('internal'),
             sprintf('Test class %s should have internal annotation.', $className)
+        );
+    }
+
+    /**
+     * @param string $className
+     *
+     * @dataProvider provideTestClasses
+     */
+    public function testThatTestClassesHaveSameBase($className)
+    {
+        $rc = new \ReflectionClass($className);
+
+        $expectedParent = 'PhpCsFixer\Tests\Test\TestCase';
+
+        $this->assertTrue(
+            $rc->isSubclassOf($expectedParent),
+            sprintf('Test class %s should be subclass of %s.', $className, $expectedParent)
         );
     }
 

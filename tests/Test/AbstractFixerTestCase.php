@@ -22,7 +22,6 @@ use PhpCsFixer\Test\AccessibleObject;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Utils;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
 /**

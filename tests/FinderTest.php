@@ -13,7 +13,7 @@
 namespace PhpCsFixer\Tests;
 
 use PhpCsFixer\Finder;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @internal

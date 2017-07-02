@@ -13,7 +13,7 @@
 namespace PhpCsFixer\Tests\Linter;
 
 use PhpCsFixer\Linter\LinterInterface;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>

@@ -14,7 +14,6 @@ namespace PhpCsFixer\Tests\Test;
 
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\Test\IntegrationCase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @internal

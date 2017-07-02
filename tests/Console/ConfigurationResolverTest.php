@@ -16,7 +16,7 @@ use PhpCsFixer\Config;
 use PhpCsFixer\Console\Command\FixCommand;
 use PhpCsFixer\Console\ConfigurationResolver;
 use PhpCsFixer\Finder;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**

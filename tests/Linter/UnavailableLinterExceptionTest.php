@@ -13,7 +13,7 @@
 namespace PhpCsFixer\Tests\Linter;
 
 use PhpCsFixer\Linter\UnavailableLinterException;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Andreas Möller <am@localheinz.com>

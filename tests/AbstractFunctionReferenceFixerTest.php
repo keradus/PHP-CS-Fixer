@@ -13,8 +13,8 @@
 namespace PhpCsFixer\Tests;
 
 use PhpCsFixer\Test\AccessibleObject;
+use PhpCsFixer\Tests\Test\TestCase;
 use PhpCsFixer\Tokenizer\Tokens;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>

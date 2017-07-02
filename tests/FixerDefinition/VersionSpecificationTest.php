@@ -13,7 +13,7 @@
 namespace PhpCsFixer\Tests\FixerDefinition;
 
 use PhpCsFixer\FixerDefinition\VersionSpecification;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Andreas Möller <am@localheinz.com>

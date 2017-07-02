@@ -14,7 +14,7 @@ namespace PhpCsFixer\Tests\Console\Command;
 
 use PhpCsFixer\Console\Command\FixCommand;
 use PhpCsFixer\Test\AccessibleObject;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Andreas Möller <am@localheinz.com>

@@ -12,8 +12,8 @@
 
 namespace PhpCsFixer\Tests;
 
+use PhpCsFixer\Tests\Test\TestCase;
 use PhpCsFixer\ToolInfo;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @author SpacePossum

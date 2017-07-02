@@ -13,7 +13,7 @@
 namespace PhpCsFixer\Tests;
 
 use PhpCsFixer\FixerNameValidator;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\Test\TestCase;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
