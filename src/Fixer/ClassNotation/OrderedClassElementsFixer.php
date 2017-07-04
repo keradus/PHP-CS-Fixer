@@ -172,7 +172,7 @@ class Example
     public function A(){}
     private function B(){}
 }',
-array('order' => array('method_private', 'method_public'))
+                    array('order' => array('method_private', 'method_public'))
                 ),
             )
         );

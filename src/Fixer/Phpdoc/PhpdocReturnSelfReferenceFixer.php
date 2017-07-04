@@ -45,7 +45,7 @@ final class PhpdocReturnSelfReferenceFixer extends AbstractFixer implements Conf
             'The type of `@return` annotations of methods returning a reference to itself must the configured one.',
             array(
                 new CodeSample(
-'<?php
+                    '<?php
 class Sample
 {
     /**
@@ -66,7 +66,7 @@ class Sample
 }'
                 ),
                 new CodeSample(
-'<?php
+                    '<?php
 class Sample
 {
     /**
