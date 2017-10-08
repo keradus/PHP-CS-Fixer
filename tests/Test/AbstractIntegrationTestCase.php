@@ -94,11 +94,11 @@ abstract class AbstractIntegrationTestCase extends TestCase
 
     public static function tearDownAfterClass()
     {
-        parent::tearDownAfterClass();
-
         $tmpFile = static::getTempFile();
 
         self::$fileRemoval->delete($tmpFile);
+
+        parent::tearDownAfterClass();
     }
 
     protected function setUp()

@@ -41,13 +41,6 @@ final class ConfigurationResolverTest extends TestCase
         $this->config = new Config();
     }
 
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        unset($this->config);
-    }
-
     public function testSetOptionWithUndefinedOption()
     {
         $this->setExpectedExceptionRegExp(

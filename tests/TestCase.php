@@ -23,16 +23,16 @@ abstract class TestCase extends BaseTestCase
 {
     protected function tearDown()
     {
-        parent::tearDown();
-
         $this->cleanPropertiesPerInstance();
+
+        parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
-        parent::tearDownAfterClass();
-
         self::cleanPropertiesPerClass();
+
+        parent::tearDownAfterClass();
 
         var_dump(sprintf(
             "\nMemory: %d MB, peak: %d MB",

@@ -64,23 +64,23 @@ final class CiIntegrationTest extends TestCase
 
     public static function tearDownAfterClass()
     {
-        parent::tearDownAfterClass();
-
         static::executeCommand('rm -rf .git');
 
         self::$fileRemoval->delete(static::$tmpFilePath);
+
+        parent::tearDownAfterClass();
     }
 
     public function tearDown()
     {
-        parent::tearDown();
-
         static::executeCommand(implode(' && ', array(
             'git reset . -q',
             'git checkout . -q',
             'git clean -fdq',
             'git checkout master -q',
         )));
+
+        parent::tearDown();
     }
 
     /**
