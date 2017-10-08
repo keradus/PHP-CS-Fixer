@@ -15,12 +15,88 @@ namespace PhpCsFixer\Tests;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 /**
+ * @internal
+ */
+final class PHPUnitTearDownPropertiesManager
+{
+    private $classProperties = [];
+    private $instanceProperties = [];
+    private $instance;
+
+    public function __construct($instance)
+    {
+        $this->instance = $instance;
+
+        $reflection = new \ReflectionObject($this->instance);
+
+        foreach ($reflection->getProperties() as $property) {
+            if (1 === preg_match('/^PHPUnit[\\\_]/', $property->getDeclaringClass()->getName())) {
+                continue;
+            }
+
+            if ($property->isStatic()) {
+                $this->classProperties[] = $property->getName();
+            }
+            else {
+                $this->instanceProperties[] = $property->getName();
+            }
+        }
+    }
+
+    public function cleanInstance() {
+        $this->cleanPropertiesPerContext($this->instance, $this->instanceProperties);
+    }
+
+    public function cleanClass() {
+        $this->cleanPropertiesPerContext(get_class($this->instance), $this->classProperties);
+    }
+
+    private static function cleanPropertiesPerContext($context, array $properties)
+    {
+        foreach ($properties as $var) {
+            $property = new \ReflectionProperty($context, $var);
+            $property->setAccessible(true);
+            $property->setValue($context, null);
+        }
+    }
+}
+
+trait PHPUnitTearDownPropertiesTrait
+{
+    /**
+     * @var ?PHPUnitTearDownPropertiesManager
+     * @internal
+     */
+    private static $propertiesToClean;
+
+    private function cleanPropertiesPerInstance() {
+        if (null === self::$propertiesToClean) {
+            self::$propertiesToClean = new PHPUnitTearDownPropertiesManager($this);
+        }
+
+        self::$propertiesToClean->cleanInstance();
+    }
+
+    private static function cleanPropertiesPerClass() {
+        if (null === self::$propertiesToClean) {
+            throw new \LogicException('It is needed to run `cleanPropertiesPerInstance` before calling `cleanPropertiesPerClass`.');
+        }
+
+        self::$propertiesToClean->cleanClass();
+
+        self::$propertiesToClean = null;
+    }
+}
+
+/**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  *
  * @internal
  */
 abstract class TestCase extends BaseTestCase
 {
+    use PHPUnitTearDownPropertiesTrait;
+
     protected function tearDown()
     {
         $this->cleanPropertiesPerInstance();
@@ -31,72 +107,13 @@ abstract class TestCase extends BaseTestCase
     public static function tearDownAfterClass()
     {
         self::cleanPropertiesPerClass();
+//
+//        var_dump(sprintf(
+//            "\nMemory: %d MB, peak: %d MB",
+//            floor(memory_get_usage(true) / 1024 / 1024),
+//            floor(memory_get_peak_usage(true) / 1024 / 1024)
+//        ));
 
         parent::tearDownAfterClass();
-
-        var_dump(sprintf(
-            "\nMemory: %d MB, peak: %d MB",
-            floor(memory_get_usage(true) / 1024 / 1024),
-            floor(memory_get_peak_usage(true) / 1024 / 1024)
-        ));
-    }
-
-    /**
-     * @var ?array
-     */
-    private static $propertiesToClean;
-
-    protected function cleanPropertiesPerInstance() {
-        $this->collectPropertiesToClean();
-
-        self::cleanPropertiesPerContext($this, self::$propertiesToClean['perInstance']);
-    }
-
-    protected static function cleanPropertiesPerClass() {
-        if (null === self::$propertiesToClean) {
-            throw new \LogicException('Run `collectPropertiesToClean` before calling `cleanPropertiesPerClass`.');
-        }
-
-        self::cleanPropertiesPerContext(get_called_class(), self::$propertiesToClean['perClass']);
-
-        self::$propertiesToClean = null;
-    }
-
-    private function collectPropertiesToClean() {
-        if (null !== self::$propertiesToClean) {
-            return;
-        }
-
-        $refl = new \ReflectionObject($this);
-
-        $perInstance = [];
-        $perClass = [];
-
-        foreach ($refl->getProperties() as $property) {
-            if (0 === strpos($property->getDeclaringClass()->getName(), 'PHPUnit')) {
-                continue;
-            }
-
-            if ($property->isStatic()) {
-                $perClass[] = $property->getName();
-            }
-            else {
-                $perInstance[] = $property->getName();
-            }
-        }
-
-        self::$propertiesToClean = [
-            'perClass' => $perClass,
-            'perInstance' => $perInstance,
-        ];
-    }
-
-    private static function cleanPropertiesPerContext($context, array $properties)
-    {
-        foreach ($properties as $var) {
-            $prop = new \ReflectionProperty($context, $var);
-            $prop->setAccessible(true);
-            $prop->setValue($context, null);
-        }
     }
 }
