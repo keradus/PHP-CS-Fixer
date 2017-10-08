@@ -15,7 +15,7 @@ namespace PhpCsFixer\Tests\Report;
 use GeckoPackages\PHPUnit\Constraints\XML\XMLMatchesXSDConstraint;
 use PhpCsFixer\Report\ReportSummary;
 use PhpCsFixer\Report\XmlReporter;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\TestCase;
 
 /**
  * @author Boris Gorbylev <ekho@ekho.name>

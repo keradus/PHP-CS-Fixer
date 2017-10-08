@@ -14,7 +14,7 @@ namespace PhpCsFixer\Tests\Report;
 
 use PhpCsFixer\Report\JsonReporter;
 use PhpCsFixer\Report\ReportSummary;
-use PHPUnit\Framework\TestCase;
+use PhpCsFixer\Tests\TestCase;
 
 /**
  * @author Boris Gorbylev <ekho@ekho.name>
