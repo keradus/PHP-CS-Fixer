@@ -24,6 +24,17 @@ use PhpCsFixer\Tests\TestCase;
  */
 final class ApplicationTest extends TestCase
 {
+    private $foo;
+    private static $bar;
+    static public function setUpBeforeClass() {
+        self::$bar = array_fill(0, 10000000, 0);
+    }
+    protected function setUp() {
+        parent::setUp();
+        var_dump("\nbig memory allocation");
+        $this->foo = array_fill(0, 10000000, 0);
+    }
+
     public function testApplication()
     {
         $app = new Application();
