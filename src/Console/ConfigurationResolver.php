@@ -407,16 +407,10 @@ final class ConfigurationResolver
         if (null === $this->progress) {
             if (OutputInterface::VERBOSITY_VERBOSE <= $this->options['verbosity'] && 'txt' === $this->getFormat()) {
                 $progressType = $this->options['show-progress'];
-                $progressTypes = ['none', 'run-in', 'estimating', 'estimating-max'];
+                $progressTypes = ['none', 'dots'];
 
                 if (null === $progressType) {
-                    $default = 'run-in';
-
-                    if (getenv('PHP_CS_FIXER_FUTURE_MODE')) {
-                        $default = 'estimating-max';
-                    }
-
-                    $progressType = $this->getConfig()->getHideProgress() ? 'none' : $default;
+                    $progressType = $this->getConfig()->getHideProgress() ? 'none' : 'dots';
                 } elseif (!in_array($progressType, $progressTypes, true)) {
                     throw new InvalidConfigurationException(sprintf(
                         'The progress type "%s" is not defined, supported are "%s".',

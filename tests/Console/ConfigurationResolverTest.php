@@ -75,7 +75,7 @@ final class ConfigurationResolverTest extends TestCase
             'verbosity' => OutputInterface::VERBOSITY_VERBOSE,
         ], $config);
 
-        $this->assertSame('run-in', $resolver->getProgress());
+        $this->assertSame('dots', $resolver->getProgress());
     }
 
     public function testResolveProgressWithNegativeConfigAndNegativeOption()
@@ -133,9 +133,7 @@ final class ConfigurationResolverTest extends TestCase
     {
         return [
             ['none'],
-            ['run-in'],
-            ['estimating'],
-            ['estimating-max'],
+            ['dots'],
         ];
     }
 
@@ -148,7 +146,7 @@ final class ConfigurationResolverTest extends TestCase
         ]);
 
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('The progress type "foo" is not defined, supported are "none", "run-in", "estimating", "estimating-max".');
+        $this->expectExceptionMessage('The progress type "foo" is not defined, supported are "none", "dots".');
 
         $resolver->getProgress();
     }
