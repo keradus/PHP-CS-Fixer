@@ -74,13 +74,6 @@ class Tokens extends \SplFixedArray
     private $foundTokenKinds = [];
 
     /**
-     * @var bool
-     *
-     * @todo remove at 3.0
-     */
-    private static $isLegacyMode = false;
-
-    /**
      * Clone tokens collection.
      */
     public function __clone()
@@ -88,34 +81,6 @@ class Tokens extends \SplFixedArray
         foreach ($this as $key => $val) {
             $this[$key] = clone $val;
         }
-    }
-
-    /**
-     * @return bool
-     *
-     * @internal
-     *
-     * @todo remove at 3.0
-     */
-    public static function isLegacyMode()
-    {
-        return self::$isLegacyMode;
-    }
-
-    /**
-     * @param bool $isLegacy
-     *
-     * @internal
-     *
-     * @todo remove at 3.0
-     */
-    public static function setLegacyMode($isLegacy)
-    {
-        if (getenv('PHP_CS_FIXER_FUTURE_MODE') && $isLegacy) {
-            throw new \RuntimeException('Cannot enable `legacy mode` when using `future mode`.  This check was performed as `PHP_CS_FIXER_FUTURE_MODE` env var is set.');
-        }
-
-        self::$isLegacyMode = $isLegacy;
     }
 
     /**
@@ -319,12 +284,6 @@ class Tokens extends \SplFixedArray
     public function clearChanged()
     {
         $this->changed = false;
-
-        if (self::isLegacyMode()) {
-            foreach ($this as $token) {
-                $token->clearChanged();
-            }
-        }
     }
 
     /**
@@ -503,11 +462,9 @@ class Tokens extends \SplFixedArray
             $elements[$kind] = [];
         }
 
-        if (!self::isLegacyMode()) {
-            $possibleKinds = array_filter($possibleKinds, function ($kind) {
-                return $this->isTokenKindFound($kind);
-            });
-        }
+        $possibleKinds = array_filter($possibleKinds, function ($kind) {
+            return $this->isTokenKindFound($kind);
+        });
 
         if (count($possibleKinds)) {
             for ($i = $start; $i < $end; ++$i) {
@@ -660,11 +617,9 @@ class Tokens extends \SplFixedArray
      */
     public function getTokenOfKindSibling($index, $direction, array $tokens = [], $caseSensitive = true)
     {
-        if (!self::isLegacyMode()) {
-            $tokens = array_filter($tokens, function ($token) {
-                return $this->isTokenKindFound($this->extractTokenKind($token));
-            });
-        }
+        $tokens = array_filter($tokens, function ($token) {
+            return $this->isTokenKindFound($this->extractTokenKind($token));
+        });
 
         if (!count($tokens)) {
             return null;
@@ -822,11 +777,9 @@ class Tokens extends \SplFixedArray
             }
         }
 
-        if (!self::isLegacyMode()) {
-            foreach ($sequence as $token) {
-                if (!$this->isTokenKindFound($this->extractTokenKind($token))) {
-                    return null;
-                }
+        foreach ($sequence as $token) {
+            if (!$this->isTokenKindFound($this->extractTokenKind($token))) {
+                return null;
             }
         }
 
@@ -922,14 +875,6 @@ class Tokens extends \SplFixedArray
             return true;
         }
 
-        if (self::isLegacyMode()) {
-            foreach ($this as $token) {
-                if ($token->isChanged()) {
-                    return true;
-                }
-            }
-        }
-
         return false;
     }
 
@@ -948,23 +893,6 @@ class Tokens extends \SplFixedArray
     public function clearAt($index)
     {
         $this[$index] = new Token('');
-    }
-
-    /**
-     * Override token at given index and register it.
-     *
-     * @param int                $index
-     * @param array|string|Token $token token prototype
-     *
-     * @deprecated since 2.4, use offsetSet instead
-     */
-    public function overrideAt($index, $token)
-    {
-        @trigger_error(__METHOD__.' is deprecated and will be removed in 3.0, use offsetSet instead.', E_USER_DEPRECATED);
-        self::$isLegacyMode = true;
-
-        $this[$index]->override($token);
-        $this->registerFoundToken($token);
     }
 
     /**
@@ -1149,10 +1077,6 @@ class Tokens extends \SplFixedArray
      */
     public function countTokenKind($tokenKind)
     {
-        if (self::isLegacyMode()) {
-            throw new \RuntimeException(sprintf('%s is not available in legacy mode.', __METHOD__));
-        }
-
         return isset($this->foundTokenKinds[$tokenKind]) ? $this->foundTokenKinds[$tokenKind] : 0;
     }
 
@@ -1183,21 +1107,6 @@ class Tokens extends \SplFixedArray
 
         if (0 === $size) {
             return false;
-        }
-
-        if (self::isLegacyMode()) {
-            // If code is not monolithic there is a great chance that first or last token is `T_INLINE_HTML`:
-            if ($this[0]->isGivenKind(T_INLINE_HTML) || $this[$size - 1]->isGivenKind(T_INLINE_HTML)) {
-                return false;
-            }
-
-            for ($index = 1; $index < $size; ++$index) {
-                if ($this[$index]->isGivenKind([T_INLINE_HTML, T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO])) {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         if ($this->isTokenKindFound(T_INLINE_HTML)) {
