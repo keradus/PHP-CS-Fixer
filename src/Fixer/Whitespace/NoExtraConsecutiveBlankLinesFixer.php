@@ -24,7 +24,6 @@ use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
-use Symfony\Component\OptionsResolver\Options;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -48,7 +47,6 @@ final class NoExtraConsecutiveBlankLinesFixer extends AbstractFixer implements C
         'switch',
         'throw',
         'use',
-        'useTrait',
         'use_trait',
     ];
 
@@ -312,18 +310,6 @@ switch($a) {
                 ->setAllowedValues([
                     (new FixerOptionValidatorGenerator())->allowedValueIsSubsetOf(self::$availableTokens),
                 ])
-                ->setNormalizer(static function (Options $options, $tokens) {
-                    foreach ($tokens as &$token) {
-                        if ('useTrait' === $token) {
-                            @trigger_error('Token "useTrait" is deprecated and will be removed in 3.0, use "use_trait" instead.', E_USER_DEPRECATED);
-                            $token = 'use_trait';
-
-                            break;
-                        }
-                    }
-
-                    return $tokens;
-                })
                 ->setDefault(['extra'])
                 ->getOption(),
         ]);

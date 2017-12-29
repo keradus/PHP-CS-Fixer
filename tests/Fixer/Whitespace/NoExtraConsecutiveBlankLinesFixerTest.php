@@ -698,56 +698,6 @@ $a = new Qux();',
     }
 
     /**
-     * @group legacy
-     * @expectedDeprecation Token "useTrait" is deprecated and will be removed in 3.0, use "use_trait" instead.
-     */
-    public function testRemoveBetweenUseTraitsDeprecatedToken()
-    {
-        $this->fixer->configure(['tokens' => ['useTrait']]);
-        $this->doTest(
-            '<?php
-            namespace T\A;
-            use V;
-
-
-            use W;
-
-            class Test {
-                use A;
-                use B;
-
-                private function test($b) {
-
-                    $a = function() use ($b) { echo $b;};
-
-                    $b = function() use ($b) { echo $b;};
-
-                }
-            }',
-            '<?php
-            namespace T\A;
-            use V;
-
-
-            use W;
-
-            class Test {
-                use A;
-
-                use B;
-
-                private function test($b) {
-
-                    $a = function() use ($b) { echo $b;};
-
-                    $b = function() use ($b) { echo $b;};
-
-                }
-            }'
-        );
-    }
-
-    /**
      * @param string      $expected
      * @param null|string $input
      *
