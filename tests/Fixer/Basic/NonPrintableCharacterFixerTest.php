@@ -28,7 +28,7 @@ final class NonPrintableCharacterFixerTest extends AbstractFixerTestCase
      * @param string      $expected
      * @param null|string $input
      *
-     * @dataProvider provideFixCases
+     * @dataProvider provideFixWithEscapeSequencesInStringsCases
      */
     public function testFix($expected, $input = null)
     {

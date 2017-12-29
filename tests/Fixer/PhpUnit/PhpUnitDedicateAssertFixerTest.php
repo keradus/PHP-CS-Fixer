@@ -161,6 +161,7 @@ $this->assertTrue(is_writable($a));
 $this->assertTrue(is_readable($a));
 ',
                 null,
+                ['target' => PhpUnitTargetVersion::VERSION_5_0],
             ],
             [
                 '<?php

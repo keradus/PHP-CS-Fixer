@@ -40,7 +40,7 @@ final class RuleSet implements RuleSetInterface
             'line_ending' => true,
             'lowercase_constants' => true,
             'lowercase_keywords' => true,
-            'method_argument_space' => ['ensure_fully_multiline' => true],
+            'method_argument_space' => true,
             'no_break_comment' => true,
             'no_closing_tag' => true,
             'no_spaces_after_function_name' => true,
@@ -75,7 +75,10 @@ final class RuleSet implements RuleSetInterface
             'increment_style' => true,
             'lowercase_cast' => true,
             'magic_constant_casing' => true,
-            'method_argument_space' => true,
+            'method_argument_space' => [
+                // @TODO: maybe switch to true, which is default ?
+                'ensure_fully_multiline' => false,
+            ],
             'native_function_casing' => true,
             'new_with_braces' => true,
             'no_blank_lines_after_class_opening' => true,
@@ -109,7 +112,16 @@ final class RuleSet implements RuleSetInterface
             'normalize_index_brace' => true,
             'object_operator_without_whitespace' => true,
             'php_unit_fqcn_annotation' => true,
-            'phpdoc_align' => true,
+            'phpdoc_align' => [
+                // @TODO: maybe switch to true, which is default ?
+                'tags' => [
+                    'param',
+                    'return',
+                    'throws',
+                    'type',
+                    'var',
+                ],
+            ],
             'phpdoc_annotation_without_dot' => true,
             'phpdoc_indent' => true,
             'phpdoc_inline_tag' => true,
@@ -157,9 +169,15 @@ final class RuleSet implements RuleSetInterface
             'modernize_types_casting' => true,
             'no_alias_functions' => true,
             'no_homoglyph_names' => true,
-            'non_printable_character' => true,
+            'non_printable_character' => [
+                // @TODO: maybe switch to true, which is default ?
+                'use_escape_sequences_in_strings' => false,
+            ],
             'php_unit_construct' => true,
-            'php_unit_dedicate_assert' => true,
+            'php_unit_dedicate_assert' => [
+                // @TODO: maybe switch to true, which is default ?
+                'target' => PhpUnitTargetVersion::VERSION_5_0,
+            ],
             'psr4' => true,
             'silenced_deprecation_error' => true,
         ],
@@ -184,9 +202,7 @@ final class RuleSet implements RuleSetInterface
         '@PHP70Migration:risky' => [
             '@PHP56Migration:risky' => true,
             'declare_strict_types' => true,
-            'non_printable_character' => [
-                'use_escape_sequences_in_strings' => true,
-            ],
+            'non_printable_character' => true,
             'random_api_migration' => ['replacements' => [
                 'mt_rand' => 'random_int',
                 'rand' => 'random_int',
