@@ -15,7 +15,7 @@ namespace PhpCsFixer\Fixer\Whitespace;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
@@ -306,7 +306,7 @@ switch($a) {
      */
     protected function createConfigurationDefinition()
     {
-        return new FixerConfigurationResolverRootless('tokens', [
+        return new FixerConfigurationResolver([
             (new FixerOptionBuilder('tokens', 'List of tokens to fix.'))
                 ->setAllowedTypes(['array'])
                 ->setAllowedValues([
