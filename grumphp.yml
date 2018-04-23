@@ -1,0 +1,49 @@
+parameters:
+    git_dir: .
+    bin_dir: dev-tools/vendor/bin
+    stop_on_failure: true
+    tasks:
+        composer:
+            metadata:
+                priority: 90
+            strict: true
+        phpunit:
+            metadata:
+                priority: 50
+        shell:
+            metadata:
+                priority: 40
+            scripts:
+                - ["-c", "php php-cs-fixer --diff --dry-run -v fix"]
+        phpmd:
+            metadata:
+                priority: 30
+            exclude: ['tests/Fixtures']
+            ruleset: ['phpmd.xml']
+        composer_require_checker:
+            metadata:
+                priority: 20
+            composer_file: 'composer.json'
+            config_file: '.composer-require-checker.json'
+        jsonlint:
+            metadata:
+                priority: 13
+            detect_key_conflicts: true
+        xmllint:
+            metadata:
+                priority: 12
+        yamllint:
+            metadata:
+                priority: 11
+
+    # testsuites:
+    #     SCA:
+    #         tasks:
+    #             - phpmd
+    #             - jsonlint
+    #             # - all others except "basics"
+    #
+    #     basics:
+    #         tasks:
+    #             - phpcsfixer2
+    #             - phpunit

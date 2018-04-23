@@ -6,7 +6,8 @@
         "localheinz/composer-normalize": "^0.6.0",
         "maglnet/composer-require-checker": "^0.1.5",
         "mi-schi/phpmd-extension": "^4.2",
-        "phpmd/phpmd": "^2.4.3"
+        "phpmd/phpmd": "^2.4.3",
+        "phpro/grumphp": "^0.14.0"
     },
     "conflict": {
         "hhvm": "*"
