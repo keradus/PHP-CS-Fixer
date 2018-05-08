@@ -722,8 +722,10 @@ Choose from the list of available rules:
     syntax; defaults to ``'long'``
 
 * **logical_operators**
-   | Use ``&&`` and ``||`` logical operators instead of ``and`` and ``or``.
-   | *Rule is: risky.*
+
+  Use ``&&`` and ``||`` logical operators instead of ``and`` and ``or``.
+
+  *Risky rule: risky, because you must double-check if using and/or with lower precedence was intentional.*
 
 * **lowercase_cast** [@Symfony]
 

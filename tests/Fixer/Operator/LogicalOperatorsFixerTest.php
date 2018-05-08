@@ -12,12 +12,14 @@
 
 namespace PhpCsFixer\Tests\Fixer\Operator;
 
-use PhpCsFixer\Test\AbstractFixerTestCase;
+use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
  * @author Haralan Dobrev <hkdobrev@gmail.com>
  *
  * @internal
+ *
+ * @covers \PhpCsFixer\Fixer\Operator\LogicalOperatorsFixer
  */
 final class LogicalOperatorsFixerTest extends AbstractFixerTestCase
 {
@@ -34,39 +36,39 @@ final class LogicalOperatorsFixerTest extends AbstractFixerTestCase
 
     public function provideFixCases()
     {
-        return array(
-            array(
+        return [
+            [
                 '<?php if ($a == "foo" && $b == "bar") {}',
                 '<?php if ($a == "foo" and $b == "bar") {}',
-            ),
-            array(
+            ],
+            [
                 '<?php if ($a == "foo" || $b == "bar") {}',
                 '<?php if ($a == "foo" or $b == "bar") {}',
-            ),
-            array(
+            ],
+            [
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" and ($b == "bar" or $c == "baz")) {}',
-            ),
-            array(
+            ],
+            [
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" and ($b == "bar" || $c == "baz")) {}',
-            ),
-            array(
+            ],
+            [
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" && ($b == "bar" or $c == "baz")) {}',
-            ),
-            array(
+            ],
+            [
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" AND ($b == "bar" OR $c == "baz")) {}',
-            ),
-            array(
+            ],
+            [
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" and ($b == "bar" OR $c == "baz")) {}',
-            ),
-            array(
+            ],
+            [
                 '<?php if ($a == "foo" && ($b == "bar" || $c == "baz")) {}',
                 '<?php if ($a == "foo" AND ($b == "bar" or $c == "baz")) {}',
-            ),
-        );
+            ],
+        ];
     }
 }
