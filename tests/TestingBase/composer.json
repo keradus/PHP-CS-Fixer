@@ -1,0 +1,43 @@
+{
+    "name": "php-cs-fixer/testing-base",
+    "type": "library",
+    "description": "Testing Base for PHP CS Fixer",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fabien Potencier",
+            "email": "fabien@symfony.com"
+        },
+        {
+            "name": "Dariusz Rumiński",
+            "email": "dariusz.ruminski@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^5.6 || >=7.0 <7.3",
+        "ext-json": "*",
+        "ext-tokenizer": "*",
+        "symfony/filesystem": "^3.0 || ^4.0",
+        "symfony/finder": "^3.0 || ^4.0",
+        "symfony/polyfill-mbstring": "^1.4",
+        "justinrainbow/json-schema": "^5.0",
+        "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.0.1",
+        "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.0.1",
+        "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1",
+        "phpunitgoodpractices/traits": "^1.5.1"
+    },
+    "conflict": {
+        "hhvm": "*"
+    },
+    "suggest": {
+        "ext-mbstring": "For handling non-UTF8 characters in cache signature."
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpCsFixer\\TestingBase\\": ""
+        }
+    }
+}

@@ -10,14 +10,14 @@
  * with this source code in the file LICENSE.
  */
 
-namespace PhpCsFixer\Tests\TestingBase;
+namespace PhpCsFixer\TestingBase;
 
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\Linter\CachingLinter;
 use PhpCsFixer\Linter\Linter;
 use PhpCsFixer\Linter\LinterInterface;
-use PhpCsFixer\Tests\Test\Assert\AssertTokensTrait;
+use PhpCsFixer\TestingBase\Assert\AssertTokensTrait;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -46,6 +46,11 @@ abstract class AbstractFixerTestCase extends AbstractTestCase
 
         $this->linter = $this->createLinter();
         $this->fixer = $this->createFixer();
+
+        // @todo remove at 3.0 together with env var itself
+        if (getenv('PHP_CS_FIXER_TEST_USE_LEGACY_TOKENIZER')) {
+            Tokens::setLegacyMode(true);
+        }
     }
 
     protected function tearDown()
@@ -54,6 +59,9 @@ abstract class AbstractFixerTestCase extends AbstractTestCase
 
         $this->linter = null;
         $this->fixer = null;
+
+        // @todo remove at 3.0
+        Tokens::setLegacyMode(false);
     }
 
     /**

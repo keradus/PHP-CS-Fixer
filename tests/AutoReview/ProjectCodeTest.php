@@ -79,8 +79,8 @@ final class ProjectCodeTest extends TestCase
 
         $this->assertTrue(class_exists($testClassName), sprintf('Expected test class "%s" for "%s" not found.', $testClassName, $className));
         $this->assertTrue(
-            is_subclass_of($testClassName, \PhpCsFixer\Tests\TestCase::class) || is_subclass_of($testClassName, \PhpCsFixer\Tests\TestingBase\AbstractTestCase::class),
-            sprintf('Expected test class "%s" to be a subclass of %s.', $testClassName, implode(' or ', [\PhpCsFixer\Tests\TestCase::class, \PhpCsFixer\Tests\TestingBase\AbstractTestCase::class]))
+            is_subclass_of($testClassName, \PhpCsFixer\Tests\TestCase::class) || is_subclass_of($testClassName, \PhpCsFixer\TestingBase\AbstractTestCase::class),
+            sprintf('Expected test class "%s" to be a subclass of %s.', $testClassName, implode(' or ', [\PhpCsFixer\Tests\TestCase::class, \PhpCsFixer\TestingBase\AbstractTestCase::class]))
         );
     }
 
