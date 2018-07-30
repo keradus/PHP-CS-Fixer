@@ -15,8 +15,6 @@ namespace PhpCsFixer\Tests;
 use PhpCsFixer\TestingBase\AbstractTestCase;
 
 /**
- * Version without traits for cases when this class is used as a lib.
- *
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  *
  * @internal
