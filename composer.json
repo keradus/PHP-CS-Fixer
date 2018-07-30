@@ -41,16 +41,12 @@
         "mikey179/vfsStream": "^1.6",
         "php-coveralls/php-coveralls": "^2.1",
         "php-cs-fixer/accessible-object": "^1.0",
-        "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.0.1",
-        "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.0.1",
+        "php-cs-fixer/testing-base": "*@dev",
         "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1",
-        "phpunitgoodpractices/traits": "^1.5.1",
         "symfony/phpunit-bridge": "^4.0"
     },
     "suggest": {
         "ext-mbstring": "For handling non-UTF8 characters in cache signature.",
-        "php-cs-fixer/phpunit-constraint-isidenticalstring": "For IsIdenticalString constraint.",
-        "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "For XmlMatchesXsd constraint.",
         "symfony/polyfill-mbstring": "When enabling `ext-mbstring` is not possible."
     },
     "config": {
@@ -64,7 +60,8 @@
             "tests/Test/AbstractFixerTestCase.php",
             "tests/Test/AbstractIntegrationCaseFactory.php",
             "tests/Test/AbstractIntegrationTestCase.php",
-            "tests/Test/Assert/AssertTokensTrait.php",
+            "tests/TestingBase/Assert/AssertTokensTrait.php",
+            "tests/TestingBase/AbstractTestCase.php",
             "tests/Test/IntegrationCase.php",
             "tests/Test/IntegrationCaseFactory.php",
             "tests/Test/IntegrationCaseFactoryInterface.php",
@@ -77,6 +74,12 @@
             "PhpCsFixer\\Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "tests/TestingBase"
+        }
+    ],
     "bin": [
         "php-cs-fixer"
     ]

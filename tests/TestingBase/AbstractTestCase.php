@@ -10,7 +10,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace PhpCsFixer\Tests\TestingBase;
+namespace PhpCsFixer\TestingBase;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use PHPUnitGoodPractices\Traits\ExpectationViaCodeOverAnnotationTrait;
@@ -33,7 +33,8 @@ if (trait_exists(ProphesizeOnlyInterfaceTrait::class)) {
     }
 } else {
     /**
-     * Version without traits for cases when this class is used as a lib.
+     * Version without traits for cases when one requested `PhpCsFixer\Test\TestCase` used in deprecated `PhpCsFixer\Test\*`
+     * and not `PhpCsFixer\TestingBase\AbstractTestCase` directly.
      *
      * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
      *

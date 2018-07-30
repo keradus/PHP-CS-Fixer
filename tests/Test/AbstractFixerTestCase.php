@@ -14,9 +14,7 @@ namespace PhpCsFixer\Tests\Test;
 
 use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\Linter\LinterInterface;
-use PhpCsFixer\Tests\Test\Assert\AssertTokensTrait;
-use PhpCsFixer\Tests\TestingBase\AbstractFixerTestCase as BaseAbstractFixerTestCase;
-use PhpCsFixer\Tokenizer\Tokens;
+use PhpCsFixer\TestingBase\AbstractFixerTestCase as BaseAbstractFixerTestCase;
 use Prophecy\Argument;
 
 /**
@@ -26,31 +24,6 @@ use Prophecy\Argument;
  */
 abstract class AbstractFixerTestCase extends BaseAbstractFixerTestCase
 {
-    use AssertTokensTrait;
-
-    /**
-     * @var LinterInterface
-     */
-    protected $linter;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        // @todo remove at 3.0 together with env var itself
-        if (getenv('PHP_CS_FIXER_TEST_USE_LEGACY_TOKENIZER')) {
-            Tokens::setLegacyMode(true);
-        }
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        // @todo remove at 3.0
-        Tokens::setLegacyMode(false);
-    }
-
     /**
      * @return FixerInterface
      */
