@@ -58,6 +58,8 @@ jobs:
                 - ./check_trailing_spaces.sh || travis_terminate 1
                 - if [ -n "$COMMIT_SCA_FILES" ]; then ./dev-tools/vendor/bin/phpmd `echo "$COMMIT_SCA_FILES" | grep -Ev "^tests/Fixtures" | xargs | sed 's/ /,/g'` text phpmd.xml || travis_terminate 1; fi
                 - ./dev-tools/vendor/bin/composer-require-checker check composer.json --config-file=.composer-require-checker.json || travis_terminate 1
+                # TODO - install deps for TestingBase
+                - ./dev-tools/vendor/bin/composer-require-checker check tests/TestingBase/composer.json --config-file=tests/TestingBase/.composer-require-checker.json || travis_terminate 1
                 - composer normalize -d ./dev-tools ./../composer.json --dry-run
                 - ./dev-tools/check-shell-scripts.sh
 
