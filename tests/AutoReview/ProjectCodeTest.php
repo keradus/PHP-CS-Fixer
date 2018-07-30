@@ -78,7 +78,10 @@ final class ProjectCodeTest extends TestCase
         }
 
         $this->assertTrue(class_exists($testClassName), sprintf('Expected test class "%s" for "%s" not found.', $testClassName, $className));
-        $this->assertTrue(is_subclass_of($testClassName, TestCase::class), sprintf('Expected test class "%s" to be a subclass of "\PhpCsFixer\Tests\TestCase".', $testClassName));
+        $this->assertTrue(
+            is_subclass_of($testClassName, \PhpCsFixer\Tests\TestCase::class) || is_subclass_of($testClassName, \PhpCsFixer\Tests\TestingBase\AbstractTestCase::class),
+            sprintf('Expected test class "%s" to be a subclass of %s.', $testClassName, implode(' or ', [\PhpCsFixer\Tests\TestCase::class, \PhpCsFixer\Tests\TestingBase\AbstractTestCase::class]))
+        );
     }
 
     /**
@@ -450,6 +453,7 @@ final class ProjectCodeTest extends TestCase
             ->in(__DIR__.'/..')
             ->exclude([
                 'Fixtures',
+                'TestingBase',
             ])
         ;
 
