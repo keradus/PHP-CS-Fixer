@@ -56,11 +56,17 @@ jobs:
                     | grep -v tests/TestCase.php \
                     && (echo "UNKNOWN FILES DETECTED" && travis_terminate 1) || echo "NO UNKNOWN FILES"
                 - ./check_trailing_spaces.sh || travis_terminate 1
+                # MD
                 - if [ -n "$COMMIT_SCA_FILES" ]; then ./dev-tools/vendor/bin/phpmd `echo "$COMMIT_SCA_FILES" | grep -Ev "^tests/Fixtures" | xargs | sed 's/ /,/g'` text phpmd.xml || travis_terminate 1; fi
+                # Deps checker
                 - ./dev-tools/vendor/bin/composer-require-checker check composer.json --config-file=.composer-require-checker.json || travis_terminate 1
-                # TODO - install deps for TestingBase
+                # Deps checker for TestingBase
+                - travis_retry composer update -d tests/TestingBase $DEFAULT_COMPOSER_FLAGS
                 - ./dev-tools/vendor/bin/composer-require-checker check tests/TestingBase/composer.json --config-file=tests/TestingBase/.composer-require-checker.json || travis_terminate 1
+                - rm -rf tests/TestingBase/vendor
+                # test normalization
                 - composer normalize -d ./dev-tools ./../composer.json --dry-run
+                - composer normalize -d ./dev-tools ./../tests/TestingBase/composer.json --dry-run
                 - ./dev-tools/check-shell-scripts.sh
 
         - &STANDARD_TEST_JOB

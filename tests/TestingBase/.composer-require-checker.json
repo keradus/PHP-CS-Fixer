@@ -1,10 +1,6 @@
 {
     "symbol-whitelist" : [
-        "PhpCsFixer\\Tests\\Test\\Constraint\\SameStringsConstraint",
-        "PHPUnit\\Framework\\Constraint\\IsIdentical",
-        "PHPUnit\\Framework\\TestCase",
-        "PHPUnit\\Runner\\Version",
-        "Prophecy\\Argument",
+        "PhpCsFixer\\PhpunitConstraintIsIdenticalString\\Constraint\\IsIdenticalString",
 
         "null", "true", "false",
         "static", "self", "parent",
