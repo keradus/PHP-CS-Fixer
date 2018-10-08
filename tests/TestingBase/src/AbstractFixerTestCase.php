@@ -17,7 +17,6 @@ use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\Linter\CachingLinter;
 use PhpCsFixer\Linter\Linter;
 use PhpCsFixer\Linter\LinterInterface;
-use PhpCsFixer\PhpunitConstraintIsIdenticalString\Constraint\IsIdenticalString;
 use PhpCsFixer\TestingBase\Assert\AssertTokensTrait;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -124,7 +123,7 @@ abstract class AbstractFixerTestCase extends AbstractTestCase
 
             $this->assertThat(
                 $tokens->generateCode(),
-                new IsIdenticalString($expected),
+                self::createIsIdenticalStringConstraint($expected),
                 'Code build on input code must match expected code.'
             );
             $this->assertTrue($tokens->isChanged(), 'Tokens collection built on input code must be marked as changed after fixing.');
@@ -132,8 +131,8 @@ abstract class AbstractFixerTestCase extends AbstractTestCase
             $tokens->clearEmptyTokens();
 
             $this->assertSame(
-                count($tokens),
-                count(array_unique(array_map(static function (Token $token) {
+                \count($tokens),
+                \count(array_unique(array_map(static function (Token $token) {
                     return spl_object_hash($token);
                 }, $tokens->toArray()))),
                 'Token items inside Tokens collection must be unique.'
@@ -156,7 +155,7 @@ abstract class AbstractFixerTestCase extends AbstractTestCase
 
         $this->assertThat(
             $tokens->generateCode(),
-            new IsIdenticalString($expected),
+            self::createIsIdenticalStringConstraint($expected),
             'Code build on expected code must not change.'
         );
         $this->assertFalse($tokens->isChanged(), 'Tokens collection built on expected code must not be marked as changed after fixing.');
@@ -188,5 +187,27 @@ abstract class AbstractFixerTestCase extends AbstractTestCase
         }
 
         return $linter;
+    }
+
+    /**
+     * @todo 3.0 Remove me when this file will not be hardcoded as part of src
+     *
+     * @param string $expected
+     */
+    private static function createIsIdenticalStringConstraint($expected)
+    {
+        $candidates = array_filter([
+            'PhpCsFixer\PhpunitConstraintIsIdenticalString\Constraint\IsIdenticalString',
+            'PHPUnit\Framework\Constraint\IsIdentical',
+            'PHPUnit_Framework_Constraint_IsIdentical',
+        ], function ($className) { return class_exists($className); });
+
+        if (empty($candidates)) {
+            throw new \RuntimeException('PHPUnit not installed?!');
+        }
+
+        $candidate = array_shift($candidates);
+
+        return new $candidate($expected);
     }
 }

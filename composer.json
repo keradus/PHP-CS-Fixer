@@ -66,6 +66,7 @@
             "tests/Test/AbstractIntegrationTestCase.php",
             "tests/TestingBase/src/Assert/AssertTokensTrait.php",
             "tests/TestingBase/src/AbstractTestCase.php",
+            "tests/TestingBase/src/AbstractFixerTestCase.php",
             "tests/Test/IntegrationCase.php",
             "tests/Test/IntegrationCaseFactory.php",
             "tests/Test/IntegrationCaseFactoryInterface.php",
