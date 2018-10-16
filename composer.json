@@ -53,8 +53,11 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.12-dev"
+            "dev-2.12": "2.12-dev"
         }
+    },
+    "provide": {
+        "friendsofphp/php-cs-fixer": "2.12.999"
     },
     "autoload": {
         "psr-4": {

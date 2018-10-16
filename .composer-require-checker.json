@@ -11,6 +11,8 @@
         "PHPUnitGoodPractices\\Traits\\ProphesizeOnlyInterfaceTrait",
         "Prophecy\\Argument",
 
+        "PhpCsFixer\\PhpunitConstraintIsIdenticalString\\Constraint\\IsIdenticalString",
+
         "null", "true", "false",
         "static", "self", "parent",
         "array", "string", "int", "float", "bool", "iterable", "callable", "void"
