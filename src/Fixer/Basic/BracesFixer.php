@@ -127,7 +127,7 @@ class Foo
     public function getPriority()
     {
         // should be run after the ElseIfFixer, LineEndingFixer, NoEmptyStatementFixer and NoUselessElseFixer
-        return -25;
+        return 33;
     }
 
     /**

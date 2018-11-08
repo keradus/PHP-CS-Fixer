@@ -39,6 +39,14 @@ final class ElseifFixer extends AbstractFixer
     /**
      * {@inheritdoc}
      */
+    public function getPriority()
+    {
+        return 34;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isCandidate(Tokens $tokens)
     {
         return $tokens->isAllTokenKindsFound([T_IF, T_ELSE]);

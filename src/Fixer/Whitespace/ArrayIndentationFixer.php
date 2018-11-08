@@ -51,7 +51,7 @@ final class ArrayIndentationFixer extends AbstractFixer implements WhitespacesAw
     {
         // should run after BracesFixer, MethodChainingIndentationFixer
         // should run before AlignMultilineCommentFixer and BinaryOperatorSpacesFixer
-        return -30;
+        return 32;
     }
 
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)

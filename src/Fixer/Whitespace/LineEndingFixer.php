@@ -52,6 +52,12 @@ final class LineEndingFixer extends AbstractFixer implements WhitespacesAwareFix
         );
     }
 
+    public function getPriority()
+    {
+        // Should run before braces
+        return 34;
+    }
+
     /**
      * {@inheritdoc}
      */

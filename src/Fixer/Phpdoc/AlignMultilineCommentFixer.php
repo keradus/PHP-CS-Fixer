@@ -88,8 +88,8 @@ with a line not prefixed with asterisk
      */
     public function getPriority()
     {
-        // Should run after ArrayIndentationFixer
-        return -40;
+        // Should run after ArrayIndentationFixer but before every other Phpdoc Fixer
+        return 30;
     }
 
     /**

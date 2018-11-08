@@ -52,7 +52,7 @@ switch ($b) {
     public function getPriority()
     {
         // must be run before NoUselessElseFixer and NoUselessReturnFixer.
-        return 26;
+        return 35;
     }
 
     /**
