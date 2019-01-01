@@ -6,9 +6,10 @@ PHP 7.3 test.
     "@PHP71Migration:risky": true,
     "@Symfony": true,
     "@Symfony:risky": true,
-    "list_syntax": {"syntax":"short"},
+    "list_syntax": {"syntax": "short"},
     "mb_str_functions": true,
     "multiline_whitespace_before_semicolons": true,
+    "native_function_invocation": {"include": ["get_class"]},
     "php_unit_test_case_static_method_calls": {"call_type": "this"},
     "silenced_deprecation_error": true,
     "strict_param": true
