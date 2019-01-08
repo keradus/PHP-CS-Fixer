@@ -210,18 +210,6 @@ json_encode($foo);
             [
                 '<?php
 
-\json_encode($foo);
-\strlen($foo);
-',
-                '<?php
-
-json_encode($foo);
-strlen($foo);
-',
-            ],
-            [
-                '<?php
-
 class Foo
 {
     public function bar($foo)
@@ -269,6 +257,20 @@ echo \#
 #
 strlen($a);
 echo strlen($a);
+',
+            ],
+            'fix multiple calls in single code' => [
+                '<?php
+
+\json_encode($foo);
+\strlen($foo);
+\strlen($foo);
+',
+                '<?php
+
+json_encode($foo);
+strlen($foo);
+strlen($foo);
 ',
             ],
         ];

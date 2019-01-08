@@ -869,7 +869,27 @@ class Tokens extends \SplFixedArray
     public function insertAt($index, $items)
     {
         $items = \is_array($items) || $items instanceof self ? $items : [$items];
-        $itemsCnt = \count($items);
+
+        $this->insertSlices([$index => $items]);
+    }
+
+    /**
+     * @TODO: docs
+     *
+     * @internal
+     *
+     * 5 => tokenA
+     * 7 => [tokenB, tokenC]
+     *
+     * @param mixed $slices
+     */
+    public function insertSlices($slices)
+    {
+        $itemsCnt = 0;
+        foreach ($slices as $slice) {
+            $slice = \is_array($slice) || $slice instanceof self ? $slice : [$slice];
+            $itemsCnt += \count($slice);
+        }
 
         if (0 === $itemsCnt) {
             return;
@@ -880,20 +900,33 @@ class Tokens extends \SplFixedArray
         $this->blockEndCache = [];
         $this->setSize($oldSize + $itemsCnt);
 
+        krsort($slices);
+
+        $insertBound = $oldSize - 1;
+
         // since we only move already existing items around, we directly call into SplFixedArray::offset* methods.
         // that way we get around additional overhead this class adds with overridden offset* methods.
-        for ($i = $oldSize + $itemsCnt - 1; $i >= $index; --$i) {
-            $oldItem = parent::offsetExists($i - $itemsCnt) ? parent::offsetGet($i - $itemsCnt) : new Token('');
-            parent::offsetSet($i, $oldItem);
-        }
+        foreach ($slices as $index => $slice) {
+            $slice = \is_array($slice) || $slice instanceof self ? $slice : [$slice];
+            $sliceCnt = \count($slice);
 
-        for ($i = 0; $i < $itemsCnt; ++$i) {
-            if ('' === $items[$i]->getContent()) {
-                throw new \InvalidArgumentException('Must not add empty token to collection.');
+            for ($i = $insertBound; $i >= $index; --$i) {
+                $oldItem = parent::offsetExists($i) ? parent::offsetGet($i) : new Token('');
+                parent::offsetSet($i + $itemsCnt, $oldItem);
             }
 
-            $this->registerFoundToken($items[$i]);
-            parent::offsetSet($i + $index, $items[$i]);
+            $insertBound = $index - $sliceCnt;
+            $itemsCnt -= $sliceCnt;
+
+            foreach ($slice as $indexItem => $item) {
+                if ('' === $item->getContent()) {
+                    throw new \InvalidArgumentException('Must not add empty token to collection.');
+                }
+
+                $this->registerFoundToken($item);
+                $newOffset = $index + $itemsCnt + $indexItem;
+                parent::offsetSet($newOffset, $item);
+            }
         }
     }
 
