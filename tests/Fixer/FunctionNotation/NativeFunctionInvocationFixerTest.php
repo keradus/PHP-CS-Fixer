@@ -210,6 +210,18 @@ json_encode($foo);
             [
                 '<?php
 
+\json_encode($foo);
+\strlen($foo);
+',
+                '<?php
+
+json_encode($foo);
+strlen($foo);
+',
+            ],
+            [
+                '<?php
+
 class Foo
 {
     public function bar($foo)
