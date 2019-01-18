@@ -1,0 +1,6 @@
+--TEST--
+Test of super huge file that would require 64566 tokens to be inserted!
+--RULESET--
+{
+    "whitespace_after_comma_in_array": true
+}
