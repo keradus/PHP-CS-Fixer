@@ -21,6 +21,7 @@ use PhpCsFixer\FixerDefinition\CodeSampleInterface;
 use PhpCsFixer\FixerDefinition\FileSpecificCodeSampleInterface;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSampleInterface;
 use PhpCsFixer\FixerFactory;
+use PhpCsFixer\Preg;
 use PhpCsFixer\StdinFileInfo;
 use PhpCsFixer\Tests\TestCase;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -215,6 +216,79 @@ final class FixerTest extends TestCase
         }
     }
 
+    /**
+     * Blur filter that find candidate fixer for performance optimization to use only `insertSlices` instead of multiple `insertAt` if there is no other collection manipulation.
+     *
+     * @dataProvider provideFixerDefinitionsCases
+     */
+    public function testFixerUseInsertSlicesWhenOnlyInsertionsArePerformed(FixerInterface $fixer)
+    {
+        $reflection = new \ReflectionClass($fixer);
+        $tokens = Tokens::fromCode(file_get_contents($reflection->getFileName()));
+
+        $sequences = $this->findAllTokenSequences($tokens, [[T_VARIABLE, '$tokens'], [T_OBJECT_OPERATOR], [T_STRING]]);
+
+        $usedMethods = array_unique(array_map(function (array $sequence) {
+            $last = end($sequence);
+
+            return $last->getContent();
+        }, $sequences));
+
+        // if there is no `insertAt`, it's not a candidate
+        if (!\in_array('insertAt', $usedMethods, true)) {
+            $this->addToAssertionCount(1);
+
+            return;
+        }
+
+        $usedMethods = array_filter($usedMethods, function ($method) {
+            return 0 === Preg::match('/^(count|find|generate|get|is|rewind)/', $method);
+        });
+
+        $allowedMethods = ['insertAt'];
+        $nonAllowedMethods = array_diff($usedMethods, $allowedMethods);
+
+        if ([] === $nonAllowedMethods) {
+            $fixerName = $fixer->getName();
+            if (\in_array($fixerName, [
+                // DO NOT add anything to this list, it may be only reduced
+                'blank_line_after_namespace',
+                'blank_line_after_opening_tag',
+                'blank_line_before_statement',
+                'date_time_immutable',
+                'declare_strict_types',
+                'doctrine_annotation_braces',
+                'doctrine_annotation_spaces',
+                'final_internal_class',
+                'function_typehint_space',
+                'native_constant_invocation',
+                'new_with_braces',
+                'no_short_echo_tag',
+                'not_operator_with_space',
+                'not_operator_with_successor_space',
+                'php_unit_internal_class',
+                'php_unit_no_expectation_annotation',
+                'php_unit_set_up_tear_down_visibility',
+                'php_unit_test_annotation',
+                'php_unit_test_class_requires_covers',
+                'phpdoc_to_return_type',
+                'random_api_migration',
+                'semicolon_after_instruction',
+                'single_line_after_imports',
+                'static_lambda',
+                'strict_param',
+                'void_return',
+                'class_attributes_separation',
+                'method_chaining_indentation',
+            ], true)) {
+                $this->markTestIncomplete(sprintf('Fixer "%s" may be optimized to use `Tokens::insertSlices` instead of `%s`, please help and optimize it.', $fixerName, implode(', ', $allowedMethods)));
+            }
+            $this->fail(sprintf('Fixer "%s" shall be optimized to use `Tokens::insertSlices` instead of `%s`.', $fixerName, implode(', ', $allowedMethods)));
+        }
+
+        $this->addToAssertionCount(1);
+    }
+
     public function provideFixerDefinitionsCases()
     {
         return array_map(static function (FixerInterface $fixer) {
@@ -266,6 +340,19 @@ final class FixerTest extends TestCase
         return array_map(static function (FixerInterface $fixer) {
             return [$fixer];
         }, $fixers);
+    }
+
+    private function findAllTokenSequences($tokens, $sequence)
+    {
+        $lastIndex = 0;
+        $sequences = [];
+        while ($found = $tokens->findSequence($sequence, $lastIndex)) {
+            $keys = array_keys($found);
+            $sequences[] = $found;
+            $lastIndex = $keys[2];
+        }
+
+        return $sequences;
     }
 
     private function getAllFixers()
