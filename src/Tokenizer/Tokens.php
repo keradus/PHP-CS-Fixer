@@ -874,14 +874,11 @@ class Tokens extends \SplFixedArray
     }
 
     /**
-     * @TODO: docs
+     * Insert a slices or individual Tokens into multiple places in a single run.
      *
      * @internal
      *
-     * 5 => tokenA
-     * 7 => [tokenB, tokenC]
-     *
-     * @param mixed $slices
+     * @param array<int, Token|Token[]> $slices
      */
     public function insertSlices($slices)
     {
