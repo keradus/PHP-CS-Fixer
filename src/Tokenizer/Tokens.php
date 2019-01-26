@@ -885,20 +885,20 @@ class Tokens extends \SplFixedArray
      */
     public function insertSlices($slices)
     {
-        $itemsCnt = 0;
+        $itemsCount = 0;
         foreach ($slices as $slice) {
             $slice = \is_array($slice) || $slice instanceof self ? $slice : [$slice];
-            $itemsCnt += \count($slice);
+            $itemsCount += \count($slice);
         }
 
-        if (0 === $itemsCnt) {
+        if (0 === $itemsCount) {
             return;
         }
 
         $oldSize = \count($this);
         $this->changed = true;
         $this->blockEndCache = [];
-        $this->setSize($oldSize + $itemsCnt);
+        $this->setSize($oldSize + $itemsCount);
 
         krsort($slices);
 
@@ -912,11 +912,11 @@ class Tokens extends \SplFixedArray
 
             for ($i = $insertBound; $i >= $index; --$i) {
                 $oldItem = parent::offsetExists($i) ? parent::offsetGet($i) : new Token('');
-                parent::offsetSet($i + $itemsCnt, $oldItem);
+                parent::offsetSet($i + $itemsCount, $oldItem);
             }
 
             $insertBound = $index - $sliceCnt;
-            $itemsCnt -= $sliceCnt;
+            $itemsCount -= $sliceCnt;
 
             foreach ($slice as $indexItem => $item) {
                 if ('' === $item->getContent()) {
@@ -924,7 +924,7 @@ class Tokens extends \SplFixedArray
                 }
 
                 $this->registerFoundToken($item);
-                $newOffset = $index + $itemsCnt + $indexItem;
+                $newOffset = $index + $itemsCount + $indexItem;
                 parent::offsetSet($newOffset, $item);
             }
         }
