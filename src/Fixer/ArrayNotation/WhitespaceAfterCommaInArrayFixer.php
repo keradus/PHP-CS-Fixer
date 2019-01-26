@@ -71,7 +71,7 @@ final class WhitespaceAfterCommaInArrayFixer extends AbstractFixer
             }
         }
 
-        if ($tokensToInsert) {
+        if ([] !== $tokensToInsert) {
             $tokens->insertSlices($tokensToInsert);
         }
     }
