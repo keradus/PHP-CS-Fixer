@@ -584,8 +584,8 @@ namespace {
     public function testFix73()
     {
         $this->doTest(
-             '<?php $name = \get_class($foo, );',
-             '<?php $name = get_class($foo, );'
+            '<?php $name = \get_class($foo, );',
+            '<?php $name = get_class($foo, );'
          );
     }
 }
