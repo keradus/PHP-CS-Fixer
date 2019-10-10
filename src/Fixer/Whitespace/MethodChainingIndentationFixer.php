@@ -44,7 +44,7 @@ final class MethodChainingIndentationFixer extends AbstractFixer implements Whit
     {
         // Should run after BracesFixer
         // Should run before ArrayIndentationFixer
-        return -29;
+        return 33;
     }
 
     /**

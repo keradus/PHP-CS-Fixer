@@ -43,7 +43,7 @@ final class ElseifFixer extends AbstractFixer
     {
         // Should run after NoAlternativeSyntaxFixer
         // Should run before BracesFixer
-        return 34;
+        return 35;
     }
 
     /**

@@ -43,8 +43,8 @@ final class Example
 
     public function getPriority()
     {
-        // must be run before Braces and SpaceAfterSemicolonFixer
-        return 1;
+        // should be run before Braces, SpaceAfterSemicolonFixer
+        return 35;
     }
 
     public function isCandidate(Tokens $tokens)

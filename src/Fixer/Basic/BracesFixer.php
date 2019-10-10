@@ -126,8 +126,9 @@ class Foo
      */
     public function getPriority()
     {
-        // should be run after the ElseIfFixer, LineEndingFixer, NoEmptyStatementFixer and NoUselessElseFixer
-        return 33;
+        // should be run after ElseIfFixer, LineEndingFixer, NoEmptyStatementFixer, NoUselessElseFixer, SingleTraitInsertPerStatementFixer
+        // should be run before MethodChainingIndentationFixer
+        return 34;
     }
 
     /**
