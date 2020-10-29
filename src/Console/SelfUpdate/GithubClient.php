@@ -34,6 +34,9 @@ final class GithubClient implements GithubClientInterface
             ])
         );
 
+        var_dump("getTags result", $result);
+        var_dump("getTags error_get_last", error_get_last());
+
         if (false === $result) {
             throw new \RuntimeException(sprintf('Failed to load tags at "%s".', $url));
         }
