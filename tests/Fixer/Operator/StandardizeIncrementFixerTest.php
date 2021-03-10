@@ -19,6 +19,7 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
  *
  * @internal
  *
+ * @covers \PhpCsFixer\Fixer\AbstractIncrementOperatorFixer
  * @covers \PhpCsFixer\Fixer\Operator\StandardizeIncrementFixer
  */
 final class StandardizeIncrementFixerTest extends AbstractFixerTestCase
@@ -36,7 +37,7 @@ final class StandardizeIncrementFixerTest extends AbstractFixerTestCase
 
     public function provideFixCases()
     {
-        return [
+        $tests = [
             [
                 '<?php ++$i;',
                 '<?php $i += 1;',
@@ -86,14 +87,6 @@ final class StandardizeIncrementFixerTest extends AbstractFixerTestCase
                 '<?php echo $foo[$i += 1];',
             ],
             [
-                '<?php echo ++$foo->{$bar};',
-                '<?php echo $foo->{$bar} += 1;',
-            ],
-            [
-                '<?php echo ++$foo->{$bar->{$baz}};',
-                '<?php echo $foo->{$bar->{$baz}} += 1;',
-            ],
-            [
                 '<?php echo ++$foo[$bar[$baz]];',
                 '<?php echo $foo[$bar[$baz]] += 1;',
             ],
@@ -114,8 +107,8 @@ final class StandardizeIncrementFixerTest extends AbstractFixerTestCase
                 '<?php $$${$foo} += 1;',
             ],
             [
-                '<?php ++$a{$b};',
-                '<?php $a{$b} += 1;',
+                '<?php ++$a[$b];',
+                '<?php $a[$b] += 1;',
             ],
             [
                 '<?php ++$a[++$b];',
@@ -254,8 +247,8 @@ final class StandardizeIncrementFixerTest extends AbstractFixerTestCase
                 '<?php $$${$foo} -= 1;',
             ],
             [
-                '<?php --$a{$b};',
-                '<?php $a{$b} -= 1;',
+                '<?php --$a[$b];',
+                '<?php $a[$b] -= 1;',
             ],
             [
                 '<?php --$a[--$b];',
@@ -522,7 +515,71 @@ $i#3
                 '<?php --$a[foo($d,foo($c))];',
                 '<?php $a[foo($d,foo($c))] -= 1;',
             ],
+            [
+                '<?php $i *= 1; ++$i;',
+                '<?php $i *= 1; $i += 1;',
+            ],
+            [
+                '<?php ++A::$b;',
+                '<?php A::$b += 1;',
+            ],
+            [
+                '<?php ++\A::$b;',
+                '<?php \A::$b += 1;',
+            ],
+            [
+                '<?php ++\A\B\C::$d;',
+                '<?php \A\B\C::$d += 1;',
+            ],
+            [
+                '<?php ++$a::$b;',
+                '<?php $a::$b += 1;',
+            ],
+            [
+                '<?php ++$a::$b->$c;',
+                '<?php $a::$b->$c += 1;',
+            ],
+            [
+                '<?php class Foo {
+                    public static function bar() {
+                        ++self::$v1;
+                        ++static::$v2;
+                    }
+                }',
+                '<?php class Foo {
+                    public static function bar() {
+                        self::$v1 += 1;
+                        static::$v2 += 1;
+                    }
+                }',
+            ],
         ];
+
+        foreach ($tests as $index => $test) {
+            yield $index => $test;
+        }
+
+        if (\PHP_VERSION_ID < 80000) {
+            yield [
+                '<?php echo ++$foo->{$bar};',
+                '<?php echo $foo->{$bar} += 1;',
+            ];
+
+            yield [
+                '<?php echo ++$foo->{$bar->{$baz}};',
+                '<?php echo $foo->{$bar->{$baz}} += 1;',
+            ];
+
+            yield [
+                '<?php ++$a{$b};',
+                '<?php $a{$b} += 1;',
+            ];
+
+            yield [
+                '<?php --$a{$b};',
+                '<?php $a{$b} -= 1;',
+            ];
+        }
     }
 
     /**
@@ -551,6 +608,22 @@ $i#3
             ],
             [
                 '<?php $i += 1 <=> 2;',
+            ],
+            [
+                '<?php ++$a::$b::$c;',
+                '<?php $a::$b::$c += 1;',
+            ],
+            [
+                '<?php ++$a->$b::$c;',
+                '<?php $a->$b::$c += 1;',
+            ],
+            [
+                '<?php ++$a::${$b}::$c;',
+                '<?php $a::${$b}::$c += 1;',
+            ],
+            [
+                '<?php ++$a->$b::$c->${$d}->${$e}::f(1 + 2 * 3)->$g::$h;',
+                '<?php $a->$b::$c->${$d}->${$e}::f(1 + 2 * 3)->$g::$h += 1;',
             ],
         ];
     }

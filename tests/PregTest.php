@@ -66,7 +66,7 @@ final class PregTest extends TestCase
     /**
      * @dataProvider providePatternValidationCases
      *
-     * @param $pattern
+     * @param string      $pattern
      * @param null|int    $expected
      * @param null|string $expectedException
      * @param null|string $expectedMessage
@@ -103,7 +103,9 @@ final class PregTest extends TestCase
             return;
         }
 
-        $setup() || $this->addToAssertionCount(1);
+        if (!$setup()) {
+            $this->addToAssertionCount(1);
+        }
     }
 
     /**
@@ -147,7 +149,9 @@ final class PregTest extends TestCase
             return;
         }
 
-        $setup() || $this->addToAssertionCount(1);
+        if (!$setup()) {
+            $this->addToAssertionCount(1);
+        }
     }
 
     public function testMatchAllFailing()
@@ -176,7 +180,7 @@ final class PregTest extends TestCase
     public function testReplaceFailing()
     {
         $this->expectException(PregException::class);
-        $this->expectExceptionMessageRegExp('~\Q\Preg::replace()\E: Invalid PCRE pattern "": \(code: \d+\) [^(]+ \(version: \d+~');
+        $this->expectExceptionMessageMatches('~\Q\Preg::replace()\E: Invalid PCRE pattern "": \(code: \d+\) [^(]+ \(version: \d+~');
 
         Preg::replace('', 'foo', 'bar');
     }
@@ -213,7 +217,7 @@ final class PregTest extends TestCase
      */
     public function testReplaceCallback($pattern, $subject)
     {
-        $callback = function (array $x) { return implode('-', $x); };
+        $callback = static function (array $x) { return implode('-', $x); };
 
         $expectedResult = preg_replace_callback($pattern, $callback, $subject);
         $actualResult = Preg::replaceCallback($pattern, $callback, $subject);

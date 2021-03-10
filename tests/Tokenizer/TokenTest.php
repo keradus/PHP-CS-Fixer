@@ -140,12 +140,21 @@ final class TokenTest extends TestCase
 
     public function provideIsCommentCases()
     {
-        return [
+        $tests = [
             [$this->getBraceToken(), false],
             [$this->getForeachToken(), false],
             [new Token([T_COMMENT, '/* comment */', 1]), true],
             [new Token([T_DOC_COMMENT, '/** docs */', 1]), true],
         ];
+
+        foreach ($tests as $index => $test) {
+            yield $index => $test;
+        }
+
+        // @TODO: drop condition when PHP 8.0+ is required
+        if (\defined('T_ATTRIBUTE')) {
+            yield [new Token([T_ATTRIBUTE, '#[', 1]), false];
+        }
     }
 
     /**
@@ -263,6 +272,7 @@ final class TokenTest extends TestCase
         if (null !== $whitespaces) {
             static::assertSame($isWhitespace, $token->isWhitespace($whitespaces));
         } else {
+            static::assertSame($isWhitespace, $token->isWhitespace(null));
             static::assertSame($isWhitespace, $token->isWhitespace());
         }
     }
@@ -324,7 +334,7 @@ final class TokenTest extends TestCase
     }
 
     /**
-     * @param string             $equals
+     * @param bool               $equals
      * @param array|string|Token $other
      * @param bool               $caseSensitive
      *
@@ -475,6 +485,78 @@ final class TokenTest extends TestCase
             [
                 'CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE',
                 CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE,
+            ],
+        ];
+    }
+
+    /**
+     * @param null|string $expected
+     *
+     * @dataProvider provideGetNameCases
+     */
+    public function testGetName(Token $token, $expected = null)
+    {
+        static::assertSame($expected, $token->getName());
+    }
+
+    public function provideGetNameCases()
+    {
+        yield [
+            new Token([T_FUNCTION, 'function', 1]),
+            'T_FUNCTION',
+        ];
+
+        yield [
+            new Token(')'),
+            null,
+        ];
+
+        yield [
+            new Token(''),
+            null,
+        ];
+    }
+
+    /**
+     * @dataProvider provideToArrayCases
+     */
+    public function testToArray(Token $token, array $expected)
+    {
+        static::assertSame($expected, $token->toArray());
+    }
+
+    public function provideToArrayCases()
+    {
+        yield [
+            new Token([T_FUNCTION, 'function', 1]),
+            [
+                'id' => T_FUNCTION,
+                'name' => 'T_FUNCTION',
+                'content' => 'function',
+                'isArray' => true,
+                'changed' => false,
+            ],
+        ];
+
+        yield [
+            new Token(')'),
+            [
+                'id' => null,
+                'name' => null,
+                'content' => ')',
+                'isArray' => false,
+                'changed' => false,
+            ],
+        ];
+
+        yield [
+            new Token(''),
+            [
+                'id' => null,
+                'name' => null,
+                'content' => '',
+                'isArray' => false,
+                'changed' => false,
             ],
         ];
     }

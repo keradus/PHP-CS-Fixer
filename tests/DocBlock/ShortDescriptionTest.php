@@ -24,12 +24,12 @@ use PhpCsFixer\Tests\TestCase;
 final class ShortDescriptionTest extends TestCase
 {
     /**
-     * @param mixed      $expected
-     * @param null|mixed $input
+     * @param null|int $expected
+     * @param string   $input
      *
      * @dataProvider provideGetEndCases
      */
-    public function testGetEnd($expected, $input = null)
+    public function testGetEnd($expected, $input)
     {
         $doc = new DocBlock($input);
         $shortDescription = new ShortDescription($doc);
@@ -40,7 +40,6 @@ final class ShortDescriptionTest extends TestCase
     public function provideGetEndCases()
     {
         return [
-            [null, '/** */'],
             [1, '/**
      * Test docblock.
      *
@@ -68,6 +67,8 @@ final class ShortDescriptionTest extends TestCase
                   *
                   * And here is description...
                   */'],
+            [null, '/** */'],
+            [null, "/**\n * @test\n*/"],
         ];
     }
 }

@@ -156,11 +156,6 @@ class F
         $this->doTest($expected, $input);
     }
 
-    /**
-     * Expected after fixing, return type to fix.
-     *
-     * @return array<array<string, string>
-     */
     public function provideGeneratedFixCases()
     {
         return [
@@ -181,7 +176,7 @@ class F
     public function testInvalidConfiguration(array $configuration, $message)
     {
         $this->expectException(\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessageRegExp(sprintf('/^\[phpdoc_return_self_reference\] %s$/', preg_quote($message, '/')));
+        $this->expectExceptionMessageMatches(sprintf('/^\[phpdoc_return_self_reference\] %s$/', preg_quote($message, '/')));
 
         $this->fixer->configure($configuration);
     }

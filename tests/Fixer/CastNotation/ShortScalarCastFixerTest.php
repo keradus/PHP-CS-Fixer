@@ -13,6 +13,7 @@
 namespace PhpCsFixer\Tests\Fixer\CastNotation;
 
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
+use Symfony\Bridge\PhpUnit\ExpectDeprecationTrait;
 
 /**
  * @author SpacePossum
@@ -23,6 +24,8 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
  */
 final class ShortScalarCastFixerTest extends AbstractFixerTestCase
 {
+    use ExpectDeprecationTrait;
+
     /**
      * @param string      $expected
      * @param null|string $input
@@ -55,10 +58,15 @@ final class ShortScalarCastFixerTest extends AbstractFixerTestCase
      * @dataProvider provideFixDeprecatedCases
      * @requires PHP 7.4
      * @group legacy
-     * @expectedDeprecation Unsilenced deprecation: The (real) cast is deprecated, use (float) instead
      */
     public function testFix74Deprecated($expected, $input = null)
     {
+        if (\PHP_VERSION_ID >= 80000) {
+            static::markTestSkipped('PHP < 8.0 is required.');
+        }
+
+        $this->expectDeprecation('%AThe (real) cast is deprecated, use (float) instead');
+
         $this->doTest($expected, $input);
     }
 
@@ -89,7 +97,13 @@ final class ShortScalarCastFixerTest extends AbstractFixerTestCase
     public function provideNoFixCases()
     {
         $cases = [];
-        foreach (['string', 'array', 'object', 'unset'] as $cast) {
+        $types = ['string', 'array', 'object'];
+
+        if (\PHP_VERSION_ID < 80000) {
+            $types[] = 'unset';
+        }
+
+        foreach ($types as $cast) {
             $cases[] = [sprintf('<?php $b=(%s) $d;', $cast)];
             $cases[] = [sprintf('<?php $b=( %s ) $d;', $cast)];
             $cases[] = [sprintf('<?php $b=(%s ) $d;', ucfirst($cast))];

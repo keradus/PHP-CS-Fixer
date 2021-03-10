@@ -28,9 +28,130 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
  */
 final class TokensAnalyzerTest extends TestCase
 {
-    public function testGetClassyElements()
+    /**
+     * @dataProvider provideGetClassyElementsCases
+     *
+     * @param bool   $returnTraitsImports
+     * @param string $source
+     */
+    public function testGetClassyElements(array $expectedElements, $returnTraitsImports, $source)
     {
-        $source = <<<'PHP'
+        $tokens = Tokens::fromCode($source);
+
+        foreach ($expectedElements as $index => $element) {
+            $expectedElements[$index] = [
+                'token' => $tokens[$index],
+                'type' => $element['type'],
+                'classIndex' => $element['classIndex'],
+            ];
+        }
+
+        $tokensAnalyzer = new TokensAnalyzer($tokens);
+
+        static::assertSame(
+            $expectedElements,
+            $tokensAnalyzer->getClassyElements($returnTraitsImports)
+        );
+    }
+
+    public function provideGetClassyElementsCases()
+    {
+        yield 'trait import' => [
+            [
+                10 => [
+                    'type' => 'trait_import',
+                    'classIndex' => 4,
+                ],
+                19 => [
+                    'type' => 'trait_import',
+                    'classIndex' => 4,
+                ],
+                24 => [
+                    'type' => 'const',
+                    'classIndex' => 4,
+                ],
+                35 => [
+                    'type' => 'method',
+                    'classIndex' => 4,
+                ],
+                55 => [
+                    'type' => 'trait_import',
+                    'classIndex' => 49,
+                ],
+                64 => [
+                    'type' => 'method',
+                    'classIndex' => 49,
+                ],
+            ],
+            true,
+            '<?php
+            /**  */
+            class Foo
+            {
+                use A\B;
+                //
+                use Foo;
+
+                const A = 1;
+
+                public function foo()
+                {
+                    $a = new class()
+                    {
+                        use Z; // nested trait import
+
+                        public function bar()
+                        {
+                            echo 123;
+                        }
+                    };
+
+                    $a->bar();
+                }
+            }',
+        ];
+
+        yield [
+            [
+                9 => [
+                    'type' => 'property',
+                    'classIndex' => 1,
+                ],
+                14 => [
+                    'type' => 'property',
+                    'classIndex' => 1,
+                ],
+                19 => [
+                    'type' => 'property',
+                    'classIndex' => 1,
+                ],
+                28 => [
+                    'type' => 'property',
+                    'classIndex' => 1,
+                ],
+                42 => [
+                    'type' => 'const',
+                    'classIndex' => 1,
+                ],
+                53 => [
+                    'type' => 'method',
+                    'classIndex' => 1,
+                ],
+                83 => [
+                    'type' => 'method',
+                    'classIndex' => 1,
+                ],
+                140 => [
+                    'type' => 'method',
+                    'classIndex' => 1,
+                ],
+                164 => [
+                    'type' => 'const',
+                    'classIndex' => 158,
+                ],
+            ],
+            false,
+            <<<'PHP'
 <?php
 class Foo
 {
@@ -61,64 +182,13 @@ function test(){}
 class Foo2
 {
     const CONSTANT = 'constant value';
+
+    use Foo\Bar; // not expected in the return value by default (BC)
 }
 
-PHP;
-
-        $tokens = Tokens::fromCode($source);
-        $tokensAnalyzer = new TokensAnalyzer($tokens);
-        $elements = $tokensAnalyzer->getClassyElements();
-
-        static::assertSame(
-            [
-                9 => [
-                    'token' => $tokens[9],
-                    'type' => 'property',
-                    'classIndex' => 1,
-                ],
-                14 => [
-                    'token' => $tokens[14],
-                    'type' => 'property',
-                    'classIndex' => 1,
-                ],
-                19 => [
-                    'token' => $tokens[19],
-                    'type' => 'property',
-                    'classIndex' => 1,
-                ],
-                28 => [
-                    'token' => $tokens[28],
-                    'type' => 'property',
-                    'classIndex' => 1,
-                ],
-                42 => [
-                    'token' => $tokens[42],
-                    'type' => 'const',
-                    'classIndex' => 1,
-                ],
-                53 => [
-                    'token' => $tokens[53],
-                    'type' => 'method',
-                    'classIndex' => 1,
-                ],
-                83 => [
-                    'token' => $tokens[83],
-                    'type' => 'method',
-                    'classIndex' => 1,
-                ],
-                140 => [
-                    'token' => $tokens[140],
-                    'type' => 'method',
-                    'classIndex' => 1,
-                ],
-                164 => [
-                    'token' => $tokens[164],
-                    'type' => 'const',
-                    'classIndex' => 158,
-                ],
-            ],
-            $elements
-        );
+PHP
+            ,
+        ];
     }
 
     /**
@@ -131,7 +201,7 @@ PHP;
 class Foo
 {
     public int $prop0;
-    protected ?int $prop1;
+    protected ?array $prop1;
     private string $prop2 = 1;
     var ? Foo\Bar $prop3 = array(1,2,3);
 }
@@ -454,6 +524,10 @@ PHP;
                 '<?php $a = new class(new class($d->a) implements B{}) extends C{};',
                 [7 => true, 11 => true],
             ],
+            [
+                '<?php interface foo {}',
+                [1 => false],
+            ],
         ];
     }
 
@@ -613,6 +687,13 @@ preg_replace_callback(
             ],
             [
                 '<?php
+                    $a = function (): int {
+                        return [];
+                    };',
+                [6 => true],
+            ],
+            [
+                '<?php
                     function foo (): ?int {
                         return [];
                     };',
@@ -624,14 +705,74 @@ preg_replace_callback(
     /**
      * @param string $source
      *
+     * @dataProvider provideIsLambda80Cases
+     * @requires PHP 8.0
+     */
+    public function testIsLambda80($source, array $expected)
+    {
+        $tokensAnalyzer = new TokensAnalyzer(Tokens::fromCode($source));
+
+        foreach ($expected as $index => $expectedValue) {
+            static::assertSame($expectedValue, $tokensAnalyzer->isLambda($index));
+        }
+    }
+
+    public function provideIsLambda80Cases()
+    {
+        return [
+            [
+                '<?php
+                    $a = function (): ?static {
+                        return [];
+                    };',
+                [6 => true],
+            ],
+            [
+                '<?php
+                    $a = function (): static {
+                        return [];
+                    };',
+                [6 => true],
+            ],
+            [
+                '<?php
+$c = 4; //
+$a = function(
+    $a,
+    $b,
+) use (
+    $c,
+) {
+    echo $a + $b + $c;
+};
+
+
+$a(1,2);',
+                [14 => true],
+            ],
+        ];
+    }
+
+    public function testIsLambdaInvalid()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('No T_FUNCTION or T_FN at given index 0, got "T_OPEN_TAG".');
+
+        $tokensAnalyzer = new TokensAnalyzer(Tokens::fromCode('<?php '));
+        $tokensAnalyzer->isLambda(0);
+    }
+
+    /**
+     * @param string $source
+     *
      * @dataProvider provideIsConstantInvocationCases
      */
     public function testIsConstantInvocation($source, array $expected)
     {
         $tokensAnalyzer = new TokensAnalyzer(Tokens::fromCode($source));
 
-        foreach ($expected as $index => $isLambda) {
-            static::assertSame($isLambda, $tokensAnalyzer->isConstantInvocation($index), 'Token at index '.$index.' should match the expected value.');
+        foreach ($expected as $index => $expectedValue) {
+            static::assertSame($expectedValue, $tokensAnalyzer->isConstantInvocation($index), 'Token at index '.$index.' should match the expected value.');
         }
     }
 
@@ -782,6 +923,14 @@ preg_replace_callback(
                 '<?php foo(E_USER_DEPRECATED | E_DEPRECATED);',
                 [3 => true, 7 => true],
             ],
+            [
+                '<?php interface Foo extends Bar, Baz, Qux {}',
+                [7 => false, 10 => false, 13 => false],
+            ],
+            [
+                '<?php use Foo\Bar, Foo\Baz, Foo\Qux;',
+                [3 => false, 5 => false, 8 => false, 10 => false, 13 => false, 15 => false],
+            ],
         ];
     }
 
@@ -844,7 +993,32 @@ preg_replace_callback(
                 '<?php try {} catch (FOO|BAR|BAZ $e) {}',
                 [9 => false, 11 => false, 13 => false],
             ],
+            [
+                '<?php interface Foo { public function bar(): Baz; }',
+                [16 => false],
+            ],
+            [
+                '<?php interface Foo { public function bar(): \Baz; }',
+                [17 => false],
+            ],
+            [
+                '<?php interface Foo { public function bar(): ?Baz; }',
+                [17 => false],
+            ],
+            [
+                '<?php interface Foo { public function bar(): ?\Baz; }',
+                [18 => false],
+            ],
         ];
+    }
+
+    public function testIsConstantInvocationInvalid()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('No T_STRING at given index 0, got "T_OPEN_TAG".');
+
+        $tokensAnalyzer = new TokensAnalyzer(Tokens::fromCode('<?php '));
+        $tokensAnalyzer->isConstantInvocation(0);
     }
 
     /**
@@ -896,8 +1070,12 @@ preg_replace_callback(
                 '<?php $foo->{"bar"}++;',
                 [6 => true],
             ],
-            [
+            'array access' => [
                 '<?php $a["foo"]++;',
+                [5 => true],
+            ],
+            'array curly access' => [
+                '<?php $a{"foo"}++;',
                 [5 => true],
             ],
         ];
@@ -1008,6 +1186,14 @@ preg_replace_callback(
     public function provideIsBinaryOperatorCases()
     {
         $cases = [
+            [
+                '<?php echo $a[1] + 1;',
+                [8 => true],
+            ],
+            [
+                '<?php echo $a{1} + 1;',
+                [8 => true],
+            ],
             [
                 '<?php $a .= $b; ?>',
                 [3 => true],
@@ -1750,5 +1936,64 @@ class MyTestWithAnonymousClass extends TestCase
                 'classIndex' => 158,
             ],
         ], $elements);
+    }
+
+    /**
+     * @param bool   $expected
+     * @param string $source
+     * @param int    $index
+     *
+     * @dataProvider provideIsSuperGlobalCases
+     */
+    public function testIsSuperGlobal($expected, $source, $index)
+    {
+        $tokens = Tokens::fromCode($source);
+        $tokensAnalyzer = new TokensAnalyzer($tokens);
+
+        static::assertSame($expected, $tokensAnalyzer->isSuperGlobal($index));
+    }
+
+    public function provideIsSuperGlobalCases()
+    {
+        $superNames = [
+            '$_COOKIE',
+            '$_ENV',
+            '$_FILES',
+            '$_GET',
+            '$_POST',
+            '$_REQUEST',
+            '$_SERVER',
+            '$_SESSION',
+            '$GLOBALS',
+        ];
+
+        $cases = [];
+
+        foreach ($superNames as $superName) {
+            $cases[] = [
+                true,
+                sprintf('<?php echo %s[0];', $superName),
+                3,
+            ];
+        }
+
+        $notGlobalCodeCases = [
+            '<?php echo 1; $a = static function($b) use ($a) { $a->$b(); }; // $_SERVER',
+            '<?php class Foo{}?> <?php $_A = 1; /* $_SESSION */',
+        ];
+
+        foreach ($notGlobalCodeCases as $notGlobalCodeCase) {
+            $tokensCount = \count(Tokens::fromCode($notGlobalCodeCase));
+
+            for ($i = 0; $i < $tokensCount; ++$i) {
+                $cases[] = [
+                    false,
+                    $notGlobalCodeCase,
+                    $i,
+                ];
+            }
+        }
+
+        return $cases;
     }
 }

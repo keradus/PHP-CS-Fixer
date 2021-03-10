@@ -51,10 +51,11 @@ final class SpaceAfterSemicolonFixer extends AbstractFixer implements Configurat
 
     /**
      * {@inheritdoc}
+     *
+     * Must run after CombineConsecutiveUnsetsFixer, MultilineWhitespaceBeforeSemicolonsFixer, NoEmptyStatementFixer, OrderedClassElementsFixer, SingleImportPerStatementFixer, SingleTraitInsertPerStatementFixer.
      */
     public function getPriority()
     {
-        // should be run after MultilineWhitespaceBeforeSemicolonsFixer, SingleTraitInsertPerStatementFixer
         return -1;
     }
 

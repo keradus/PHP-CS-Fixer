@@ -63,6 +63,16 @@ SAMPLE
 
     /**
      * {@inheritdoc}
+     *
+     * Must run after NoMultilineWhitespaceAroundDoubleArrowFixer.
+     */
+    public function getPriority()
+    {
+        return 0;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function isCandidate(Tokens $tokens)
     {
@@ -122,8 +132,8 @@ SAMPLE
 
         // if there is some item between braces then add `,` after it
         if (
-            $startIndex !== $beforeEndIndex && !$beforeEndToken->equals(',') &&
-            ($this->configuration['after_heredoc'] || !$beforeEndToken->isGivenKind(T_END_HEREDOC))
+            $startIndex !== $beforeEndIndex && !$beforeEndToken->equals(',')
+            && ($this->configuration['after_heredoc'] || !$beforeEndToken->isGivenKind(T_END_HEREDOC))
         ) {
             $tokens->insertAt($beforeEndIndex + 1, new Token(','));
 

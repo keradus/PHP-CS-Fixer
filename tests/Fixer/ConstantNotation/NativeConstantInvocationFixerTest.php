@@ -110,13 +110,6 @@ final class NativeConstantInvocationFixerTest extends AbstractFixerTestCase
         $this->doTest($after, $before);
     }
 
-    public function testIsRisky()
-    {
-        $fixer = $this->createFixer();
-
-        static::assertTrue($fixer->isRisky());
-    }
-
     /**
      * @dataProvider provideFixWithDefaultConfigurationCases
      *
@@ -172,24 +165,6 @@ final class NativeConstantInvocationFixerTest extends AbstractFixerTestCase
                 // A user likely would add this M_PI to its excluded list.
                 '<?php namespace M_PI; const M_PI = 1; return \\M_PI;',
                 '<?php namespace M_PI; const M_PI = 1; return M_PI;',
-            ],
-            [
-                '<?php
-echo \\/**/M_PI;
-echo \\ M_PI;
-echo \\#
-#
-M_PI;
-echo \\M_PI;
-',
-                '<?php
-echo \\/**/M_PI;
-echo \\ M_PI;
-echo \\#
-#
-M_PI;
-echo M_PI;
-',
             ],
             [
                 '<?php foo(\E_DEPRECATED | \E_USER_DEPRECATED);',
@@ -534,5 +509,48 @@ echo PHP_VERSION . PHP_EOL;
 EOT;
 
         $this->doTest($expected);
+    }
+
+    public function testFixStrictOption()
+    {
+        $this->fixer->configure(['strict' => true]);
+
+        $this->doTest(
+            '<?php
+                echo \PHP_VERSION . \PHP_EOL; // built-in constants to have backslash
+                echo MY_FRAMEWORK_MAJOR_VERSION . MY_FRAMEWORK_MINOR_VERSION; // non-built-in constants not to have backslash
+                echo \Dont\Touch\Namespaced\CONSTANT;
+            ',
+            '<?php
+                echo \PHP_VERSION . PHP_EOL; // built-in constants to have backslash
+                echo \MY_FRAMEWORK_MAJOR_VERSION . MY_FRAMEWORK_MINOR_VERSION; // non-built-in constants not to have backslash
+                echo \Dont\Touch\Namespaced\CONSTANT;
+            '
+        );
+    }
+
+    /**
+     * @requires PHP <8.0
+     */
+    public function testFixPrePHP80()
+    {
+        $this->doTest(
+            '<?php
+echo \\/**/M_PI;
+echo \\ M_PI;
+echo \\#
+#
+M_PI;
+echo \\M_PI;
+',
+            '<?php
+echo \\/**/M_PI;
+echo \\ M_PI;
+echo \\#
+#
+M_PI;
+echo M_PI;
+'
+        );
     }
 }

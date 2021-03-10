@@ -702,6 +702,83 @@ $first = true;// needed because by default first docblock is never fixed.
                     var ? Foo\Bar $foo;
                 }',
             ],
+            [
+                '<?php
+                class Foo {
+                    /**
+                     * Do not convert this
+                     */
+                    var ? array $foo;
+                }',
+            ],
+        ];
+    }
+
+    /**
+     * @param string      $expected
+     * @param null|string $input
+     *
+     * @dataProvider provideFix80Cases
+     * @requires PHP 8.0
+     */
+    public function testFix80($expected, $input = null)
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix80Cases()
+    {
+        return [
+            [
+                '<?php
+/**
+ * @Annotation
+ */
+#[CustomAnnotationA]
+Class MyAnnotation3
+{
+    /**
+     * @Annotation
+     */
+    #[CustomAnnotationB]
+    #[CustomAnnotationC]
+    public function foo() {}
+
+    /**
+     * @Annotation
+     */
+    #[CustomAnnotationD]
+    public $var;
+
+    /*
+     * end of class
+     */
+}',
+                '<?php
+/**
+ * @Annotation
+ */
+#[CustomAnnotationA]
+Class MyAnnotation3
+{
+    /**
+     * @Annotation
+     */
+    #[CustomAnnotationB]
+    #[CustomAnnotationC]
+    public function foo() {}
+
+    /**
+     * @Annotation
+     */
+    #[CustomAnnotationD]
+    public $var;
+
+    /**
+     * end of class
+     */
+}',
+            ],
         ];
     }
 }

@@ -611,6 +611,39 @@ EOT
         }
     }',
             ],
+            [
+                '<?php
+    abstract class MyTest extends \PHPUnit_Framework_TestCase
+    {
+        /**
+         * @expectedException FooException
+         * @expectedExceptionMessage
+         */
+        abstract public function testFnc();
+    }',
+            ],
+            'expecting exception in single line comment' => [
+                '<?php
+    final class MyTest extends \PHPUnit_Framework_TestCase
+    {
+        /** */
+        public function testFnc()
+        {
+            $this->setExpectedException(\FooException::class);
+
+            aaa();
+        }
+    }',
+                '<?php
+    final class MyTest extends \PHPUnit_Framework_TestCase
+    {
+        /** @expectedException FooException */
+        public function testFnc()
+        {
+            aaa();
+        }
+    }',
+            ],
         ];
     }
 
@@ -661,6 +694,34 @@ EOT
             aaa();
         }
     }',
+            ],
+
+            [
+                '<?php
+final class MyTest extends \PHPUnit_Framework_TestCase
+{
+/**
+*/
+public function testFnc()
+{
+    $this->setExpectedException(\FooException::class, \'foo\', 123);
+
+aaa();
+}
+}',
+                '<?php
+final class MyTest extends \PHPUnit_Framework_TestCase
+{
+/**
+* @expectedException FooException
+* @expectedExceptionMessage foo
+* @expectedExceptionCode 123
+*/
+public function testFnc()
+{
+aaa();
+}
+}',
             ],
         ];
     }

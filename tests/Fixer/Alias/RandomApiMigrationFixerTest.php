@@ -27,7 +27,7 @@ final class RandomApiMigrationFixerTest extends AbstractFixerTestCase
     public function testConfigureCheckSearchFunction()
     {
         $this->expectException(\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessageRegExp('#^\[random_api_migration\] Invalid configuration: Function "is_null" is not handled by the fixer\.$#');
+        $this->expectExceptionMessageMatches('#^\[random_api_migration\] Invalid configuration: Function "is_null" is not handled by the fixer\.$#');
 
         $this->fixer->configure(['replacements' => ['is_null' => 'random_int']]);
     }
@@ -35,7 +35,7 @@ final class RandomApiMigrationFixerTest extends AbstractFixerTestCase
     public function testConfigureCheckReplacementType()
     {
         $this->expectException(\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessageRegExp('#^\[random_api_migration\] Invalid configuration: Replacement for function "rand" must be a string, "NULL" given\.$#');
+        $this->expectExceptionMessageMatches('#^\[random_api_migration\] Invalid configuration: Replacement for function "rand" must be a string, "NULL" given\.$#');
 
         $this->fixer->configure(['replacements' => ['rand' => null]]);
     }
@@ -48,11 +48,14 @@ final class RandomApiMigrationFixerTest extends AbstractFixerTestCase
     {
         $this->fixer->configure(['rand' => 'random_int']);
 
+        $reflectionProperty = new \ReflectionProperty($this->fixer, 'configuration');
+        $reflectionProperty->setAccessible(true);
+
         static::assertSame(
             ['replacements' => [
                 'rand' => ['alternativeName' => 'random_int', 'argumentCount' => [0, 2]], ],
             ],
-            static::getObjectAttribute($this->fixer, 'configuration')
+            $reflectionProperty->getValue($this->fixer)
         );
     }
 
@@ -60,11 +63,14 @@ final class RandomApiMigrationFixerTest extends AbstractFixerTestCase
     {
         $this->fixer->configure(['replacements' => ['rand' => 'random_int']]);
 
+        $reflectionProperty = new \ReflectionProperty($this->fixer, 'configuration');
+        $reflectionProperty->setAccessible(true);
+
         static::assertSame(
             ['replacements' => [
                 'rand' => ['alternativeName' => 'random_int', 'argumentCount' => [0, 2]], ],
             ],
-            static::getObjectAttribute($this->fixer, 'configuration')
+            $reflectionProperty->getValue($this->fixer)
         );
     }
 
@@ -178,6 +184,11 @@ class srand extends SrandClass{
                 }',
                 null,
                 ['replacements' => ['rand' => 'random_int']],
+            ],
+            [
+                '<?php rand($d, rand($a,$b));',
+                null,
+                ['replacements' => ['rand' => 'rand']],
             ],
         ];
     }

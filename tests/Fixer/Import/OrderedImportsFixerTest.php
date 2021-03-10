@@ -598,45 +598,39 @@ EOF;
         );
     }
 
-    /**
-     * @param string      $expected
-     * @param null|string $input
-     *
-     * @dataProvider provideCommentCases
-     */
-    public function testCodeWithComments($expected, $input = null)
+    public function testCodeWithComments()
     {
-        $this->doTest($expected, $input);
+        $this->doTest(
+            '<?php
+                use A\C1 /* A */;
+                use /* B */ B\C2;',
+            '<?php
+                use /* B */ B\C2;
+                use A\C1 /* A */;'
+        );
     }
 
-    public function provideCommentCases()
+    /**
+     * @requires PHP <8.0
+     */
+    public function testCodeWithCommentsAndMultiLine()
     {
-        return [
-            [
-                '<?php
-                    use A\C1 /* A */;
-                    use /* B */ B\C2;',
-                '<?php
-                    use /* B */ B\C2;
-                    use A\C1 /* A */;',
-            ],
-            [
-                '<?php
+        $this->doTest(
+            '<?php
                     use#
 A\C1;
                     use B#
 \C2#
 #
 ;',
-                '<?php
+            '<?php
                     use#
 B#
 \C2#
 #
 ;
-                    use A\C1;',
-            ],
-        ];
+                    use A\C1;'
+        );
     }
 
     /**
@@ -666,30 +660,30 @@ use some\b\{
 };
 use const some\a\{ConstA, ConstB, ConstC};
 use const some\b\{
-    ConstA,
-    ConstB,
-    ConstC
+    ConstX,
+    ConstY,
+    ConstZ
 };
 use function some\a\{fn_a, fn_b, fn_c};
 use function some\b\{
-    fn_a,
-    fn_b,
-    fn_c
+    fn_x,
+    fn_y,
+    fn_z
 };
 ',
                 '<?php
 use some\a\{ClassA, ClassB, ClassC as C};
 use function some\b\{
-    fn_b,
-    fn_c,
-    fn_a
+    fn_y,
+    fn_z,
+    fn_x
 };
 use function some\a\{fn_a, fn_b, fn_c};
 use A\B;
 use const some\b\{
-    ConstC,
-    ConstA,
-    ConstB
+    ConstZ,
+    ConstX,
+    ConstY
 };
 use const some\a\{ConstA, ConstB, ConstC};
 use some\b\{
@@ -739,29 +733,29 @@ use some\b\{
     ClassG
 };
 use const some\b\{
-    ConstA,
-    ConstB,
-    ConstC
+    ConstX,
+    ConstY,
+    ConstZ
 };
 use function some\b\{
-    fn_a,
-    fn_b,
-    fn_c
+    fn_x,
+    fn_y,
+    fn_z
 };
 ',
                 '<?php
 use some\a\{ClassA, ClassB, ClassC as C};
 use function some\b\{
-    fn_b,
-    fn_c,
-    fn_a
+    fn_y,
+    fn_z,
+    fn_x
 };
 use function some\a\{fn_a, fn_b, fn_c};
 use A\B;
 use const some\b\{
-    ConstC,
-    ConstA,
-    ConstB
+    ConstZ,
+    ConstX,
+    ConstY
 };
 use const some\a\{ConstA, ConstB, ConstC};
 use some\b\{
@@ -977,6 +971,17 @@ use A\A1;
                 ],
             ],
         ];
+    }
+
+    public function testUnknownOrderTypes()
+    {
+        $this->expectException(\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException::class);
+        $this->expectExceptionMessage('[ordered_imports] Invalid configuration: Unknown sort types "foo", "bar".');
+
+        $this->configureFixerWithAliasedOptions([
+            'sort_algorithm' => OrderedImportsFixer::SORT_ALPHA,
+            'imports_order' => ['class', 'const', 'function', 'foo', 'bar'],
+        ]);
     }
 
     /*
@@ -1748,7 +1753,7 @@ use some\b\{
 use function some\a\{fn_a, fn_b, fn_c};
 use some\b\{ClassA, ClassB, ClassC as C};
 use const some\a\{ConstA, ConstB, ConstC};
-use some\a\{ClassA as A /*z*/, ClassB, ClassC};
+use some\a\{ClassX as X /*z*/, ClassY, ClassZ};
 use Some\Biz\Barz\Boozz\Foz\Which\Is\Really\Long;
 use const some\b\{ConstG, ConstX, ConstY, ConstZ};
 use some\c\{ClassR, ClassT, ClassV as V, NiceClassName};
@@ -1766,7 +1771,7 @@ use some\b\{
 use const some\a\{ConstB, ConstA, ConstC};
 use const some\b\{ConstX, ConstY, ConstZ, ConstG};
 use some\b\{ClassA, ClassB, ClassC as C};
-use some\a\{  ClassB,ClassC, /*z*/ ClassA as A};
+use some\a\{  ClassY,ClassZ, /*z*/ ClassX as X};
 ',
             ],
             [
@@ -1815,7 +1820,7 @@ use some\b\{
 };
 use some\a\{ClassA, ClassB, ClassC as C};
 use some\b\{ClassK, ClassL, ClassM as M};
-use some\a\{ClassA as A /*z*/, ClassB, ClassC};
+use some\a\{ClassX as X /*z*/, ClassY, ClassZ};
 use const some\a\{ConstA, ConstB, ConstC};
 use const some\b\{ConstD, ConstE, ConstF};
 use function some\a\{fn_a, fn_b};
@@ -1827,7 +1832,7 @@ use const some\a\{ConstA, ConstB, ConstC};
 use some\a\{ClassA, ClassB, ClassC as C};
 use Foo\Zar\Baz;
 use some\b\{ClassK, ClassL, ClassM as M};
-use some\a\{ClassA as A /*z*/, ClassB, ClassC};
+use some\a\{ClassX as X /*z*/, ClassY, ClassZ};
 use A\B;
 use some\b\{
     ClassF,
@@ -2062,6 +2067,30 @@ use function some\a\{fn_a, fn_b, fn_c,};
                     'sort_algorithm' => OrderedImportsFixer::SORT_NONE,
                     'imports_order' => [OrderedImportsFixer::IMPORT_TYPE_CLASS, OrderedImportsFixer::IMPORT_TYPE_CONST, OrderedImportsFixer::IMPORT_TYPE_FUNCTION],
                 ],
+            ],
+            [
+                '<?php
+use Foo\{
+    Aaa,
+    Bbb,
+};',
+                '<?php
+use Foo\{
+    Bbb,
+    Aaa,
+};',
+            ],
+            [
+                '<?php
+use Foo\{
+    Aaa /* 3 *//* 4 *//* 5 */,
+    Bbb /* 1 *//* 2 */,
+};',
+                '<?php
+use Foo\{
+    /* 1 */Bbb/* 2 */,/* 3 */
+    /* 4 */Aaa/* 5 */,/* 6 */
+};',
             ],
         ];
     }

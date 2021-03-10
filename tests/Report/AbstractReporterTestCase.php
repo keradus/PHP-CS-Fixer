@@ -24,20 +24,20 @@ use PhpCsFixer\Tests\TestCase;
 abstract class AbstractReporterTestCase extends TestCase
 {
     /**
-     * @var ReporterInterface
+     * @var null|ReporterInterface
      */
     protected $reporter;
 
-    protected function setUp()
+    protected function doSetUp()
     {
-        parent::setUp();
+        parent::doSetUp();
 
         $this->reporter = $this->createReporter();
     }
 
-    protected function tearDown()
+    protected function doTearDown()
     {
-        parent::tearDown();
+        parent::doTearDown();
 
         $this->reporter = null;
     }
@@ -134,7 +134,7 @@ abstract class AbstractReporterTestCase extends TestCase
                         ],
                     ],
                     1234,
-                    2.5 * 1024 * 1024,
+                    2621440, // 2.5 * 1024 * 1024
                     false,
                     false,
                     false
@@ -154,7 +154,7 @@ abstract class AbstractReporterTestCase extends TestCase
                         ],
                     ],
                     1234,
-                    2.5 * 1024 * 1024,
+                    2621440, // 2.5 * 1024 * 1024
                     true,
                     true,
                     true

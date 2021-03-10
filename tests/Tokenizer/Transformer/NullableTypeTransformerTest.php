@@ -118,16 +118,31 @@ final class NullableTypeTransformerTest extends AbstractTransformerTestCase
                     9 => CT::T_NULLABLE_TYPE,
                 ],
             ],
+            [
+                '<?php fn(?Barable $barA, ?Barable $barB): ?Fooable => null;',
+                [
+                    3 => CT::T_NULLABLE_TYPE,
+                    9 => CT::T_NULLABLE_TYPE,
+                    16 => CT::T_NULLABLE_TYPE,
+                ],
+            ],
+            [
+                '<?php class Foo { public ?array $foo; public static ?array $bar; }',
+                [
+                    9 => CT::T_NULLABLE_TYPE,
+                    19 => CT::T_NULLABLE_TYPE,
+                ],
+            ],
         ];
     }
 
     /**
      * @param string $source
      *
-     * @dataProvider provideProcessPhp74Cases
-     * @requires PHP 7.4
+     * @dataProvider provideProcess80Cases
+     * @requires PHP 8.0
      */
-    public function testProcessPhp74($source, array $expectedTokens = [])
+    public function testProcess80($source, array $expectedTokens = [])
     {
         $this->doTest(
             $source,
@@ -138,15 +153,24 @@ final class NullableTypeTransformerTest extends AbstractTransformerTestCase
         );
     }
 
-    public function provideProcessPhp74Cases()
+    public function provideProcess80Cases()
     {
         return [
             [
-                '<?php fn(?Barable $barA, ?Barable $barB): ?Fooable => null;',
+                '<?php
+                    class Foo
+                    {
+                        public function __construct(
+                            private ?string $foo = null,
+                            protected ?string $bar = null,
+                            public ?string $xyz = null,
+                        ) {
+                        }
+                    }',
                 [
-                    3 => CT::T_NULLABLE_TYPE,
-                    9 => CT::T_NULLABLE_TYPE,
-                    16 => CT::T_NULLABLE_TYPE,
+                    17 => CT::T_NULLABLE_TYPE,
+                    29 => CT::T_NULLABLE_TYPE,
+                    41 => CT::T_NULLABLE_TYPE,
                 ],
             ],
         ];

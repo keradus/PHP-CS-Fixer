@@ -12,6 +12,7 @@
 
 namespace PhpCsFixer\Tests\Fixer\FunctionNotation;
 
+use PhpCsFixer\Fixer\FunctionNotation\MethodArgumentSpaceFixer;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\WhitespacesFixerConfig;
@@ -25,6 +26,11 @@ use PhpCsFixer\WhitespacesFixerConfig;
  */
 final class MethodArgumentSpaceFixerTest extends AbstractFixerTestCase
 {
+    /**
+     * @var MethodArgumentSpaceFixer
+     */
+    protected $fixer;
+
     /**
      * @param string      $expected
      * @param null|string $input
@@ -69,7 +75,7 @@ final class MethodArgumentSpaceFixerTest extends AbstractFixerTestCase
             $input = str_replace("\n", "\r\n", $input);
         }
 
-        return $this->testFix(
+        $this->testFix(
             str_replace("\n", "\r\n", $expected),
             $input,
             $configuration
@@ -693,8 +699,11 @@ $b,
     $c#
 #
 )#
-use ($b,
-$c,$d) {
+use (
+    $b1,
+    $c1,
+    $d1
+) {
 };
 EXPECTED
                 ,
@@ -710,8 +719,8 @@ $a#
 $b,$c#
 #
 )#
-use ($b,
-$c,$d) {
+use ($b1,
+$c1,$d1) {
 };
 INPUT
                 ,
@@ -921,6 +930,14 @@ if (true) {
                 [
                     'on_multiline' => 'ensure_fully_multiline',
                 ],
+            ],
+            'test anonymous functions' => [
+                '<?php
+$example = function () use ($message1, $message2) {
+};',
+                '<?php
+$example = function () use ($message1,$message2) {
+};',
             ],
         ];
     }

@@ -526,10 +526,19 @@ EOF;
         $this->doTest($expected, $input);
     }
 
+    /**
+     * @requires PHP <7.1
+     */
+    public function testIgnoreConstants()
+    {
+        $this->fixer->configure(['elements' => ['const']]);
+        $this->doTest('<?php class A { const B=1; }');
+    }
+
     public function testInvalidConfigurationType()
     {
         $this->expectException(\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessageRegExp('/^\[visibility_required\] Invalid configuration: The option "elements" .*\.$/');
+        $this->expectExceptionMessageMatches('/^\[visibility_required\] Invalid configuration: The option "elements" .*\.$/');
 
         $this->fixer->configure(['elements' => [null]]);
     }
@@ -537,20 +546,9 @@ EOF;
     public function testInvalidConfigurationValue()
     {
         $this->expectException(\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessageRegExp('/^\[visibility_required\] Invalid configuration: The option "elements" .*\.$/');
+        $this->expectExceptionMessageMatches('/^\[visibility_required\] Invalid configuration: The option "elements" .*\.$/');
 
         $this->fixer->configure(['elements' => ['_unknown_']]);
-    }
-
-    /**
-     * @requires PHP <7.1
-     */
-    public function testInvalidConfigurationValueForPHPVersion()
-    {
-        $this->expectException(\PhpCsFixer\ConfigurationException\InvalidForEnvFixerConfigurationException::class);
-        $this->expectExceptionMessageRegExp('/^\[visibility_required\] Invalid configuration for env: "const" option can only be enabled with PHP 7\.1\+\.$/');
-
-        $this->fixer->configure(['elements' => ['const']]);
     }
 
     /**
@@ -797,19 +795,59 @@ AB# <- this is the name
         yield [
             '<?php class Foo { private int $foo; }',
         ];
+
         yield [
             '<?php class Foo { protected ?string $foo; }',
         ];
+
         yield [
             '<?php class Foo { public ? string $foo; }',
         ];
+
         yield [
             '<?php class Foo { public ? string $foo; }',
             '<?php class Foo { var ? string $foo; }',
         ];
+
         yield [
             '<?php class Foo { public static Foo\Bar $foo; }',
             '<?php class Foo { static public Foo\Bar $foo; }',
+        ];
+
+        yield [
+            '<?php class Foo { public array $foo; }',
+        ];
+
+        yield [
+            '<?php class Foo { public ?array $foo; }',
+        ];
+
+        yield [
+            '<?php class Foo { public static ?array $foo; }',
+            '<?php class Foo { static public ?array $foo; }',
+        ];
+    }
+
+    /**
+     * @param string      $expected
+     * @param null|string $input
+     *
+     * @requires PHP 8.0
+     * @dataProvider provideFix80Cases
+     */
+    public function testFix80($expected, $input = null)
+    {
+        $this->doTest($expected, $input);
+    }
+
+    public function provideFix80Cases()
+    {
+        yield [
+            '<?php class Foo { private int|float|null $foo; }',
+        ];
+
+        yield [
+            '<?php class Foo { private int | /* or empty */ null $foo; }',
         ];
     }
 }

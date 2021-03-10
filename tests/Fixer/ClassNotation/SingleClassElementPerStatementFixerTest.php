@@ -710,7 +710,7 @@ EOT
     public function testWrongConfig()
     {
         $this->expectException(\PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessageRegExp('/^\[single_class_element_per_statement\] Invalid configuration: The option "elements" .*\.$/');
+        $this->expectExceptionMessageMatches('/^\[single_class_element_per_statement\] Invalid configuration: The option "elements" .*\.$/');
 
         $this->fixer->configure(['elements' => ['foo']]);
     }
@@ -872,6 +872,15 @@ EOT
             }',
             '<?php class Foo {
                 var ? Foo\Bar $foo, $bar;
+            }',
+        ];
+        yield [
+            '<?php class Foo {
+                var array $foo;
+                var array $bar;
+            }',
+            '<?php class Foo {
+                var array $foo, $bar;
             }',
         ];
     }
