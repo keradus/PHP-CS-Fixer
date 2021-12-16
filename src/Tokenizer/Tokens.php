@@ -293,6 +293,9 @@ class Tokens extends \SplFixedArray
      */
     public function offsetSet($index, $newval): void
     {
+        $this->blockStartCache = [];
+        $this->blockEndCache = [];
+
         if (!isset($this[$index]) || !$this[$index]->equals($newval)) {
             $this->changed = true;
 
@@ -337,11 +340,11 @@ class Tokens extends \SplFixedArray
 
         for ($count = $index; $index < $limit; ++$index) {
             if (!$this->isEmptyAt($index)) {
-                $this[$count++] = $this[$index]; // @phpstan-ignore-line as we know that index exists
+                // use directly for speed, skip the register of token kinds found etc.
+                parent::offsetSet($count++, $this[$index]);
             }
         }
 
-        // we are moving the tokens, we need to clear the indices Cache
         $this->blockStartCache = [];
         $this->blockEndCache = [];
 
