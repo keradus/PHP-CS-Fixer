@@ -47,10 +47,27 @@ final class Token
     private bool $changed = false;
 
     /**
+     * @var ?\PhpToken
+     */
+    private $token;
+
+    /**
      * @param array|string $token token prototype
      */
     public function __construct($token)
     {
+        if ($token instanceof \PhpToken) {
+            $this->token = $token;
+            if ($token->id > 127) {
+                $this->id = $token->id;
+            }
+            $this->content = $token->text;
+            $this->isArray = null !== $this->id;
+
+            return;
+        }
+
+        // rest is deprecated -->
         if (\is_array($token)) {
             if (!\is_int($token[0])) {
                 throw new \InvalidArgumentException(sprintf(
@@ -271,6 +288,17 @@ final class Token
      */
     public function getName(): ?string
     {
+        if ($this->token) {
+            if ($this->id) {
+                if (CT::has($this->id)) {
+                    return CT::getName($this->id);
+                }
+                return $this->token->getTokenName();
+            }
+            return null;
+        }
+
+        // rest is deprecated -->
         if (null === $this->id) {
             return null;
         }
@@ -287,6 +315,7 @@ final class Token
      */
     public static function getNameForId(int $id): ?string
     {
+        // deprecated
         if (CT::has($id)) {
             return CT::getName($id);
         }

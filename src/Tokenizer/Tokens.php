@@ -986,7 +986,10 @@ class Tokens extends \SplFixedArray
         // clear memory
         $this->setSize(0);
 
-        $tokens = token_get_all($code, TOKEN_PARSE);
+        // old way:
+        // $tokens = token_get_all($code, TOKEN_PARSE);
+        // new way:
+        $tokens = \PhpToken::tokenize($code, TOKEN_PARSE);
 
         $this->setSize(\count($tokens));
 

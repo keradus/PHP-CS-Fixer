@@ -505,8 +505,18 @@ final class TokenTest extends TestCase
     public function provideGetNameCases(): \Generator
     {
         yield [
+            new Token(new \PhpToken(T_FUNCTION, 'function')),
+            'T_FUNCTION',
+        ];
+
+        yield [
             new Token([T_FUNCTION, 'function', 1]),
             'T_FUNCTION',
+        ];
+
+        yield [
+            new Token(new \PhpToken(\ord(')'), ')')),
+            null,
         ];
 
         yield [
@@ -515,8 +525,23 @@ final class TokenTest extends TestCase
         ];
 
         yield [
+            new Token(new \PhpToken(\ord(''), '')),
+            null,
+        ];
+
+        yield [
             new Token(''),
             null,
+        ];
+
+        yield [
+            new Token(new \PhpToken(CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE, '}')),
+            'CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE',
+        ];
+
+        yield [
+            new Token([CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE, '}']),
+            'CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE',
         ];
     }
 
