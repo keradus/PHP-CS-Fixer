@@ -34,11 +34,11 @@ jobs:
           os: ${{ runner.os }}
           php: ${{ matrix.php-version }}
 
-      - name: direct-composit-cache
-        uses: ./.github/composite-actions/setup-cache
-        with:
-          os: direct-composit-cache
-          php: ${{ matrix.php-version }}
+      # - name: direct-composit-cache
+      #   uses: ./.github/composite-actions/setup-cache
+      #   with:
+      #     os: direct-composit-cache
+      #     php: ${{ matrix.php-version }}
 
       - name: Run AutoReview
         shell: bash
