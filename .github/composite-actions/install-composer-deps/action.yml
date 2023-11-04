@@ -7,6 +7,12 @@ inputs:
   cache-path:
     description: 'Composer cache path'
     required: true
+  os:
+    description: 'OS version'
+    required: true
+  php:
+    description: 'PHP version'
+    required: true
 
 runs:
   using: "composite"
@@ -26,7 +32,7 @@ runs:
       env:
         CACHE_PATH: ${{ inputs.cache-path }}
       with:
-        path: ${CACHE_PATH}
+        path: /home/runner/.cache/composer
         key: GG-1-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
 
     - name: Install dependencies
