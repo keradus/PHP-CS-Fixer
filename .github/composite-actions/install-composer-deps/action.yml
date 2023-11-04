@@ -32,8 +32,8 @@ runs:
       env:
         CACHE_PATH: ${{ inputs.cache-path }}
       with:
-        path: /home/runner/.cache/composer
-        key: GG-1-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
+        path: ${{ inputs.cache-path }}
+        key: GG-2-${{ inputs.php }}-${{ inputs.cache-path }}---${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
 
     - name: Install dependencies
       uses: nick-invision/retry@v2
