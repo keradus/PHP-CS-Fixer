@@ -32,7 +32,7 @@ runs:
       env:
         CACHE_PATH: ${{ inputs.cache-path }}
       with:
-        path: ${{ inputs.cache-path }}
+        path: $CACHE_PATH
         key: GG-2-${{ inputs.php }}-${{ inputs.cache-path }}---${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
 
     - name: Install dependencies
