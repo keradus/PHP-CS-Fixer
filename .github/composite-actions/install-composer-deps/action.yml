@@ -11,14 +11,22 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: GGG2
+    - name: GGG2a
       shell: bash
-      run: echo ${{ inputs.cache-path }}
+      run: echo GGG2a && echo ${{ inputs.cache-path }}
+
+    - name: GGG2b
+      shell: bash
+      env:
+        CACHE_PATH: ${{ inputs.cache-path }}
+      run: echo GGG2b && echo ${CACHE_PATH}
 
     - name: GGG3
       uses: actions/cache@v3
+      env:
+        CACHE_PATH: ${{ inputs.cache-path }}
       with:
-        path: ${{ inputs.cache-path }}
+        path: ${CACHE_PATH}
         key: GGG-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           GGG-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-
