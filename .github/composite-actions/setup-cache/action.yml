@@ -16,13 +16,17 @@ runs:
       shell: bash
       run: echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
 
+    - name: SHOW COMPOSER CACHE VAR
+      shell: bash
+      run: echo ${{ steps.composer-cache-dir.outputs.dir }}
+
     - name: Cache dependencies
       uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache-dir.outputs.dir }}
-        key: composer-${{ inputs.os }}-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
+        key: DEBUG-${{ inputs.os }}-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          composer-${{ inputs.os }}-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-
-          composer-${{ inputs.os }}-${{ inputs.php }}-
-          composer-${{ inputs.os }}-
-          composer-
+          DEBUG-${{ inputs.os }}-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-
+          DEBUG-${{ inputs.os }}-${{ inputs.php }}-
+          DEBUG-${{ inputs.os }}-
+          DEBUG-
