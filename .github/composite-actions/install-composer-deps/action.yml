@@ -1,39 +1,40 @@
 name: "Install composer deps"
 
 inputs:
-  flags:
-    description: 'Composer flags'
-    required: false
-  cache-path:
-    description: 'Composer cache path'
-    required: true
   os:
     description: 'OS version'
     required: true
   php:
     description: 'PHP version'
     required: true
+  flags:
+    description: 'Composer flags'
+    required: false
 
 runs:
   using: "composite"
   steps:
-    - name: GGG2a
+    - name: Get Composer cache directory
+      id: composer-cache-dir
       shell: bash
-      run: echo GGG2a && echo ${{ inputs.cache-path }}
+      run: echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
 
-    - name: GGG2b
+    - name: Get Composer cache directory
       shell: bash
-      env:
-        CACHE_PATH: ${{ inputs.cache-path }}
-      run: echo GGG2b && echo ${CACHE_PATH}
+      run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
 
-    - name: GGG3
+    - name: Get Composer cache directory 2
+      shell: bash
+      run: echo $COMPOSER_CACHE_DIR
+
+    - name: Cache Composer dependencies
       uses: actions/cache@v3
-      env:
-        CACHE_PATH: ${{ inputs.cache-path }}
       with:
-        path: /home/runner/.cache/composer
-        key: GG-2-${{ inputs.php }}-${{ inputs.cache-path }}---${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
+        path: ${{ env.COMPOSER_CACHE_DIR }}
+        key: AA-${{ env.COMPOSER_CACHE_DIR }}-${{ inputs.os }}-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          AA-${{ inputs.os }}-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-
+          AA-${{ inputs.os }}-${{ inputs.php }}-
 
     - name: Install dependencies
       uses: nick-invision/retry@v2
