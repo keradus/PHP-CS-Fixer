@@ -64,4 +64,4 @@ runs:
       uses: ./.github/composite-actions/install-composer-deps
       with:
         flags: ${{ inputs.composer-flags }}
-        cache-path:  /home/runner/.cache/composerrrr
+        cache-path:  /home/runner/.cache/composer
