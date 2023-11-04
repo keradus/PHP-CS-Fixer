@@ -4,23 +4,21 @@ inputs:
   flags:
     description: 'Composer flags'
     required: false
+  cache-path:
+    description: 'Composer cache path'
+    required: true
 
 runs:
   using: "composite"
   steps:
-    - name: GGG1
-      id: composer-cache-dir
-      shell: bash
-      run: echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
-
     - name: GGG2
       shell: bash
-      run: echo ${{ steps.composer-cache-dir.outputs.dir }}
+      run: echo ${{ inputs.cache-path }}
 
     - name: GGG3
       uses: actions/cache@v3
       with:
-        path: ${{ steps.composer-cache-dir.outputs.dir }}
+        path: ${{ inputs.cache-path }}
         key: GGG-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           GGG-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-

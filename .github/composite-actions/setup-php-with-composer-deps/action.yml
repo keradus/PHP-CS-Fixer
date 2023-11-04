@@ -51,13 +51,17 @@ runs:
       shell: bash
       run: composer config extra.symfony.require ${{ inputs.composer-flex-with-symfony-version }}
 
-    - name: Setup cache
-      uses: ./.github/composite-actions/setup-cache
-      with:
-        php: VVV
-        os: BBB
+    - name: GGG1
+      id: composer-cache-dir
+      shell: bash
+      run: echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+
+    - name: GGG2
+      shell: bash
+      run: echo ${{ steps.composer-cache-dir.outputs.dir }}
 
     - name: Install Composer deps
       uses: ./.github/composite-actions/install-composer-deps
       with:
         flags: ${{ inputs.composer-flags }}
+        cache-path: ${{ steps.composer-cache-dir.outputs.dir }}
