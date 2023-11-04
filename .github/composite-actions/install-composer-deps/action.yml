@@ -4,22 +4,10 @@ inputs:
   flags:
     description: 'Composer flags'
     required: false
-  os:
-    description: 'OS version'
-    required: true
-  php:
-    description: 'PHP version'
-    required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Setup cache
-      uses: ./.github/composite-actions/setup-cache
-      with:
-        php: ${{ inputs.php }}
-        os: 11111
-
     - name: Install dependencies
       uses: nick-invision/retry@v2
       with:
