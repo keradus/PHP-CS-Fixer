@@ -18,7 +18,7 @@ runs:
     - name: GGG3
       uses: actions/cache@v3
       with:
-        path:  /home/runner/.cache/composerxxx
+        path: ${{ inputs.cache-path }}
         key: GGG-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           GGG-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-
