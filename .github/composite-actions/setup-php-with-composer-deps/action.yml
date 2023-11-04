@@ -54,8 +54,8 @@ runs:
     - name: Setup cache
       uses: ./.github/composite-actions/setup-cache
       with:
-        php: ${{ inputs.php }}
-        os: ${{ inputs.os }}
+        php: VVV
+        os: BBB
 
     - name: Install Composer deps
       uses: ./.github/composite-actions/install-composer-deps
