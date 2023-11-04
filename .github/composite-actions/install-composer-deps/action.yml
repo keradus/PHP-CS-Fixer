@@ -18,8 +18,6 @@ runs:
     # That registered shutdown function is _NOT_ having access to inputs.* nor steps.*.outputs for
     # `path` parameter, which is evaluated on both stages (read and write), yet `key` parameters
     # are evaluated on start only and are not affected by this issue.
-    #
-    # Refs:
     - name: Get Composer cache directory
       shell: bash
       run: |
@@ -30,10 +28,11 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ env.COMPOSER_CACHE_DIR }}
-        key: CC-${{ env.COMPOSER_CACHE_DIR }}-${{ runner.os }}-${{ env.COMPOSER_CACHE_PHP }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
+        key: Composer-${{ runner.os }}-${{ env.COMPOSER_CACHE_PHP }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          CC-${{ runner.os }}-${{ env.COMPOSER_CACHE_PHP }}-${{ hashFiles('**/composer.json') }}-
-          CC-${{ runner.os }}-${{ env.COMPOSER_CACHE_PHP }}-
+          Composer-${{ runner.os }}-${{ env.COMPOSER_CACHE_PHP }}-${{ hashFiles('**/composer.json') }}-
+          Composer-${{ runner.os }}-${{ env.COMPOSER_CACHE_PHP }}-
+          Composer-${{ runner.os }}-
 
     - name: Install dependencies
       uses: nick-invision/retry@v2
