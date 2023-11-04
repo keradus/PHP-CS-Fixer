@@ -8,6 +8,26 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: GGG1
+      id: composer-cache-dir
+      shell: bash
+      run: echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+
+    - name: GGG2
+      shell: bash
+      run: echo ${{ steps.composer-cache-dir.outputs.dir }}
+
+    - name: GGG3
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache-dir.outputs.dir }}
+        key: GGG-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          GGG-${{ inputs.php }}-${{ hashFiles('**/composer.json') }}-
+          GGG-${{ inputs.php }}-
+          GGG-${{ inputs.os }}-
+          GGG-
+
     - name: Install dependencies
       uses: nick-invision/retry@v2
       with:
