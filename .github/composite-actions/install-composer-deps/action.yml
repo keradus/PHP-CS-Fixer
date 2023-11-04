@@ -11,11 +11,13 @@ runs:
     # Warning!
     #
     # Use $GITUB_ENV instead of $GITHUB_OUTPUT.
+    #
     # The actions/cache is, on calling it in this composite action, reading the cache,
     # and then also registering a shutdown function for whole workflow, to write the cache afterwards.
     #
     # That registered shutdown function is _NOT_ having access to inputs.* nor steps.*.outputs for
-    # `path` parameter, which is evaluated on both stages (read and write), yet `key` parameters.
+    # `path` parameter, which is evaluated on both stages (read and write), yet `key` parameters
+    # are evaluated on start only and are not affected by this issue.
     #
     # Refs:
     - name: Get Composer cache directory
