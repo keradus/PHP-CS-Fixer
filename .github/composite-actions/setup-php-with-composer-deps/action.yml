@@ -54,6 +54,4 @@ runs:
     - name: Install Composer deps
       uses: ./.github/composite-actions/install-composer-deps
       with:
-        php: ${{ inputs.php }}
-        os: ${{ inputs.os }}
         flags: ${{ inputs.composer-flags }}
