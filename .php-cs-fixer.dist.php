@@ -25,7 +25,11 @@ $header = <<<'EOF'
 $finder = (new PhpCsFixer\Finder())
     ->ignoreDotFiles(false)
     ->ignoreVCSIgnored(true)
-    ->exclude(['dev-tools/phpstan', 'tests/Fixtures'])
+    ->exclude([
+        'dev-tools/phpstan',
+        'tests/Fixtures',
+        'src/ExecutorWithoutErrorHandler.php', // due to explicit usage of `@`, exception for `error_suppression` rule
+    ])
     ->in(__DIR__)
 ;
 
@@ -41,6 +45,7 @@ return (new PhpCsFixer\Config())
         'header_comment' => ['header' => $header],
         'modernize_strpos' => true, // needs PHP 8+ or polyfill
         'no_useless_concat_operator' => false, // TODO switch back on when the `src/Console/Application.php` no longer needs the concat
+        'error_suppression' => ['mute_deprecation_error' => true, 'noise_remaining_usages' => true],
     ])
     ->setFinder($finder)
 ;
