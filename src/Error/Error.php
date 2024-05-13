@@ -109,6 +109,7 @@ final class Error implements \JsonSerializable
             'filePath' => $this->filePath,
             'source' => null !== $this->source
                 ? [
+                    'class' => $this->source::class,
                     'message' => $this->source->getMessage(),
                     'code' => $this->source->getCode(),
                     'file' => $this->source->getFile(),
@@ -118,5 +119,16 @@ final class Error implements \JsonSerializable
             'appliedFixers' => $this->appliedFixers,
             'diff' => $this->diff,
         ];
+    }
+
+    public static function fromJson(array $json): self
+    {
+        return new self(
+            $json['type'],
+            $json['filePath'],
+            null !== $json['source'] ? SourceErrorFromWorker::fromArray($json['source']) : null,
+            $json['appliedFixers'],
+            $json['diff']
+        );
     }
 }

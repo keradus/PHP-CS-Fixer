@@ -258,15 +258,7 @@ final class Runner
                         }
 
                         foreach ($workerResponse['errors'] ?? [] as $error) {
-                            $this->errorsManager->report(new Error(
-                                $error['type'],
-                                $error['filePath'],
-                                null !== $error['source']
-                                    ? ParallelisationException::forWorkerError($error['source'])
-                                    : null,
-                                $error['appliedFixers'],
-                                $error['diff']
-                            ));
+                            $this->errorsManager->report(Error::fromJson($error));
                         }
 
                         // Pass-back information about applied changes (only if there are any)
