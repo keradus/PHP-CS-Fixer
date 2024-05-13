@@ -96,6 +96,8 @@ final class ErrorsManager
         $this->errors[] = $error;
     }
 
+    // @TODO v4 move handling of WorkerException outside of ErrorsManager and break the execution flow when it happen @Wirone
+    // ref https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/pull/7777#discussion_r1591666901
     public function reportWorkerError(WorkerError $error): void
     {
         $this->workerErrors[] = $error;

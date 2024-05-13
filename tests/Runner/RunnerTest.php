@@ -184,7 +184,7 @@ final class RunnerTest extends TestCase
     /**
      * @requires OS Darwin|Windows
      *
-     * @TODO Fix it for Linux - somehow this test reaches timeout in CI, even though it works on Linux through Docker.
+     * @TODO v4 Fix it for Linux - somehow this test reaches timeout in CI, even though it works on Linux through Docker. @Wirone
      *
      * @covers \PhpCsFixer\Runner\Runner::fix
      * @covers \PhpCsFixer\Runner\Runner::fixFile

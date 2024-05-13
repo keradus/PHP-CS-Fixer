@@ -182,6 +182,8 @@ final class WorkerCommand extends Command
                     });
                 },
                 static function (\Throwable $error) use ($errorOutput): void {
+                    // @TODO v4 verify onRejected behaviour @Wirone
+                    // ref https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/pull/7777#discussion_r1590399285
                     $errorOutput->writeln($error->getMessage());
                 }
             )
