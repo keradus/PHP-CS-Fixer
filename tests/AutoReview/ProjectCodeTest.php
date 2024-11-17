@@ -114,7 +114,6 @@ final class ProjectCodeTest extends TestCase
             return; // already readonly
         }
 
-
         $tokens = $this->createTokensForClass($className);
 
         $constructorSequence = $tokens->findSequence([
@@ -130,10 +129,10 @@ final class ProjectCodeTest extends TestCase
         }
 
         $tokensContent = $tokens->generateCode();
-        $propertyNames = array_map(fn (\ReflectionProperty $item) => $item->getName(), $rcProperties);
+        $propertyNames = array_map(static fn (\ReflectionProperty $item) => $item->getName(), $rcProperties);
 
         $overrideFound = Preg::match(
-            '/\$this->('.join("|", $propertyNames).')\s*=/',
+            '/\$this->('.implode('|', $propertyNames).')\s*=/',
             $tokensContent
         );
 
