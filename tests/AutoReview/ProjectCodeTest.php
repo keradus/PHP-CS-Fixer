@@ -23,6 +23,7 @@ use PhpCsFixer\DocBlock\Annotation;
 use PhpCsFixer\DocBlock\DocBlock;
 use PhpCsFixer\Fixer\AbstractPhpUnitFixer;
 use PhpCsFixer\Fixer\ConfigurableFixerTrait;
+use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\Fixer\PhpUnit\PhpUnitNamespacedFixer;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\Preg;
@@ -82,6 +83,68 @@ final class ProjectCodeTest extends TestCase
         $testClassName = 'PhpCsFixer\Tests'.substr($className, 10).'Test';
 
         self::assertTrue(class_exists($testClassName), \sprintf('Expected test class "%s" for "%s" not found.', $testClassName, $className));
+    }
+
+    /**
+     * @dataProvider provideSrcClassCases
+     *
+     * @param class-string $className
+     */
+    public function testXXXThatSrcClassesAreReadonlyWhenPossible(string $className): void
+    {
+        self::assertTrue(true);
+
+        $rc = new \ReflectionClass($className);
+        $rcProperties = $rc->getProperties();
+
+        if (0 === \count($rcProperties)) {
+            return; // public properties present, no need for class to be readonly
+        }
+
+        if ($rc->implementsInterface(FixerInterface::class)) {
+            return; // Fixers are not readonly
+        }
+
+        $rc = new \ReflectionClass($className);
+        $doc = new DocBlock($rc->getDocComment() ?: '/** */');
+        $readonly = \count($doc->getAnnotationsOfType('readonly')) > 0;
+        // $rewritable = \count($doc->getAnnotationsOfType('rewritable')) > 0;
+
+        if ($readonly) {
+            return; // already readonly
+        }
+
+
+        $tokens = $this->createTokensForClass($className);
+
+        $constructorSequence = $tokens->findSequence([
+            [T_FUNCTION],
+            [T_STRING, '__construct'],
+            '(',
+        ]);
+        if ($constructorSequence) {
+            $tokens = clone $tokens;
+            $openIndex = $tokens->getNextTokenOfKind(array_key_last($constructorSequence), ['{']);
+            $closeIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $openIndex);
+            $tokens->overrideRange($openIndex + 1, $closeIndex - 1, []);
+        }
+
+        $tokensContent = $tokens->generateCode();
+        $propertyNames = array_map(fn (\ReflectionProperty $item) => $item->getName(), $rcProperties);
+
+        $overrideFound = Preg::match(
+            '/\$this->('.join("|", $propertyNames).')\s*=/',
+            $tokensContent
+        );
+
+        if ($overrideFound) {
+            return; // properties are mutable during lifecycle of instance
+        }
+
+        self::assertTrue(
+            false,
+            \sprintf('The class "%s" should have readonly annotation.', $className)
+        );
     }
 
     /**
