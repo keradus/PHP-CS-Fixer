@@ -22,6 +22,8 @@ use Symfony\Contracts\EventDispatcher\Event;
  * @author Greg Korba <greg@codito.dev>
  *
  * @internal
+ *
+ * @readonly
  */
 final class AnalysisStarted extends Event
 {

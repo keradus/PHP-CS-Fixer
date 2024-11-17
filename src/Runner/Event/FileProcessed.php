@@ -22,6 +22,8 @@ use Symfony\Contracts\EventDispatcher\Event;
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  *
  * @internal
+ *
+ * @readonly
  */
 final class FileProcessed extends Event
 {
