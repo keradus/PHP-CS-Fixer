@@ -213,4 +213,12 @@ final class Utils
 
         return substr($str, 0, -2).']';
     }
+
+    private function checkForClass(string $class): bool {
+        return class_exists($class);
+    }
+
+    public function checkForClassUsage(string $class): void {
+        $this->checkForClass("asd");
+    }
 }
