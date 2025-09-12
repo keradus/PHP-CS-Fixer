@@ -214,11 +214,14 @@ final class Utils
         return substr($str, 0, -2).']';
     }
 
-    private function checkForClass(string $class): bool {
-        return class_exists($class);
+    /**
+     * @param class-string $className
+     */
+    private function checkForClass(string $className): bool {
+        return class_exists($className);
     }
 
-    public function checkForClassUsage(string $class): void {
+    public function checkForClassUsage(): void {
         $this->checkForClass("asd");
     }
 }
