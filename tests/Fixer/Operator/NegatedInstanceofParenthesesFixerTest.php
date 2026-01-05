@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace PhpCsFixer\Tests\Fixer\Operator;
 
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
+use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @internal
@@ -31,6 +32,38 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
  */
 final class NegatedInstanceofParenthesesFixerTest extends AbstractFixerTestCase
 {
+    /**
+     * @dataProvider provideDetectEdgesCases
+     */
+    public function testDetectEdges(array $expected, ?string $input = null): void
+    {
+        self::assertGreaterThan(0, \count($expected), 'Provide at least one expected edge set.');
+
+        $tokens = Tokens::fromCode($input);
+
+        $actual = [];
+        foreach ($expected as $instanceofIndex => $expectedEdges) {
+            self::assertTrue($tokens[$instanceofIndex]->isGivenKind(\T_INSTANCEOF), \sprintf('Token at index %d is not instanceof.', $instanceofIndex));
+            $actual[$instanceofIndex] = \Closure::bind(static fn ($fixer): array => $fixer->findEdges($tokens, $instanceofIndex), null, \get_class($this->fixer))($this->fixer);
+        }
+
+        self::assertSame($expected, $actual);
+    }
+
+    /**
+     * @return iterable<string, array{0: array, 1: string}>
+     */
+    public static function provideDetectEdgesCases(): iterable
+    {
+        yield 'double_wrapped' => [
+            [
+                5 => [3, 7],
+                14 => [12, 16],
+            ],
+            '<?php !($x instanceof Foo && !$y instanceof Bar);',
+        ];
+    }
+
     /**
      * @dataProvider provideFixCases
      */
